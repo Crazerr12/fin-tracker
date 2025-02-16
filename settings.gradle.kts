@@ -52,3 +52,8 @@ include(":feature:budget:presentation")
 include(":feature:profile:data")
 include(":feature:profile:domain")
 include(":feature:profile:presentation")
+
+include(":feature:transaction:data")
+include(":feature:transaction:domain")
+include(":feature:transaction:domain:api")
+include(":feature:transaction:presentation")

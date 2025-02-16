@@ -9,9 +9,8 @@ class DataPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply(libs.plugins.jetbrains.kotlin.jvm.get().pluginId)
+                apply("android.library.plugin")
                 apply("serialization.plugin")
-                apply("kotlin.base.config")
             }
 
             with(dependencies) {
@@ -21,6 +20,12 @@ class DataPlugin : Plugin<Project> {
 
                 // Ktor
                 implementation(libs.ktor.client.core)
+
+                // Network
+                implementation(project(":core:network"))
+
+                // Database
+                implementation(project(":core:database"))
             }
         }
     }

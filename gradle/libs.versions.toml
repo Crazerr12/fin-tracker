@@ -10,7 +10,7 @@ appVersionName = "1.0.0"
 
 # Compose
 activityCompose = "1.10.0"
-composeBom = "2025.01.01"
+composeBom = "2025.02.00"
 compose-gradle-plugin = "1.7.3"
 
 # Kotlin

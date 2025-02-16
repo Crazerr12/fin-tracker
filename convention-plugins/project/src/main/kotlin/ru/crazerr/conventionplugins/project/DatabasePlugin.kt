@@ -9,8 +9,6 @@ class DatabasePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply(libs.plugins.kotlin.android.get().pluginId)
-                apply(libs.plugins.kotlin.compose.get().pluginId)
                 apply("android.library.plugin")
                 apply(libs.plugins.ksp.get().pluginId)
                 apply("serialization.plugin")
