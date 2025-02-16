@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_title">Main</string>
+    <string name="transactions_title">Transactions</string>
+    <string name="analysis_title">Analysis</string>
+    <string name="budget_title">Budget</string>
+    <string name="profile_title">Profile</string>
+</resources>

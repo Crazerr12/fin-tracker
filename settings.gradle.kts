@@ -1,0 +1,54 @@
+pluginManagement {
+    includeBuild("convention-plugins/base")
+    includeBuild("convention-plugins/project")
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "FinTracker"
+include(":app")
+
+include(":core:network")
+include(":core:root")
+include(":core:database")
+include(":core:utils")
+
+include(":feature:auth:data")
+include(":feature:auth:domain")
+include(":feature:auth:presentation")
+
+include(":feature:main:data")
+include(":feature:main:domain")
+include(":feature:main:presentation")
+
+include(":feature:transactions:data")
+include(":feature:transactions:domain")
+include(":feature:transactions:presentation")
+
+include(":feature:analysis:data")
+include(":feature:analysis:domain")
+include(":feature:analysis:presentation")
+
+include(":feature:budget:data")
+include(":feature:budget:domain")
+include(":feature:budget:presentation")
+
+include(":feature:profile:data")
+include(":feature:profile:domain")
+include(":feature:profile:presentation")
