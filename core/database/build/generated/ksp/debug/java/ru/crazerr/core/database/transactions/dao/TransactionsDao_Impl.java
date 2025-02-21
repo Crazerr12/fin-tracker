@@ -12,6 +12,7 @@ import androidx.room.util.DBUtil;
 import androidx.sqlite.db.SupportSQLiteStatement;
 import java.lang.Class;
 import java.lang.Exception;
+import java.lang.Long;
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
@@ -25,6 +26,7 @@ import javax.annotation.processing.Generated;
 import kotlin.Unit;
 import kotlin.coroutines.Continuation;
 import kotlinx.coroutines.flow.Flow;
+import ru.crazerr.core.database.converters.LocalDateConverter;
 import ru.crazerr.core.database.transactions.model.TransactionEntity;
 
 @Generated("androidx.room.RoomProcessor")
@@ -33,6 +35,8 @@ public final class TransactionsDao_Impl implements TransactionsDao {
   private final RoomDatabase __db;
 
   private final EntityInsertionAdapter<TransactionEntity> __insertionAdapterOfTransactionEntity;
+
+  private final LocalDateConverter __localDateConverter = new LocalDateConverter();
 
   private final EntityDeletionOrUpdateAdapter<TransactionEntity> __deletionAdapterOfTransactionEntity;
 
@@ -55,6 +59,8 @@ public final class TransactionsDao_Impl implements TransactionsDao {
         statement.bindLong(3, entity.getAmount());
         final int _tmp = entity.getType() ? 1 : 0;
         statement.bindLong(4, _tmp);
+        final String _tmp_1 = __localDateConverter.fromLocalDate(entity.getDate());
+        statement.bindString(5, _tmp_1);
         statement.bindLong(6, entity.getAccountId());
       }
     };
@@ -86,6 +92,8 @@ public final class TransactionsDao_Impl implements TransactionsDao {
         statement.bindLong(3, entity.getAmount());
         final int _tmp = entity.getType() ? 1 : 0;
         statement.bindLong(4, _tmp);
+        final String _tmp_1 = __localDateConverter.fromLocalDate(entity.getDate());
+        statement.bindString(5, _tmp_1);
         statement.bindLong(6, entity.getAccountId());
         statement.bindLong(7, entity.getId());
       }
@@ -94,16 +102,16 @@ public final class TransactionsDao_Impl implements TransactionsDao {
 
   @Override
   public Object insert(final TransactionEntity[] obj,
-      final Continuation<? super Unit> $completion) {
-    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      final Continuation<? super List<Long>> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<List<Long>>() {
       @Override
       @NonNull
-      public Unit call() throws Exception {
+      public List<Long> call() throws Exception {
         __db.beginTransaction();
         try {
-          __insertionAdapterOfTransactionEntity.insert(obj);
+          final List<Long> _result = __insertionAdapterOfTransactionEntity.insertAndReturnIdsList(obj);
           __db.setTransactionSuccessful();
-          return Unit.INSTANCE;
+          return _result;
         } finally {
           __db.endTransaction();
         }
@@ -168,10 +176,10 @@ public final class TransactionsDao_Impl implements TransactionsDao {
           final List<TransactionEntity> _result = new ArrayList<TransactionEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final TransactionEntity _item;
-            final int _tmpId;
-            _tmpId = _cursor.getInt(_cursorIndexOfId);
-            final int _tmpCategoryId;
-            _tmpCategoryId = _cursor.getInt(_cursorIndexOfCategoryId);
+            final long _tmpId;
+            _tmpId = _cursor.getLong(_cursorIndexOfId);
+            final long _tmpCategoryId;
+            _tmpCategoryId = _cursor.getLong(_cursorIndexOfCategoryId);
             final long _tmpAmount;
             _tmpAmount = _cursor.getLong(_cursorIndexOfAmount);
             final boolean _tmpType;
@@ -179,8 +187,11 @@ public final class TransactionsDao_Impl implements TransactionsDao {
             _tmp = _cursor.getInt(_cursorIndexOfType);
             _tmpType = _tmp != 0;
             final LocalDate _tmpDate;
-            final int _tmpAccountId;
-            _tmpAccountId = _cursor.getInt(_cursorIndexOfAccountId);
+            final String _tmp_1;
+            _tmp_1 = _cursor.getString(_cursorIndexOfDate);
+            _tmpDate = __localDateConverter.toLocalDate(_tmp_1);
+            final long _tmpAccountId;
+            _tmpAccountId = _cursor.getLong(_cursorIndexOfAccountId);
             _item = new TransactionEntity(_tmpId,_tmpCategoryId,_tmpAmount,_tmpType,_tmpDate,_tmpAccountId);
             _result.add(_item);
           }

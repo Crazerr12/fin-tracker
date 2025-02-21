@@ -13,6 +13,7 @@ import androidx.sqlite.db.SupportSQLiteStatement;
 import java.lang.Class;
 import java.lang.Exception;
 import java.lang.Integer;
+import java.lang.Long;
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
@@ -25,6 +26,8 @@ import javax.annotation.processing.Generated;
 import kotlin.Unit;
 import kotlin.coroutines.Continuation;
 import kotlinx.coroutines.flow.Flow;
+import ru.crazerr.core.database.converters.IntListConverter;
+import ru.crazerr.core.database.converters.LocalDateConverter;
 import ru.crazerr.core.database.repeatTransactions.model.RepeatTransactionEntity;
 
 @Generated("androidx.room.RoomProcessor")
@@ -33,6 +36,10 @@ public final class RepeatTransactionsDao_Impl implements RepeatTransactionsDao {
   private final RoomDatabase __db;
 
   private final EntityInsertionAdapter<RepeatTransactionEntity> __insertionAdapterOfRepeatTransactionEntity;
+
+  private final LocalDateConverter __localDateConverter = new LocalDateConverter();
+
+  private final IntListConverter __intListConverter = new IntListConverter();
 
   private final EntityDeletionOrUpdateAdapter<RepeatTransactionEntity> __deletionAdapterOfRepeatTransactionEntity;
 
@@ -55,9 +62,13 @@ public final class RepeatTransactionsDao_Impl implements RepeatTransactionsDao {
         statement.bindLong(3, entity.getAmount());
         final int _tmp = entity.getType() ? 1 : 0;
         statement.bindLong(4, _tmp);
+        final String _tmp_1 = __localDateConverter.fromLocalDate(entity.getCompletionDate());
+        statement.bindString(5, _tmp_1);
         statement.bindLong(6, entity.getAccountId());
         statement.bindLong(7, entity.getRepeatType());
         statement.bindLong(8, entity.getRepeatInterval());
+        final String _tmp_2 = __intListConverter.fromList(entity.getRepeatUnits());
+        statement.bindString(9, _tmp_2);
       }
     };
     this.__deletionAdapterOfRepeatTransactionEntity = new EntityDeletionOrUpdateAdapter<RepeatTransactionEntity>(__db) {
@@ -88,9 +99,13 @@ public final class RepeatTransactionsDao_Impl implements RepeatTransactionsDao {
         statement.bindLong(3, entity.getAmount());
         final int _tmp = entity.getType() ? 1 : 0;
         statement.bindLong(4, _tmp);
+        final String _tmp_1 = __localDateConverter.fromLocalDate(entity.getCompletionDate());
+        statement.bindString(5, _tmp_1);
         statement.bindLong(6, entity.getAccountId());
         statement.bindLong(7, entity.getRepeatType());
         statement.bindLong(8, entity.getRepeatInterval());
+        final String _tmp_2 = __intListConverter.fromList(entity.getRepeatUnits());
+        statement.bindString(9, _tmp_2);
         statement.bindLong(10, entity.getId());
       }
     };
@@ -98,16 +113,16 @@ public final class RepeatTransactionsDao_Impl implements RepeatTransactionsDao {
 
   @Override
   public Object insert(final RepeatTransactionEntity[] obj,
-      final Continuation<? super Unit> $completion) {
-    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      final Continuation<? super List<Long>> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<List<Long>>() {
       @Override
       @NonNull
-      public Unit call() throws Exception {
+      public List<Long> call() throws Exception {
         __db.beginTransaction();
         try {
-          __insertionAdapterOfRepeatTransactionEntity.insert(obj);
+          final List<Long> _result = __insertionAdapterOfRepeatTransactionEntity.insertAndReturnIdsList(obj);
           __db.setTransactionSuccessful();
-          return Unit.INSTANCE;
+          return _result;
         } finally {
           __db.endTransaction();
         }
@@ -185,6 +200,9 @@ public final class RepeatTransactionsDao_Impl implements RepeatTransactionsDao {
             _tmp = _cursor.getInt(_cursorIndexOfType);
             _tmpType = _tmp != 0;
             final LocalDate _tmpCompletionDate;
+            final String _tmp_1;
+            _tmp_1 = _cursor.getString(_cursorIndexOfCompletionDate);
+            _tmpCompletionDate = __localDateConverter.toLocalDate(_tmp_1);
             final int _tmpAccountId;
             _tmpAccountId = _cursor.getInt(_cursorIndexOfAccountId);
             final int _tmpRepeatType;
@@ -192,6 +210,9 @@ public final class RepeatTransactionsDao_Impl implements RepeatTransactionsDao {
             final int _tmpRepeatInterval;
             _tmpRepeatInterval = _cursor.getInt(_cursorIndexOfRepeatInterval);
             final List<Integer> _tmpRepeatUnits;
+            final String _tmp_2;
+            _tmp_2 = _cursor.getString(_cursorIndexOfRepeatUnits);
+            _tmpRepeatUnits = __intListConverter.toList(_tmp_2);
             _result = new RepeatTransactionEntity(_tmpId,_tmpCategoryId,_tmpAmount,_tmpType,_tmpCompletionDate,_tmpAccountId,_tmpRepeatType,_tmpRepeatInterval,_tmpRepeatUnits);
           } else {
             _result = null;

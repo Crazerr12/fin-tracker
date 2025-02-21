@@ -3,6 +3,7 @@ package ru.crazerr.core.database.accounts.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import ru.crazerr.core.database.currencies.model.CurrencyEntity
 
@@ -14,7 +15,8 @@ import ru.crazerr.core.database.currencies.model.CurrencyEntity
         childColumns = arrayOf("currency_id"),
         onUpdate = ForeignKey.RESTRICT,
         onDelete = ForeignKey.RESTRICT,
-    )]
+    )],
+    indices = [Index("currency_id")]
 )
 data class AccountEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

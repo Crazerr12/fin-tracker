@@ -12,6 +12,7 @@ import androidx.room.util.DBUtil;
 import androidx.sqlite.db.SupportSQLiteStatement;
 import java.lang.Class;
 import java.lang.Exception;
+import java.lang.Long;
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
@@ -91,16 +92,17 @@ public final class CategoriesDao_Impl implements CategoriesDao {
   }
 
   @Override
-  public Object insert(final CategoryEntity[] obj, final Continuation<? super Unit> $completion) {
-    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+  public Object insert(final CategoryEntity[] obj,
+      final Continuation<? super List<Long>> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<List<Long>>() {
       @Override
       @NonNull
-      public Unit call() throws Exception {
+      public List<Long> call() throws Exception {
         __db.beginTransaction();
         try {
-          __insertionAdapterOfCategoryEntity.insert(obj);
+          final List<Long> _result = __insertionAdapterOfCategoryEntity.insertAndReturnIdsList(obj);
           __db.setTransactionSuccessful();
-          return Unit.INSTANCE;
+          return _result;
         } finally {
           __db.endTransaction();
         }

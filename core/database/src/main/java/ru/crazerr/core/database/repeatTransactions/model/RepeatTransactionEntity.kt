@@ -3,6 +3,7 @@ package ru.crazerr.core.database.repeatTransactions.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import ru.crazerr.core.database.accounts.model.AccountEntity
 import ru.crazerr.core.database.categories.model.CategoryEntity
@@ -23,7 +24,8 @@ import java.time.LocalDate
             childColumns = arrayOf("account_id"),
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE,
-        )]
+        )],
+    indices = [Index("category_id", "account_id")]
 )
 data class RepeatTransactionEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,

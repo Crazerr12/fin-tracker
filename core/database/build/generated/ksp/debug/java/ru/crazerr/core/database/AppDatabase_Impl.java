@@ -61,13 +61,15 @@ public final class AppDatabase_Impl extends AppDatabase {
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_category_id` ON `transactions` (`category_id`)");
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_account_id` ON `transactions` (`account_id`)");
         db.execSQL("CREATE TABLE IF NOT EXISTS `repeat_transactions` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `category_id` INTEGER NOT NULL, `amount` INTEGER NOT NULL, `type` INTEGER NOT NULL, `completion_date` TEXT NOT NULL, `account_id` INTEGER NOT NULL, `repeat_type` INTEGER NOT NULL, `repeat_interval` INTEGER NOT NULL, `repeat_units` TEXT NOT NULL, FOREIGN KEY(`category_id`) REFERENCES `categories`(`id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`account_id`) REFERENCES `accounts`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_repeat_transactions_category_id_account_id` ON `repeat_transactions` (`category_id`, `account_id`)");
         db.execSQL("CREATE TABLE IF NOT EXISTS `currencies` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `symbol` TEXT NOT NULL, `code` TEXT NOT NULL)");
         db.execSQL("CREATE TABLE IF NOT EXISTS `accounts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `amount` INTEGER NOT NULL, `icon_id` TEXT NOT NULL, `currency_id` INTEGER NOT NULL, FOREIGN KEY(`currency_id`) REFERENCES `currencies`(`id`) ON UPDATE RESTRICT ON DELETE RESTRICT )");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_accounts_currency_id` ON `accounts` (`currency_id`)");
         db.execSQL("CREATE TABLE IF NOT EXISTS `budgets` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `category_id` INTEGER NOT NULL, `max_amount` INTEGER NOT NULL, `current_amount` INTEGER NOT NULL, `is_regular` INTEGER NOT NULL, `date` TEXT NOT NULL, FOREIGN KEY(`category_id`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )");
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_budgets_category_id` ON `budgets` (`category_id`)");
         db.execSQL("CREATE TABLE IF NOT EXISTS `categories` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `color` INTEGER NOT NULL, `icon_id` TEXT NOT NULL, `is_template` INTEGER NOT NULL)");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6e06c764700d2fe3e9b20d229813c023')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '75ec1793d80f31c175b5fa78d33484d1')");
       }
 
       @Override
@@ -155,7 +157,8 @@ public final class AppDatabase_Impl extends AppDatabase {
         final HashSet<TableInfo.ForeignKey> _foreignKeysRepeatTransactions = new HashSet<TableInfo.ForeignKey>(2);
         _foreignKeysRepeatTransactions.add(new TableInfo.ForeignKey("categories", "CASCADE", "CASCADE", Arrays.asList("category_id"), Arrays.asList("id")));
         _foreignKeysRepeatTransactions.add(new TableInfo.ForeignKey("accounts", "CASCADE", "CASCADE", Arrays.asList("account_id"), Arrays.asList("id")));
-        final HashSet<TableInfo.Index> _indicesRepeatTransactions = new HashSet<TableInfo.Index>(0);
+        final HashSet<TableInfo.Index> _indicesRepeatTransactions = new HashSet<TableInfo.Index>(1);
+        _indicesRepeatTransactions.add(new TableInfo.Index("index_repeat_transactions_category_id_account_id", false, Arrays.asList("category_id", "account_id"), Arrays.asList("ASC", "ASC")));
         final TableInfo _infoRepeatTransactions = new TableInfo("repeat_transactions", _columnsRepeatTransactions, _foreignKeysRepeatTransactions, _indicesRepeatTransactions);
         final TableInfo _existingRepeatTransactions = TableInfo.read(db, "repeat_transactions");
         if (!_infoRepeatTransactions.equals(_existingRepeatTransactions)) {
@@ -185,7 +188,8 @@ public final class AppDatabase_Impl extends AppDatabase {
         _columnsAccounts.put("currency_id", new TableInfo.Column("currency_id", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysAccounts = new HashSet<TableInfo.ForeignKey>(1);
         _foreignKeysAccounts.add(new TableInfo.ForeignKey("currencies", "RESTRICT", "RESTRICT", Arrays.asList("currency_id"), Arrays.asList("id")));
-        final HashSet<TableInfo.Index> _indicesAccounts = new HashSet<TableInfo.Index>(0);
+        final HashSet<TableInfo.Index> _indicesAccounts = new HashSet<TableInfo.Index>(1);
+        _indicesAccounts.add(new TableInfo.Index("index_accounts_currency_id", false, Arrays.asList("currency_id"), Arrays.asList("ASC")));
         final TableInfo _infoAccounts = new TableInfo("accounts", _columnsAccounts, _foreignKeysAccounts, _indicesAccounts);
         final TableInfo _existingAccounts = TableInfo.read(db, "accounts");
         if (!_infoAccounts.equals(_existingAccounts)) {
@@ -228,7 +232,7 @@ public final class AppDatabase_Impl extends AppDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "6e06c764700d2fe3e9b20d229813c023", "540958f72d051c9be84f3fe3fee3d8a9");
+    }, "75ec1793d80f31c175b5fa78d33484d1", "84555f22ee701c6fec801d3c6dcb50fa");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

@@ -8,6 +8,6 @@ internal class TransactionRepositoryImpl(
     private val remoteTransactionDataSource: RemoteTransactionDataSource,
 ) : TransactionRepository {
     override suspend fun createTransaction(transaction: Transaction): Result<Transaction> {
-        remoteTransactionDataSource.createTransaction()
+        return remoteTransactionDataSource.createTransaction(transaction = transaction)
     }
 }

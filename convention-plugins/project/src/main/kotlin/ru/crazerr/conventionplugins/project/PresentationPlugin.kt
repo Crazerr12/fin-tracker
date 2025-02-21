@@ -21,6 +21,11 @@ class PresentationPlugin: Plugin<Project> {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.androidx.appcompat)
                 implementation(libs.material)
+                implementation(platform(libs.androidx.compose.bom))
+                implementation(libs.androidx.ui)
+                implementation(libs.androidx.ui.graphics)
+                implementation(libs.androidx.ui.tooling.preview)
+                implementation(libs.androidx.material3)
 
                 // Decompose
                 implementation(libs.decompose)
@@ -30,6 +35,9 @@ class PresentationPlugin: Plugin<Project> {
                 implementation(platform(libs.koin.bom))
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
+
+                // Utils
+                implementation(project(":core:utils"))
             }
         }
     }

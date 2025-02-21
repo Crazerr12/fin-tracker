@@ -12,6 +12,7 @@ import androidx.room.util.DBUtil;
 import androidx.sqlite.db.SupportSQLiteStatement;
 import java.lang.Class;
 import java.lang.Exception;
+import java.lang.Long;
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
@@ -25,6 +26,7 @@ import kotlin.Unit;
 import kotlin.coroutines.Continuation;
 import kotlinx.coroutines.flow.Flow;
 import ru.crazerr.core.database.budgets.model.BudgetEntity;
+import ru.crazerr.core.database.converters.LocalDateConverter;
 
 @Generated("androidx.room.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation"})
@@ -32,6 +34,8 @@ public final class BudgetsDao_Impl implements BudgetsDao {
   private final RoomDatabase __db;
 
   private final EntityInsertionAdapter<BudgetEntity> __insertionAdapterOfBudgetEntity;
+
+  private final LocalDateConverter __localDateConverter = new LocalDateConverter();
 
   private final EntityDeletionOrUpdateAdapter<BudgetEntity> __deletionAdapterOfBudgetEntity;
 
@@ -55,6 +59,8 @@ public final class BudgetsDao_Impl implements BudgetsDao {
         statement.bindLong(4, entity.getCurrentAmount());
         final int _tmp = entity.isRegular() ? 1 : 0;
         statement.bindLong(5, _tmp);
+        final String _tmp_1 = __localDateConverter.fromLocalDate(entity.getDate());
+        statement.bindString(6, _tmp_1);
       }
     };
     this.__deletionAdapterOfBudgetEntity = new EntityDeletionOrUpdateAdapter<BudgetEntity>(__db) {
@@ -86,22 +92,25 @@ public final class BudgetsDao_Impl implements BudgetsDao {
         statement.bindLong(4, entity.getCurrentAmount());
         final int _tmp = entity.isRegular() ? 1 : 0;
         statement.bindLong(5, _tmp);
+        final String _tmp_1 = __localDateConverter.fromLocalDate(entity.getDate());
+        statement.bindString(6, _tmp_1);
         statement.bindLong(7, entity.getId());
       }
     };
   }
 
   @Override
-  public Object insert(final BudgetEntity[] obj, final Continuation<? super Unit> $completion) {
-    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+  public Object insert(final BudgetEntity[] obj,
+      final Continuation<? super List<Long>> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<List<Long>>() {
       @Override
       @NonNull
-      public Unit call() throws Exception {
+      public List<Long> call() throws Exception {
         __db.beginTransaction();
         try {
-          __insertionAdapterOfBudgetEntity.insert(obj);
+          final List<Long> _result = __insertionAdapterOfBudgetEntity.insertAndReturnIdsList(obj);
           __db.setTransactionSuccessful();
-          return Unit.INSTANCE;
+          return _result;
         } finally {
           __db.endTransaction();
         }
@@ -176,6 +185,9 @@ public final class BudgetsDao_Impl implements BudgetsDao {
             _tmp = _cursor.getInt(_cursorIndexOfIsRegular);
             _tmpIsRegular = _tmp != 0;
             final LocalDate _tmpDate;
+            final String _tmp_1;
+            _tmp_1 = _cursor.getString(_cursorIndexOfDate);
+            _tmpDate = __localDateConverter.toLocalDate(_tmp_1);
             _result = new BudgetEntity(_tmpId,_tmpCategoryId,_tmpMaxAmount,_tmpCurrentAmount,_tmpIsRegular,_tmpDate);
           } else {
             _result = null;

@@ -5,6 +5,8 @@
       <module name="FinTracker.core.mediator" target="21" />
       <module name="FinTracker.core.mediator.main" target="11" />
       <module name="FinTracker.core.mediator.test" target="11" />
+      <module name="FinTracker.feature.account.data.test" target="11" />
+      <module name="FinTracker.feature.account.presentation.test" target="11" />
       <module name="FinTracker.feature.analysis.data.test" target="17" />
       <module name="FinTracker.feature.auth.data.test" target="17" />
       <module name="FinTracker.feature.budget.data.test" target="17" />

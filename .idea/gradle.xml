@@ -35,6 +35,11 @@
             <option value="$PROJECT_DIR$/core/root" />
             <option value="$PROJECT_DIR$/core/utils" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/account" />
+            <option value="$PROJECT_DIR$/feature/account/data" />
+            <option value="$PROJECT_DIR$/feature/account/domain" />
+            <option value="$PROJECT_DIR$/feature/account/domain/api" />
+            <option value="$PROJECT_DIR$/feature/account/presentation" />
             <option value="$PROJECT_DIR$/feature/analysis" />
             <option value="$PROJECT_DIR$/feature/analysis/data" />
             <option value="$PROJECT_DIR$/feature/analysis/domain" />
@@ -47,6 +52,9 @@
             <option value="$PROJECT_DIR$/feature/budget/data" />
             <option value="$PROJECT_DIR$/feature/budget/domain" />
             <option value="$PROJECT_DIR$/feature/budget/presentation" />
+            <option value="$PROJECT_DIR$/feature/currency" />
+            <option value="$PROJECT_DIR$/feature/currency/domain" />
+            <option value="$PROJECT_DIR$/feature/currency/domain/api" />
             <option value="$PROJECT_DIR$/feature/main" />
             <option value="$PROJECT_DIR$/feature/main/data" />
             <option value="$PROJECT_DIR$/feature/main/domain" />

@@ -57,3 +57,10 @@ include(":feature:transaction:data")
 include(":feature:transaction:domain")
 include(":feature:transaction:domain:api")
 include(":feature:transaction:presentation")
+
+include(":feature:currency:domain:api")
+
+include(":feature:account:data")
+include(":feature:account:domain")
+include(":feature:account:domain:api")
+include(":feature:account:presentation")
