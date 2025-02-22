@@ -2,8 +2,6 @@
     <string name="account_editor_field_empty_error">Поле не должно быть пустым</string>
     <string name="account_editor_amount_is_not_digit_error">Поле принимает только цифры</string>
 
-    <string name="account_editor_back_button_content_description">Назад</string>
-
     <string name="account_editor_top_bar_create_title">Создать аккаунт</string>
     <string name="account_editor_top_bar_edit_title">Изменить аккаунт</string>
 
