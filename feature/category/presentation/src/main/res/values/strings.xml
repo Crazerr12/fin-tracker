@@ -1,0 +1,13 @@
+<resources>
+    <string name="category_editor_top_bar_title_create">Создать категорию</string>
+    <string name="category_editor_top_bar_title_update">Изменить категорию</string>
+
+    <string name="category_editor_name_hint">Название категории</string>
+    <string name="category_editor_name_empty_error">Поле не должно быть пустым</string>
+    <string name="category_editor_name_minimal_range_error">Минимальная длина поля - 3 символа</string>
+
+    <string name="category_editor_icon_hint">Иконка</string>
+    <string name="category_editor_color_hint">Цвет</string>
+
+    <string name="category_editor_save_button">Сохранить</string>
+</resources>

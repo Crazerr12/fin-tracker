@@ -10,4 +10,7 @@ import ru.crazerr.core.database.categories.model.CategoryEntity
 interface CategoriesDao: BaseDao<CategoryEntity> {
     @Query("SELECT * FROM categories")
     fun getAllCategories(): Flow<CategoryEntity>
+
+    @Query("SELECT * FROM categories WHERE id = :id")
+    suspend fun getCategoryById(id: Int): CategoryEntity
 }

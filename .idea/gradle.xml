@@ -52,6 +52,11 @@
             <option value="$PROJECT_DIR$/feature/budget/data" />
             <option value="$PROJECT_DIR$/feature/budget/domain" />
             <option value="$PROJECT_DIR$/feature/budget/presentation" />
+            <option value="$PROJECT_DIR$/feature/category" />
+            <option value="$PROJECT_DIR$/feature/category/data" />
+            <option value="$PROJECT_DIR$/feature/category/domain" />
+            <option value="$PROJECT_DIR$/feature/category/domain/api" />
+            <option value="$PROJECT_DIR$/feature/category/presentation" />
             <option value="$PROJECT_DIR$/feature/currency" />
             <option value="$PROJECT_DIR$/feature/currency/domain" />
             <option value="$PROJECT_DIR$/feature/currency/domain/api" />

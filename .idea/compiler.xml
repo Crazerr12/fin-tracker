@@ -10,6 +10,8 @@
       <module name="FinTracker.feature.analysis.data.test" target="17" />
       <module name="FinTracker.feature.auth.data.test" target="17" />
       <module name="FinTracker.feature.budget.data.test" target="17" />
+      <module name="FinTracker.feature.category.data.test" target="11" />
+      <module name="FinTracker.feature.category.presentation.test" target="11" />
       <module name="FinTracker.feature.data" target="11" />
       <module name="FinTracker.feature.data.main" target="11" />
       <module name="FinTracker.feature.data.test" target="11" />

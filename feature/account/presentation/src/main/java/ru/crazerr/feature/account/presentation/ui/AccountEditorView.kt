@@ -128,7 +128,7 @@ private fun AccountEditorTopBar(
             IconButton(onClick = { handleViewAction(AccountEditorViewAction.BackClick) }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.account_editor_back_button_content_description)
+                    contentDescription = stringResource(ru.crazerr.core.utils.R.string.back_button_content_description)
                 )
             }
         }

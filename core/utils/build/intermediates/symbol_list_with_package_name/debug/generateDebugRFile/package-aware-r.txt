@@ -1,1 +1,0 @@
-ru.crazerr.core.utils
