@@ -39,11 +39,11 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.components.Hint
 import ru.crazerr.core.utils.components.LoadingView
+import ru.crazerr.core.utils.visualTransformations.AmountVisualTransformation
 import ru.crazerr.feature.account.presentation.AccountEditorComponent
 import ru.crazerr.feature.account.presentation.AccountEditorState
 import ru.crazerr.feature.account.presentation.AccountEditorViewAction
 import ru.crazerr.feature.account.presentation.R
-import ru.crazerr.feature.account.presentation.utils.AmountVisualTransformation
 
 @Composable
 fun AccountEditorView(modifier: Modifier = Modifier, component: AccountEditorComponent) {
