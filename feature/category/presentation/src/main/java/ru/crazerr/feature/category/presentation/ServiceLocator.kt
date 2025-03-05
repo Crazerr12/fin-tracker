@@ -7,7 +7,7 @@ import ru.crazerr.feature.category.data.categoryDataModule
 import ru.crazerr.feature.category.presentation.categoryEditor.CategoryEditorComponentFactory
 import ru.crazerr.feature.category.presentation.categoryEditor.CategoryEditorComponentFactoryImpl
 
-val presentationCategoryModule = module {
+val categoryPresentationModule = module {
     singleOf(::CategoryEditorComponentFactoryImpl) { bind<CategoryEditorComponentFactory>() }
 
     includes(categoryDataModule)

@@ -1,6 +1,5 @@
 package ru.crazerr.feature.account.presentation
 
-import androidx.core.text.isDigitsOnly
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -41,7 +40,7 @@ internal class AccountEditorComponentImpl(
     }
 
     private fun onUpdateCurrentAmount(amount: String) {
-        if (amount.isDigitsOnly() || (amount.count { it == '.' } == 1 || amount.count { it == '.' } == 0)) {
+        if (amount.any { !it.isDigit() || it != '.' } && amount.count { it == '.' } < 2) {
             reduceState { copy(amount = amount, amountError = "") }
         } else {
             reduceState { copy(amountError = dependencies.resourceManager.getString(R.string.account_editor_amount_is_not_digit_error)) }
@@ -58,7 +57,7 @@ internal class AccountEditorComponentImpl(
 
     private suspend fun getAccount() {
         val result =
-            dependencies.accountRepository.getAccountById(dependencies.args.accountId ?: 0)
+            dependencies.accountRepository.getAccountById(dependencies.args.accountId)
 
         result.fold(
             onSuccess = {
@@ -94,7 +93,7 @@ internal class AccountEditorComponentImpl(
         coroutineScope.launch {
             val currenciesDeferred = async { getCurrencies() }
 
-            if (dependencies.args.accountId != null) {
+            if (dependencies.args.accountId != -1) {
                 reduceState { copy(isLoading = true) }
                 val accountDeferred = async { getAccount() }
                 accountDeferred.await()
@@ -109,7 +108,7 @@ internal class AccountEditorComponentImpl(
         validateUserInput {
             coroutineScope.launch {
                 reduceState { copy(buttonIsLoading = true) }
-                val result = if (dependencies.args.accountId != null) {
+                val result = if (dependencies.args.accountId != -1) {
                     dependencies.accountRepository.updateAccount(
                         account = Account(
                             id = dependencies.args.accountId,

@@ -1,5 +1,5 @@
 package ru.crazerr.feature.account.presentation
 
 data class AccountEditorArgs(
-    val accountId: Int?,
+    val accountId: Int = -1,
 )

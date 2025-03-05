@@ -1,0 +1,23 @@
+<resources>
+    <string name="transaction_editor_top_bar_title_update">Обновить транзакцию</string>
+    <string name="transaction_editor_top_bar_title_create">Создать транзакцию</string>
+
+    <string name="transaction_editor_transaction_type_title">Тип транзакции</string>
+    <string name="transaction_editor_transaction_type_income">Доход</string>
+    <string name="transaction_editor_transaction_type_expense">Расход</string>
+
+    <string name="transaction_editor_account_hint">Счёт списания</string>
+    <string name="transaction_editor_account_add">Добавить аккаунт</string>
+
+    <string name="transaction_editor_amount_hint">Сумма</string>
+    <string name="transaction_editor_amount_only_digits_error">Поле принимает только цифры</string>
+    <string name="transaction_editor_amount_empty_error">Поле не должно быть пустым</string>
+
+    <string name="transaction_editor_category_hint">Категория</string>
+    <string name="transaction_editor_category_add">Добавить категорию</string>
+
+    <string name="transaction_editor_date_hint">Дата</string>
+    <string name="transaction_editor_date_content_description">Выбрать дату</string>
+
+    <string name="transaction_editor_save_button">Сохранить</string>
+</resources>

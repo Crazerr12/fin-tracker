@@ -1,4 +1,4 @@
-package ru.crazerr.feature.account.presentation.utils
+package ru.crazerr.core.utils.visualTransformations
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
