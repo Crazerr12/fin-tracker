@@ -300,9 +300,9 @@ private fun AccountDropdown(
             },
         )
 
-        ExposedDropdownMenuBox(
+        ExposedDropdownMenu(
             expanded = state.accountsDropdownIsExpanded,
-            onExpandedChange = { handleViewAction(TransactionEditorViewAction.ManageAccountDropdown) }
+            onDismissRequest = { handleViewAction(TransactionEditorViewAction.ManageAccountDropdown) }
         ) {
             LazyColumn(
                 modifier = Modifier.height(400.dp)

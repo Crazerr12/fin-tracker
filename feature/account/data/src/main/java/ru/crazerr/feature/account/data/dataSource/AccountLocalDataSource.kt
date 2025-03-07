@@ -1,8 +1,8 @@
 package ru.crazerr.feature.account.data.dataSource
 
 import ru.crazerr.core.database.accounts.dao.AccountsDao
-import ru.crazerr.feature.account.data.models.toAccount
-import ru.crazerr.feature.account.data.models.toAccountEntity
+import ru.crazerr.feature.account.data.api.toAccount
+import ru.crazerr.feature.account.data.api.toAccountEntity
 import ru.crazerr.feature.account.domain.api.Account
 
 internal class AccountLocalDataSource(

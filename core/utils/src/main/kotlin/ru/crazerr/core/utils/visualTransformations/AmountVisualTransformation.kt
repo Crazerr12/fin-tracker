@@ -7,14 +7,24 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 class AmountVisualTransformation(private val sign: Char) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
+        if (text.isEmpty()) {
+            return TransformedText(AnnotatedString(""), object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int = offset
+                override fun transformedToOriginal(offset: Int): Int = offset
+            })
+        }
+
         val (wholePart, decimalPart) = splitParts(text.text)
 
         val formattedWhole = formatWholePart(part = wholePart)
 
         val result = buildString {
             append(formattedWhole)
+            if (text.text.contains('.')) {
+                append('.')
+            }
             if (decimalPart.isNotEmpty()) {
-                append(".${decimalPart.take(2)}")
+                append(decimalPart.take(2))
             }
             append(" $sign")
         }
@@ -23,7 +33,8 @@ class AmountVisualTransformation(private val sign: Char) : VisualTransformation 
             text = AnnotatedString(result),
             offsetMapping = AmountOffsetMapping(
                 wholeLength = formattedWhole.length,
-                decimalLength = decimalPart.length
+                decimalLength = (if (text.text.contains('.')) 1 else 0) + decimalPart.length,
+                realLength = wholePart.length,
             )
         )
     }
@@ -38,27 +49,32 @@ class AmountVisualTransformation(private val sign: Char) : VisualTransformation 
     }
 
     private fun formatWholePart(part: String): String {
-        if (part.isEmpty()) return ""
-        return part.reversed()
-            .chunked(3)
+        return part.chunked(3)
             .joinToString(" ")
-            .reversed()
     }
 
     private class AmountOffsetMapping(
         private val wholeLength: Int,
+        private val realLength: Int,
         private val decimalLength: Int,
     ) : OffsetMapping {
         override fun originalToTransformed(offset: Int): Int {
-            return if (decimalLength == 0) {
-                offset - 2
-            } else {
-                offset - 2
+            if (offset >= realLength && decimalLength != 0) {
+                return offset + (realLength - 1) / 3
             }
+
+            return offset + ((offset - 1) / 3)
         }
 
         override fun transformedToOriginal(offset: Int): Int {
-            return offset + 2
+            val spaceCount = (realLength - 1) / 3
+
+            return if (offset > wholeLength) {
+                (offset - spaceCount).coerceAtMost(realLength + decimalLength)
+            } else {
+                (offset - (offset / 4)).coerceAtLeast(0)
+            }
         }
+
     }
 }
