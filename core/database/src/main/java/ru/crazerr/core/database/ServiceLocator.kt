@@ -13,4 +13,5 @@ val databaseModule = module {
 }
 
 fun createRoomDatabase(context: Context): AppDatabase =
-    Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME).build()
+    Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+        .createFromAsset("preloaded_currencies.db").build()

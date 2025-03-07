@@ -1,11 +1,9 @@
 package ru.crazerr.conventionplugins.project
 
-import com.android.tools.r8.internal.ui
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import ru.crazerr.conventionplugins.base.implementation
 import ru.crazerr.conventionplugins.base.libs
-import kotlin.jvm.kotlin
 
 class DomainPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -19,6 +17,9 @@ class DomainPlugin : Plugin<Project> {
                 // Koin
                 implementation(platform(libs.koin.bom))
                 implementation(libs.koin.core)
+
+                // Kotlin
+                implementation(libs.kotlinx.coroutines)
             }
         }
     }

@@ -1,18 +1,19 @@
 package ru.crazerr.feature.transaction.data.dataSource
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.crazerr.core.database.accounts.dao.AccountsDao
+import ru.crazerr.feature.account.data.api.toAccount
 import ru.crazerr.feature.account.domain.api.Account
-import ru.crazerr.feature.transaction.data.model.toAccount
 
 internal class LocalAccountDataSource(
     private val accountsDao: AccountsDao
 ) {
-    suspend fun getAccounts(): Result<List<Account>> =
+    fun getAccounts(): Flow<Result<List<Account>>> = accountsDao.getAllAccounts().map { entities ->
         try {
-            val accountEntities = accountsDao.getAllAccounts()
-
-            Result.success(accountEntities.map { it.toAccount() })
+            Result.success(entities.map { it.toAccount() })
         } catch (ex: Exception) {
             Result.failure(ex)
         }
+    }
 }

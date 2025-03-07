@@ -2,6 +2,8 @@ package ru.crazerr.feature.transaction.presentation.transactionEditor
 
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.crazerr.core.utils.presentation.BaseComponent
 import ru.crazerr.core.utils.presentation.componentCoroutineScope
@@ -27,7 +29,7 @@ class TransactionEditorComponent(
             getTransaction()
         }
         getAccountsAndCategories()
-        handleInput(input = dependencies.args.accountInput)
+        handleInput(input = dependencies.args.input)
     }
 
     override fun handleViewAction(action: TransactionEditorViewAction) {
@@ -159,10 +161,12 @@ class TransactionEditorComponent(
             val accountsResult = async { dependencies.accountRepository.getAccounts() }
             val categoriesResult = async { dependencies.categoryRepository.getCategories() }
 
-            accountsResult.await().fold(
-                onSuccess = { reduceState { copy(accounts = it) } },
-                onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") }
-            )
+            accountsResult.await().collect {
+                it.fold(
+                    onSuccess = { reduceState { copy(accounts = it) } },
+                    onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") }
+                )
+            }
 
             categoriesResult.await().fold(
                 onSuccess = { reduceState { copy(categories = it) } },
@@ -184,10 +188,14 @@ class TransactionEditorComponent(
         }
     }
 
-    private fun handleInput(input: Input) {
-        when (input) {
-            is Input.AccountInput -> reduceState { copy(selectedAccount = input.account) }
-            is Input.CategoryInput -> reduceState { copy(selectedCategory = input.category) }
+    private fun handleInput(input: MutableSharedFlow<Input>) {
+        coroutineScope.launch {
+            input.collectLatest {
+                when (it) {
+                    is Input.AccountInput -> reduceState { copy(selectedAccount = it.account) }
+                    is Input.CategoryInput -> reduceState { copy(selectedCategory = it.category) }
+                }
+            }
         }
     }
 

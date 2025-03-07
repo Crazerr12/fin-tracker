@@ -9,5 +9,6 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:account:data:api"))
     implementation(project(":feature:transaction:domain"))
 }

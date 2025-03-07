@@ -2,6 +2,7 @@ package ru.crazerr.feature.transaction.data.model
 
 import ru.crazerr.core.database.transactions.model.TransactionEntity
 import ru.crazerr.core.database.transactions.model.TransactionWithAccountAndCategory
+import ru.crazerr.feature.account.data.api.toAccount
 import ru.crazerr.feature.transaction.domain.api.Transaction
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 

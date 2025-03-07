@@ -5,6 +5,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.crazerr.core.utils.presentation.BaseComponent
 import ru.crazerr.core.utils.presentation.componentCoroutineScope
+import ru.crazerr.core.utils.presentation.isValidAmount
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.account.domain.api.Account
 import ru.crazerr.feature.currency.domain.api.Currency
@@ -40,11 +41,10 @@ internal class AccountEditorComponentImpl(
     }
 
     private fun onUpdateCurrentAmount(amount: String) {
-        if (amount.any { !it.isDigit() || it != '.' } && amount.count { it == '.' } < 2) {
-            reduceState { copy(amount = amount, amountError = "") }
-        } else {
-            reduceState { copy(amountError = dependencies.resourceManager.getString(R.string.account_editor_amount_is_not_digit_error)) }
-        }
+        amount.isValidAmount().fold(
+            onSuccess = { reduceState { copy(amount = it, amountError = "") } },
+            onFailure = { reduceState { copy(amountError = dependencies.resourceManager.getString(R.string.account_editor_amount_is_not_digit_error)) } }
+        )
     }
 
     private fun onUpdateName(name: String) {
@@ -81,7 +81,7 @@ internal class AccountEditorComponentImpl(
                 reduceState {
                     copy(
                         currencies = it,
-                        selectedCurrency = if (selectedCurrency.id != 0) it[0] else selectedCurrency
+                        selectedCurrency = if (selectedCurrency.id == 0) it[0] else selectedCurrency
                     )
                 }
             },
@@ -155,7 +155,7 @@ internal class AccountEditorComponentImpl(
         }
 
         if (isValid) {
-            block
+            block()
         }
     }
 }

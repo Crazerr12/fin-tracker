@@ -16,4 +16,8 @@ interface TransactionsDao : BaseDao<TransactionEntity> {
     @Transaction
     @Query("SELECT * FROM transactions WHERE id = :id")
     suspend fun getTransactionById(id: Int): TransactionWithAccountAndCategory
+
+    @Transaction
+    @Query("SELECT * FROM transactions WHERE date BETWEEN :startDate AND :endDate")
+    fun getTransactionsByPeriod(startDate: String, endDate: String): Flow<List<TransactionEntity>>
 }

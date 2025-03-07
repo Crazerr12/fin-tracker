@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(project(":feature:main:data"))
+    implementation(project(":feature:main:domain"))
+    implementation(project(":feature:account:presentation"))
 }

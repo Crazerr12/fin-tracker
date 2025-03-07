@@ -1,9 +1,10 @@
-package ru.crazerr.feature.account.data.models
+package ru.crazerr.feature.currency.data.api
 
 import ru.crazerr.core.database.currencies.model.CurrencyEntity
 import ru.crazerr.feature.currency.domain.api.Currency
 
-internal fun CurrencyEntity.toCurrency(): Currency = Currency(
+
+fun CurrencyEntity.toCurrency(): Currency = Currency(
     id = id,
     name = name,
     symbol = symbol,

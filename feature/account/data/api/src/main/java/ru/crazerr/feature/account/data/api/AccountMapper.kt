@@ -1,10 +1,12 @@
-package ru.crazerr.feature.account.data.models
+package ru.crazerr.feature.account.data.api
 
 import ru.crazerr.core.database.accounts.model.AccountEntity
 import ru.crazerr.core.database.accounts.model.AccountWithCurrency
 import ru.crazerr.feature.account.domain.api.Account
+import ru.crazerr.feature.currency.data.api.toCurrency
 
-internal fun AccountWithCurrency.toAccount() = Account(
+
+fun AccountWithCurrency.toAccount() = Account(
     id = account.id,
     name = account.name,
     amount = account.amount,
@@ -12,7 +14,7 @@ internal fun AccountWithCurrency.toAccount() = Account(
     currency = currency.toCurrency()
 )
 
-internal fun Account.toAccountEntity() = AccountEntity(
+fun Account.toAccountEntity() = AccountEntity(
     id = id,
     name = name,
     amount = amount,

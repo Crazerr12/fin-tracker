@@ -14,11 +14,11 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -26,19 +26,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.snackbar.SnackbarManager
+import ru.crazerr.feature.main.presentation.mainStory.ui.MainStoryCoordinator
 
 @Composable
 fun RootCoordinator(modifier: Modifier = Modifier, component: RootComponent) {
@@ -69,7 +70,7 @@ fun RootCoordinator(modifier: Modifier = Modifier, component: RootComponent) {
         ) {
             when (val child = it.instance) {
                 is RootComponent.Child.AuthStory -> Box() {}
-                is RootComponent.Child.MainStory -> Box() {}
+                is RootComponent.Child.MainStory -> MainStoryCoordinator(component = child.component)
                 is RootComponent.Child.TransactionsStory -> Box() {}
                 is RootComponent.Child.BudgetStory -> Box() {}
                 is RootComponent.Child.AnalysisStory -> Box() {}
@@ -88,7 +89,8 @@ private fun GlobalSnackbarHost(snackbarManager: SnackbarManager) {
         snackbarData?.let { data ->
             val result = snackbarHostState.showSnackbar(
                 message = data.message,
-                actionLabel = data.actionLabel
+                actionLabel = data.actionLabel,
+                duration = SnackbarDuration.Short
             )
 
             if (result == SnackbarResult.ActionPerformed) {

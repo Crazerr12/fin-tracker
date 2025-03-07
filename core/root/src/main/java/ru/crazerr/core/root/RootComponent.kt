@@ -1,6 +1,5 @@
 package ru.crazerr.core.root
 
-import android.R.attr.value
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -12,6 +11,7 @@ import com.arkivanov.decompose.value.Value
 import kotlinx.serialization.Serializable
 import ru.crazerr.core.utils.snackbar.SnackbarManager
 import ru.crazerr.core.utils.snackbar.snackbarManager
+import ru.crazerr.feature.main.presentation.mainStory.MainStoryComponent
 
 interface RootComponent {
     val stack: Value<ChildStack<*, Child>>
@@ -24,7 +24,7 @@ interface RootComponent {
 
     sealed interface Child {
         class AuthStory() : Child
-        class MainStory() : Child
+        class MainStory(val component: MainStoryComponent) : Child
         class AnalysisStory() : Child
         class BudgetStory() : Child
         class ProfileStory() : Child
@@ -61,6 +61,10 @@ internal class RootComponentImpl(
     componentContext: ComponentContext,
 ) : ComponentContext by componentContext, RootComponent {
     private val navigation = StackNavigation<RootComponent.Config>()
+
+    private val di: DiInjector by lazy {
+        DiInjector.create()
+    }
 
     override val stack: Value<ChildStack<*, RootComponent.Child>> = childStack(
         source = navigation,
@@ -117,7 +121,11 @@ internal class RootComponentImpl(
     }
 
     private fun createMainStory(componentContext: ComponentContext): RootComponent.Child.MainStory =
-        RootComponent.Child.MainStory()
+        RootComponent.Child.MainStory(
+            component = di.mainStoryComponentFactory.create(
+                componentContext = componentContext
+            )
+        )
 
     private fun createAuthStory(componentContext: ComponentContext): RootComponent.Child.AuthStory =
         RootComponent.Child.AuthStory()

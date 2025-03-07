@@ -1,7 +1,7 @@
 package ru.crazerr.feature.account.data.dataSource
 
 import ru.crazerr.core.database.currencies.dao.CurrenciesDao
-import ru.crazerr.feature.account.data.models.toCurrency
+import ru.crazerr.feature.currency.data.api.toCurrency
 import ru.crazerr.feature.currency.domain.api.Currency
 
 internal class CurrencyLocalDataSource(
