@@ -45,17 +45,9 @@ class TransactionEditorStoryComponent(
 
     private fun createChild(config: Config, componentContext: ComponentContext): Child =
         when (config) {
-            is Config.AccountEditor -> createAccountEditor(
-                componentContext = componentContext
-            )
-
-            is Config.CategoryEditor -> createCategoryEditor(
-                componentContext = componentContext
-            )
-
-            is Config.TransactionEditor -> createTransactionEditor(
-                componentContext = componentContext
-            )
+            is Config.AccountEditor -> createAccountEditor(componentContext = componentContext)
+            is Config.CategoryEditor -> createCategoryEditor(componentContext = componentContext)
+            is Config.TransactionEditor -> createTransactionEditor(componentContext = componentContext)
         }
 
     private fun createAccountEditor(
@@ -79,7 +71,7 @@ class TransactionEditorStoryComponent(
 
     @OptIn(DelicateDecomposeApi::class)
     private fun createTransactionEditor(
-        componentContext: ComponentContext
+        componentContext: ComponentContext,
     ): Child.TransactionEditor = Child.TransactionEditor(
         component = dependencies.transactionEditorComponentFactory.create(
             componentContext = componentContext,
@@ -89,19 +81,19 @@ class TransactionEditorStoryComponent(
                         TransactionEditorStoryComponentAction.BackClick
                     )
 
-                    TransactionEditorComponentAction.CreateNewAccount -> navigation.push(Config.AccountEditor())
-                    TransactionEditorComponentAction.CreateNewCategory -> navigation.push(Config.CategoryEditor())
+                    TransactionEditorComponentAction.CreateNewAccount -> navigation.push(Config.AccountEditor)
+                    TransactionEditorComponentAction.CreateNewCategory -> navigation.push(Config.CategoryEditor)
                     is TransactionEditorComponentAction.SavedClick -> onAction(
                         TransactionEditorStoryComponentAction.TransactionCreated(transaction = action.transaction)
                     )
                 }
             },
-            args = TransactionEditorArgs(input = input)
+            args = TransactionEditorArgs(input = input, id = dependencies.args.transactionId)
         )
     )
 
     private fun createCategoryEditor(
-        componentContext: ComponentContext
+        componentContext: ComponentContext,
     ): Child.CategoryEditor = Child.CategoryEditor(
         component = dependencies.categoryEditorComponentFactory.create(
             componentContext = componentContext,
@@ -130,9 +122,9 @@ class TransactionEditorStoryComponent(
         data class TransactionEditor(val id: Int = -1) : Config
 
         @Serializable
-        data class AccountEditor(val id: Int = -1) : Config
+        data object AccountEditor : Config
 
         @Serializable
-        data class CategoryEditor(val id: Int = -1) : Config
+        data object CategoryEditor : Config
     }
 }

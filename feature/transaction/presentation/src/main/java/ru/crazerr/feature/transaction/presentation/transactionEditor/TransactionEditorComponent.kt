@@ -4,9 +4,11 @@ import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.crazerr.core.utils.presentation.BaseComponent
 import ru.crazerr.core.utils.presentation.componentCoroutineScope
+import ru.crazerr.core.utils.presentation.isValidAmount
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.account.domain.api.Account
 import ru.crazerr.feature.domain.api.Category
@@ -71,11 +73,10 @@ class TransactionEditorComponent(
     }
 
     private fun onUpdateAmount(amount: String) {
-        if (amount.any { !it.isDigit() || it != '.' } && amount.count { it == '.' } < 2) {
-            reduceState { copy(amount = amount, amountError = "") }
-        } else {
-            reduceState { copy(amountError = dependencies.resourceManager.getString(R.string.transaction_editor_amount_only_digits_error)) }
-        }
+        amount.isValidAmount().fold(
+            onSuccess = { reduceState { copy(amount = it, amountError = "") } },
+            onFailure = { reduceState { copy(amountError = dependencies.resourceManager.getString(R.string.transaction_editor_amount_only_digits_error)) } }
+        )
     }
 
     private fun onSelectAccount(account: Account) {
@@ -99,7 +100,7 @@ class TransactionEditorComponent(
             coroutineScope.launch {
                 reduceState { copy(buttonIsLoading = true) }
 
-                val result = if (state.value.id != -1) {
+                val result = if (state.value.id == -1) {
                     dependencies.transactionRepository.createTransaction(
                         transaction = Transaction(
                             id = state.value.id,
@@ -135,6 +136,7 @@ class TransactionEditorComponent(
 
     private fun getTransaction() {
         coroutineScope.launch {
+            reduceState { copy(id = dependencies.args.id) }
             val result =
                 dependencies.transactionRepository.getTransactionById(id = dependencies.args.id)
 
@@ -161,15 +163,21 @@ class TransactionEditorComponent(
             val accountsResult = async { dependencies.accountRepository.getAccounts() }
             val categoriesResult = async { dependencies.categoryRepository.getCategories() }
 
-            accountsResult.await().collect {
-                it.fold(
-                    onSuccess = { reduceState { copy(accounts = it) } },
-                    onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") }
-                )
-            }
+            accountsResult.await().first().fold(
+                onSuccess = {
+                    if (it.isNotEmpty()) {
+                        reduceState { copy(accounts = it, selectedAccount = it[0]) }
+                    }
+                },
+                onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") }
+            )
 
             categoriesResult.await().fold(
-                onSuccess = { reduceState { copy(categories = it) } },
+                onSuccess = {
+                    if (it.isNotEmpty()) {
+                        reduceState { copy(categories = it, selectedCategory = it[0]) }
+                    }
+                },
                 onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") }
             )
         }
@@ -192,8 +200,19 @@ class TransactionEditorComponent(
         coroutineScope.launch {
             input.collectLatest {
                 when (it) {
-                    is Input.AccountInput -> reduceState { copy(selectedAccount = it.account) }
-                    is Input.CategoryInput -> reduceState { copy(selectedCategory = it.category) }
+                    is Input.AccountInput -> reduceState {
+                        copy(
+                            selectedAccount = it.account,
+                            accounts = accounts + it.account
+                        )
+                    }
+
+                    is Input.CategoryInput -> reduceState {
+                        copy(
+                            selectedCategory = it.category,
+                            categories = categories + it.category
+                        )
+                    }
                 }
             }
         }

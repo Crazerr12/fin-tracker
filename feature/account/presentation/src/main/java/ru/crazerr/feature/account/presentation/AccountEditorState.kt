@@ -16,7 +16,7 @@ data class AccountEditorState(
 )
 
 internal val InitialAccountEditorState = AccountEditorState(
-    id = 0,
+    id = -1,
     name = "",
     nameError = "",
     amount = "",

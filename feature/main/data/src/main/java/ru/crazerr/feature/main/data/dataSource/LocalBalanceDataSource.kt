@@ -18,7 +18,7 @@ internal class LocalBalanceDataSource(
 
         return transactionsDao.getTransactionsByPeriod(
             date.minusMonths(1).withDayOfMonth(1).toString(),
-            date.plusMonths(1).withDayOfMonth(1).minusMonths(1).toString()
+            date.plusMonths(1).withDayOfMonth(1).minusDays(1).toString()
         ).map { entities ->
             try {
                 for (transaction in entities) {

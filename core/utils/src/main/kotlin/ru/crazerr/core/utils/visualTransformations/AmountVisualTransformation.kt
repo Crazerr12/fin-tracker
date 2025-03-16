@@ -49,8 +49,8 @@ class AmountVisualTransformation(private val sign: Char) : VisualTransformation 
     }
 
     private fun formatWholePart(part: String): String {
-        return part.chunked(3)
-            .joinToString(" ")
+        return part.reversed().chunked(3)
+            .joinToString(" ").reversed()
     }
 
     private class AmountOffsetMapping(

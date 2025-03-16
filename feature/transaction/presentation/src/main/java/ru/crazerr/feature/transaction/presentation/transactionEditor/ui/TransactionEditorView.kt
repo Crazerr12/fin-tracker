@@ -15,20 +15,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -39,34 +38,35 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import ru.crazerr.core.utils.components.DatePickerModal
 import ru.crazerr.core.utils.components.Hint
+import ru.crazerr.core.utils.date.toFormatDate
 import ru.crazerr.core.utils.visualTransformations.AmountVisualTransformation
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 import ru.crazerr.feature.transaction.presentation.R
 import ru.crazerr.feature.transaction.presentation.transactionEditor.TransactionEditorComponent
 import ru.crazerr.feature.transaction.presentation.transactionEditor.TransactionEditorState
 import ru.crazerr.feature.transaction.presentation.transactionEditor.TransactionEditorViewAction
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import ru.crazerr.core.utils.R as utilsR
 
 @Composable
@@ -85,7 +85,8 @@ fun TransactionEditorView(modifier: Modifier = Modifier, component: TransactionE
                 },
             )
         },
-        contentWindowInsets = WindowInsets(0)
+        contentWindowInsets = WindowInsets(0),
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
     ) { paddingValues ->
         TransactionEditorViewContent(
             modifier = Modifier
@@ -111,6 +112,7 @@ private fun TransactionEditorTopBar(
                     if (state.id != -1) R.string.transaction_editor_top_bar_title_update
                     else R.string.transaction_editor_top_bar_title_create
                 ),
+                style = MaterialTheme.typography.titleLarge,
             )
         },
         modifier = modifier,
@@ -123,7 +125,8 @@ private fun TransactionEditorTopBar(
                     ),
                 )
             }
-        }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
     )
 }
 
@@ -142,10 +145,14 @@ private fun TransactionEditorViewContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { handleViewAction(TransactionEditorViewAction.SaveClick) }) {
+        Button(
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { handleViewAction(TransactionEditorViewAction.SaveClick) },
+        ) {
             Text(
                 text = stringResource(R.string.transaction_editor_save_button),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
         }
     }
@@ -157,9 +164,11 @@ private fun TransactionEditorCard(
     state: TransactionEditorState,
     handleViewAction: (TransactionEditorViewAction) -> Unit,
 ) {
-    Card(
+    ElevatedCard(
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
     ) {
         Column(
             modifier = Modifier
@@ -175,11 +184,28 @@ private fun TransactionEditorCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = state.amount,
                 onValueChange = { handleViewAction(TransactionEditorViewAction.UpdateAmount(it)) },
                 singleLine = true,
-                visualTransformation = AmountVisualTransformation(state.selectedAccount.currency.symbol[0]),
-                placeholder = { Hint(value = stringResource(R.string.transaction_editor_amount_hint)) },
+                supportingText = if (state.amountError.isNotEmpty()) {
+                    { Hint(value = state.amountError) }
+                } else {
+                    null
+                },
+                isError = state.amountError.isNotEmpty(),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    capitalization = KeyboardCapitalization.Sentences,
+                    keyboardType = KeyboardType.Decimal,
+                ),
+                visualTransformation = AmountVisualTransformation(
+                    sign = state.selectedAccount.currency.symbol.getOrElse(
+                        index = 0,
+                        defaultValue = { Char.MIN_VALUE }),
+                ),
+                textStyle = MaterialTheme.typography.bodyMedium,
+                label = { Hint(value = stringResource(R.string.transaction_editor_amount_hint)) },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -207,6 +233,7 @@ private fun TransactionTypeRow(
 
     Row(modifier = Modifier.fillMaxWidth()) {
         TransactionTypeButton(
+            modifier = Modifier.weight(1f),
             text = stringResource(R.string.transaction_editor_transaction_type_expense),
             icon = ImageVector.vectorResource(R.drawable.ic_minus),
             isSelected = state.transactionType == TransactionType.Expense,
@@ -222,13 +249,14 @@ private fun TransactionTypeRow(
         Spacer(modifier = Modifier.width(8.dp))
 
         TransactionTypeButton(
+            modifier = Modifier.weight(1f),
             text = stringResource(R.string.transaction_editor_transaction_type_income),
             icon = Icons.Default.Add,
             isSelected = state.transactionType == TransactionType.Income,
             onSelect = {
                 handleViewAction(
                     TransactionEditorViewAction.SelectTransactionType(
-                        TransactionType.Expense
+                        TransactionType.Income
                     )
                 )
             }
@@ -238,16 +266,19 @@ private fun TransactionTypeRow(
 
 @Composable
 private fun TransactionTypeButton(
+    modifier: Modifier = Modifier,
     text: String,
     icon: ImageVector,
     isSelected: Boolean,
     onSelect: () -> Unit,
 ) {
     val containerColor =
-        if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+        if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
     val contentColor = if (isSelected) Color.White else Color(0xFF374151)
 
     Button(
+        shape = RoundedCornerShape(8.dp),
+        modifier = modifier,
         onClick = onSelect,
         border = BorderStroke(width = 1.dp, color = Color(0xFFE5E7EB)),
         colors = ButtonDefaults.buttonColors(
@@ -255,11 +286,15 @@ private fun TransactionTypeButton(
             contentColor = contentColor,
         )
     ) {
-        Box(modifier = Modifier.size(14.dp)) {
+        Box(
+            modifier = Modifier
+                .size(14.dp)
+                .background(shape = CircleShape, color = contentColor),
+        ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = containerColor
+                tint = containerColor,
             )
         }
 
@@ -298,20 +333,20 @@ private fun AccountDropdown(
                     )
                 )
             },
+            textStyle = MaterialTheme.typography.bodyMedium,
+            label = { Hint(stringResource(R.string.transaction_editor_account_hint)) }
         )
 
         ExposedDropdownMenu(
             expanded = state.accountsDropdownIsExpanded,
             onDismissRequest = { handleViewAction(TransactionEditorViewAction.ManageAccountDropdown) }
         ) {
-            LazyColumn(
-                modifier = Modifier.height(400.dp)
-            ) {
-                items(state.accounts) { account ->
+            Column {
+                state.accounts.forEach { account ->
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = "${account.currency.code}-${account.currency.name}",
+                                text = account.name,
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         },
@@ -320,12 +355,6 @@ private fun AccountDropdown(
                                 TransactionEditorViewAction.SelectAccount(
                                     account
                                 )
-                            )
-                        },
-                        trailingIcon = {
-                            Text(
-                                text = account.currency.symbol,
-                                style = MaterialTheme.typography.bodyMedium
                             )
                         },
                     )
@@ -339,7 +368,7 @@ private fun AccountDropdown(
                         style = MaterialTheme.typography.bodyMedium
                     )
                 },
-                onClick = { handleViewAction },
+                onClick = { handleViewAction(TransactionEditorViewAction.CreateNewAccount) },
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -376,15 +405,17 @@ private fun CategoryDropdown(
                         MenuAnchorType.SecondaryEditable
                     )
                 )
-            }
+            },
+            textStyle = MaterialTheme.typography.bodyMedium,
+            label = { Hint(stringResource(R.string.transaction_editor_category_hint)) }
         )
 
         ExposedDropdownMenu(
             expanded = state.categoriesDropdownIsExpanded,
             onDismissRequest = { handleViewAction(TransactionEditorViewAction.ManageCategoryDropdown) },
         ) {
-            LazyColumn(modifier = Modifier.height(400.dp)) {
-                items(state.categories) { category ->
+            Column {
+                state.categories.forEach { category ->
                     DropdownMenuItem(
                         text = {
                             Text(
@@ -402,12 +433,15 @@ private fun CategoryDropdown(
                         leadingIcon = {
                             Box(
                                 modifier = Modifier
-                                    .padding(8.dp)
-                                    .background(color = Color(category.color).copy(alpha = 0.5f)),
-                                contentAlignment = Alignment.Center
+                                    .size(30.dp)
+                                    .clip(CircleShape)
+                                    .background(color = Color(category.color).copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center,
                             ) {
                                 AsyncImage(
-                                    model = category.iconId,
+                                    modifier = Modifier
+                                        .size(20.dp),
+                                    model = category.icon.icon,
                                     contentDescription = null,
                                     colorFilter = ColorFilter.tint(color = Color(category.color))
                                 )
@@ -442,25 +476,30 @@ private fun DateRow(
     state: TransactionEditorState,
     handleViewAction: (TransactionEditorViewAction) -> Unit
 ) {
+    val context = LocalContext.current
     OutlinedTextField(
-        modifier = modifier.pointerInput(state.date) {
-            awaitEachGesture {
-                awaitFirstDown(pass = PointerEventPass.Initial)
-                val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
-                if (upEvent != null) {
-                    handleViewAction(TransactionEditorViewAction.ManageDateDialog)
+        modifier = modifier
+            .fillMaxWidth()
+            .pointerInput(state.date) {
+                awaitEachGesture {
+                    awaitFirstDown(pass = PointerEventPass.Initial)
+                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                    if (upEvent != null) {
+                        handleViewAction(TransactionEditorViewAction.ManageDateDialog)
+                    }
                 }
-            }
-        },
-        value = state.date.toString(),
+            },
+        value = state.date.toFormatDate(context),
         onValueChange = {},
         readOnly = true,
+        label = { Hint(stringResource(R.string.transaction_editor_date_hint)) },
         trailingIcon = {
             Icon(
                 imageVector = Icons.Default.DateRange,
                 contentDescription = stringResource(R.string.transaction_editor_date_content_description)
             )
         },
+        textStyle = MaterialTheme.typography.bodyMedium,
     )
 
     if (state.dateDialogIsExpanded) {
@@ -468,52 +507,6 @@ private fun DateRow(
             initialDate = state.date,
             onDateSelected = { handleViewAction(TransactionEditorViewAction.SaveDate(date = it)) },
             onDismiss = { handleViewAction(TransactionEditorViewAction.ManageDateDialog) },
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DatePickerModal(
-    initialDate: LocalDate,
-    onDateSelected: (LocalDate) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = ZonedDateTime.of(
-            initialDate, LocalTime.now(), ZoneId.systemDefault()
-        ).toInstant().toEpochMilli()
-    )
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDateSelected(
-                        Instant.ofEpochMilli(datePickerState.selectedDateMillis ?: 0L).atZone(
-                            ZoneId.systemDefault()
-                        ).toLocalDate()
-                    )
-                },
-            ) {
-                Text(
-                    text = stringResource(utilsR.string.confirm_button),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = stringResource(utilsR.string.cancel_button),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        },
-    ) {
-        DatePicker(
-            state = datePickerState,
         )
     }
 }

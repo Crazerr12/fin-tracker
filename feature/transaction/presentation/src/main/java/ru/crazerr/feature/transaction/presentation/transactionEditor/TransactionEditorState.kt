@@ -3,6 +3,7 @@ package ru.crazerr.feature.transaction.presentation.transactionEditor
 import ru.crazerr.feature.account.domain.api.Account
 import ru.crazerr.feature.currency.domain.api.Currency
 import ru.crazerr.feature.domain.api.Category
+import ru.crazerr.feature.domain.api.Icon
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 import java.time.LocalDate
 
@@ -27,17 +28,21 @@ internal val InitialTransactionEditorState = TransactionEditorState(
     transactionType = TransactionType.Expense,
     accounts = emptyList(),
     selectedAccount = Account(
-        id = 0,
+        id = -1,
         name = "",
         amount = 0,
         iconId = "",
-        currency = Currency(id = 0, name = "", symbol = "", code = "")
+        currency = Currency(id = -1, name = "", symbol = "", code = "")
     ),
     amount = "",
     amountError = "",
     categories = emptyList(),
     selectedCategory = Category(
-        id = 0, name = "", color = 0L, iconId = "", isTemplate = true,
+        id = -1,
+        name = "",
+        color = 0L,
+        icon = Icon(id = -1, icon = ByteArray(0)),
+        isTemplate = true,
     ),
     date = LocalDate.now(),
     categoriesDropdownIsExpanded = false,

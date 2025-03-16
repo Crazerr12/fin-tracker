@@ -7,6 +7,7 @@ import ru.crazerr.core.utils.presentation.componentCoroutineScope
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.category.presentation.R
 import ru.crazerr.feature.domain.api.Category
+import ru.crazerr.feature.domain.api.Icon
 
 class CategoryEditorComponent(
     componentContext: ComponentContext,
@@ -43,7 +44,7 @@ class CategoryEditorComponent(
                             id = state.value.id,
                             name = state.value.name,
                             color = state.value.selectedColor,
-                            iconId = state.value.selectedIcon,
+                            icon = state.value.selectedIcon,
                             isTemplate = false,
                         )
                     )
@@ -53,7 +54,7 @@ class CategoryEditorComponent(
                             id = 0,
                             name = state.value.name,
                             color = state.value.selectedColor,
-                            iconId = state.value.selectedIcon,
+                            icon = state.value.selectedIcon,
                             isTemplate = false
                         )
                     )
@@ -83,7 +84,7 @@ class CategoryEditorComponent(
         reduceState { copy(name = name, nameError = "") }
     }
 
-    private fun onUpdateIcon(icon: String) {
+    private fun onUpdateIcon(icon: Icon) {
         reduceState { copy(selectedIcon = icon) }
     }
 
@@ -99,7 +100,7 @@ class CategoryEditorComponent(
                         copy(
                             id = it.id,
                             name = it.name,
-                            selectedIcon = it.iconId,
+                            selectedIcon = it.icon,
                             selectedColor = it.color,
                             buttonIsLoading = false
                         )

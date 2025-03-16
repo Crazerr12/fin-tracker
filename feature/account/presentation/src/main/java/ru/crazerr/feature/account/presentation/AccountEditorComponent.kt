@@ -22,6 +22,9 @@ internal class AccountEditorComponentImpl(
     private val coroutineScope = componentCoroutineScope()
 
     init {
+        if (dependencies.args.accountId != -1) {
+            reduceState { copy(id = dependencies.args.accountId) }
+        }
         getInitData()
     }
 

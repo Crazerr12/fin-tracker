@@ -1,0 +1,21 @@
+package ru.crazerr.feature.category.data.api
+
+import ru.crazerr.core.database.categories.model.CategoryEntity
+import ru.crazerr.core.database.categories.model.CategoryWithIcon
+import ru.crazerr.feature.domain.api.Category
+
+fun Category.toCategoryEntity() = CategoryEntity(
+    id = id,
+    name = name,
+    color = color,
+    iconId = icon.id,
+    isTemplate = isTemplate
+)
+
+fun CategoryWithIcon.toCategory() = Category(
+    id = categoryEntity.id,
+    name = categoryEntity.name,
+    color = categoryEntity.color,
+    icon = iconEntity.toIcon(),
+    isTemplate = categoryEntity.isTemplate,
+)

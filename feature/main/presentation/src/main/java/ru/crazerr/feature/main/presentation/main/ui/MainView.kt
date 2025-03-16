@@ -1,5 +1,6 @@
 package ru.crazerr.feature.main.presentation.main.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -18,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,26 +49,27 @@ import ru.crazerr.feature.main.presentation.main.MainViewAction
 fun MainView(modifier: Modifier = Modifier, component: MainComponent) {
     val state by component.state.subscribeAsState()
 
-    if (state.isLoading) {
-        LoadingView()
-    } else {
-        Scaffold(
-            modifier = modifier,
-            contentWindowInsets = WindowInsets(0),
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { component.handleViewAction(MainViewAction.GoToAccount()) },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.main_add_account_content_description)
-                    )
-                }
+    Scaffold(
+        modifier = modifier.statusBarsPadding(),
+        contentWindowInsets = WindowInsets(0),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { component.handleViewAction(MainViewAction.GoToAccount()) },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.main_add_account_content_description)
+                )
             }
-        ) { paddingValues ->
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+    ) { paddingValues ->
+        if (state.isLoading) {
+            LoadingView(modifier = Modifier.padding(paddingValues))
+        } else {
             MainViewContent(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(paddingValues),
                 state = state,
                 handleViewAction = component::handleViewAction
@@ -81,7 +85,7 @@ private fun MainViewContent(
     handleViewAction: (MainViewAction) -> Unit
 ) {
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.background(color = MaterialTheme.colorScheme.surfaceVariant),
     ) {
         item {
             MainViewHeader(
@@ -100,7 +104,7 @@ private fun MainViewContent(
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(R.string.main_accounts),
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleMedium,
             )
         }
 
@@ -133,6 +137,7 @@ private fun MainViewHeader(modifier: Modifier = Modifier, currentAmount: Long, c
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.background)
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -189,7 +194,10 @@ private fun BalanceCard(
         0
     }
 
-    Card(modifier = modifier) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -225,8 +233,9 @@ private fun AccountCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        onClick = { handleViewAction(MainViewAction.GoToAccount(account.id)) }
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        onClick = { handleViewAction(MainViewAction.GoToAccount(account.id)) },
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
     ) {
         Column(
             modifier = Modifier

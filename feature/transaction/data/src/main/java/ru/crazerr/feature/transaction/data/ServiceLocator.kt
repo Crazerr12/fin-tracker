@@ -20,7 +20,7 @@ val transactionDataModule = module {
     singleOf(::CategoryRepositoryImpl) { bind<CategoryRepository>() }
 
     single {
-        LocalTransactionDataSource(transactionsDao = get<AppDatabase>().transactionsDao())
+        LocalTransactionDataSource(appDatabase = get())
     }
     single {
         LocalAccountDataSource(accountsDao = get<AppDatabase>().accountsDao())

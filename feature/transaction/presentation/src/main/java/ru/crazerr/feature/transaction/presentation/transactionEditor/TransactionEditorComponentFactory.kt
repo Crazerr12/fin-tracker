@@ -1,6 +1,7 @@
 package ru.crazerr.feature.transaction.presentation.transactionEditor
 
 import com.arkivanov.decompose.ComponentContext
+import ru.crazerr.core.utils.resourceManager.ResourceManager
 import ru.crazerr.feature.transaction.domain.AccountRepository
 import ru.crazerr.feature.transaction.domain.CategoryRepository
 import ru.crazerr.feature.transaction.domain.TransactionRepository
@@ -17,6 +18,7 @@ internal class TransactionEditorComponentFactoryImpl(
     private val transactionRepository: TransactionRepository,
     private val categoryRepository: CategoryRepository,
     private val accountRepository: AccountRepository,
+    private val resourceManager: ResourceManager,
 ) : TransactionEditorComponentFactory {
     override fun create(
         componentContext: ComponentContext,
@@ -30,6 +32,7 @@ internal class TransactionEditorComponentFactoryImpl(
             categoryRepository = categoryRepository,
             accountRepository = accountRepository,
             args = args,
+            resourceManager = resourceManager,
         )
     )
 }

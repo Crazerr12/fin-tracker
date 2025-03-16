@@ -7,5 +7,6 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:category:data:api"))
     implementation(project(":feature:category:domain"))
 }

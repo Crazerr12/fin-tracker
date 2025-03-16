@@ -21,4 +21,7 @@ interface AccountsDao : BaseDao<AccountEntity> {
 
     @Query("DELETE FROM accounts WHERE id = :id")
     suspend fun deleteAccountById(id: Int)
+
+    @Query("UPDATE accounts SET amount = amount + :transactionAmount WHERE id = :id ")
+    suspend fun updateAccountBalance(id: Int, transactionAmount: Long): Int
 }

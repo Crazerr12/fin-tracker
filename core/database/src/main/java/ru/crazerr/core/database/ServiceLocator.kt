@@ -5,6 +5,7 @@ import androidx.room.Room
 import org.koin.dsl.module
 
 private const val DATABASE_NAME = "main-database"
+private const val PRELOADED_DATABASE_NAME = "preloaded_data.db"
 
 val databaseModule = module {
     single<AppDatabase> {
@@ -14,4 +15,4 @@ val databaseModule = module {
 
 fun createRoomDatabase(context: Context): AppDatabase =
     Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-        .createFromAsset("preloaded_currencies.db").build()
+        .createFromAsset(PRELOADED_DATABASE_NAME).build()

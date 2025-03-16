@@ -35,6 +35,9 @@ class DataPlugin : Plugin<Project> {
                 // Network
                 implementation(project(":core:network"))
 
+                // Paging
+                implementation(libs.paging.common)
+
                 // Database
                 implementation(project(":core:database"))
             }

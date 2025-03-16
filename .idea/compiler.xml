@@ -11,6 +11,7 @@
       <module name="FinTracker.feature.analysis.data.test" target="17" />
       <module name="FinTracker.feature.auth.data.test" target="17" />
       <module name="FinTracker.feature.budget.data.test" target="17" />
+      <module name="FinTracker.feature.category.data.api.test" target="11" />
       <module name="FinTracker.feature.category.data.test" target="11" />
       <module name="FinTracker.feature.category.presentation.test" target="11" />
       <module name="FinTracker.feature.currency.data.api.test" target="17" />
@@ -19,6 +20,7 @@
       <module name="FinTracker.feature.data.test" target="11" />
       <module name="FinTracker.feature.main.data.test" target="17" />
       <module name="FinTracker.feature.profile.data.test" target="17" />
+      <module name="FinTracker.feature.transaction.data.api.test" target="11" />
       <module name="FinTracker.feature.transaction.data.test" target="17" />
       <module name="FinTracker.feature.transaction.presentation.test" target="11" />
       <module name="FinTracker.feature.transactions.data.test" target="17" />

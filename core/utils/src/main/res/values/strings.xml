@@ -6,4 +6,14 @@
 
     <string name="keyboard_arrow_down_content_description">Раскрыть список</string>
     <string name="keyboard_arrow_up_content_description">Скрыть список</string>
+
+    <string name="search_hint">Поиск…</string>
+    <string name="search_clear">Очистить</string>
+
+    <string name="error_happens">Произошла ошибка</string>
+    <string name="retry_button">Повторить</string>
+
+    <string name="tomorrow">Завтра</string>
+    <string name="today">Сегодня</string>
+    <string name="yesterday">Вчера</string>
 </resources>

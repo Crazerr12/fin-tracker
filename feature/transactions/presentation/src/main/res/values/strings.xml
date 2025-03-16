@@ -1,0 +1,30 @@
+<resources>
+    <!-- transactions -->
+    <string name="transactions_title">Транзакции</string>
+    <string name="transactions_filter_content_description">Фильтры</string>
+
+    <string name="transactions_tabs_all">Все</string>
+    <string name="transactions_tabs_income">Доходы</string>
+    <string name="transactions_tabs_expenses">Расходы</string>
+
+    <string name="transactions_empty_transactions">У вас еще нет транзакций. Вы можете начать прямо сейчас!</string>
+
+    <string name="transactions_add_new_transaction_content_description">Добавить новую транзакцию</string>
+
+    <!-- transactions filter -->
+    <string name="transactions_filter_title">Фильтры</string>
+    <string name="transactions_filter_reset_button">Сбросить</string>
+
+    <string name="transactions_filter_category">Категория</string>
+    <string name="transactions_filter_select_all_categories">Выбрать все категории</string>
+    <string name="transactions_filter_account">Счёт</string>
+    <string name="transactions_filter_select_all_accounts">Выбрать все счета</string>
+    <string name="transactions_filter_accounts_empty">У вас нет ни одного счёта</string>
+    <string name="transactions_filter_date">Дата</string>
+
+    <string name="transactions_filter_start_date_hint">Начальная дата</string>
+    <string name="transactions_filter_end_date_hint">Конечная дата</string>
+    <string name="transactions_filter_clear_date_content_description">Очистить дату</string>
+
+    <string name="transactions_filter_confirm_button">Подтвердить</string>
+</resources>
