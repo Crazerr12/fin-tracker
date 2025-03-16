@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import ru.crazerr.conventionplugins.base.implementation
 import ru.crazerr.conventionplugins.base.libs
 
-class UtilsPlugin: Plugin<Project> {
+class UtilsPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
@@ -34,6 +34,10 @@ class UtilsPlugin: Plugin<Project> {
                 implementation(platform(libs.koin.bom))
                 implementation(libs.koin.compose)
                 implementation(libs.koin.core)
+
+                // Paging
+                implementation(libs.paging.runtime)
+                implementation(libs.paging.compose)
             }
         }
     }

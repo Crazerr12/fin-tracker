@@ -12,6 +12,7 @@ import kotlinx.serialization.Serializable
 import ru.crazerr.core.utils.snackbar.SnackbarManager
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.main.presentation.mainStory.MainStoryComponent
+import ru.crazerr.feature.transactions.presentation.transactionsStory.TransactionsStoryComponent
 
 interface RootComponent {
     val stack: Value<ChildStack<*, Child>>
@@ -25,10 +26,10 @@ interface RootComponent {
     sealed interface Child {
         class AuthStory() : Child
         class MainStory(val component: MainStoryComponent) : Child
+        class TransactionsStory(val component: TransactionsStoryComponent) : Child
         class AnalysisStory() : Child
         class BudgetStory() : Child
         class ProfileStory() : Child
-        class TransactionsStory() : Child
     }
 
     @Serializable
@@ -134,7 +135,11 @@ internal class RootComponentImpl(
         RootComponent.Child.AnalysisStory()
 
     private fun createTransactionsStory(componentContext: ComponentContext): RootComponent.Child.TransactionsStory =
-        RootComponent.Child.TransactionsStory()
+        RootComponent.Child.TransactionsStory(
+            component = di.transactionsStoryComponentFactory.create(
+                componentContext
+            )
+        )
 
     private fun createProfileStory(componentContext: ComponentContext): RootComponent.Child.ProfileStory =
         RootComponent.Child.ProfileStory()

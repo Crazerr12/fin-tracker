@@ -20,6 +20,9 @@ class DomainPlugin : Plugin<Project> {
 
                 // Kotlin
                 implementation(libs.kotlinx.coroutines)
+
+                // Paging
+                implementation(libs.paging.common)
             }
         }
     }

@@ -54,15 +54,11 @@ import ru.crazerr.feature.account.presentation.R
 fun AccountEditorView(modifier: Modifier = Modifier, component: AccountEditorComponent) {
     val state by component.state.subscribeAsState()
 
-    if (state.isLoading) {
-        LoadingView()
-    } else {
-        AccountEditorContentView(
-            modifier = modifier,
-            state = state,
-            handleViewAction = component::handleViewAction
-        )
-    }
+    AccountEditorContentView(
+        modifier = modifier,
+        state = state,
+        handleViewAction = component::handleViewAction
+    )
 }
 
 @Composable
@@ -80,36 +76,40 @@ private fun AccountEditorContentView(
         contentWindowInsets = WindowInsets(0),
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-        ) {
-            AccountEditorCard(state = state, handleViewAction = handleViewAction)
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                shape = RoundedCornerShape(8.dp),
-                onClick = { handleViewAction(AccountEditorViewAction.SaveClick) },
-                enabled = !state.buttonIsLoading
+        if (state.isLoading) {
+            LoadingView(modifier = Modifier.padding(paddingValues))
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
             ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.account_editor_button_save),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.alpha(if (state.buttonIsLoading) 0f else 1f)
-                    )
+                AccountEditorCard(state = state, handleViewAction = handleViewAction)
 
-                    if (state.buttonIsLoading) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(24.dp)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    shape = RoundedCornerShape(8.dp),
+                    onClick = { handleViewAction(AccountEditorViewAction.SaveClick) },
+                    enabled = !state.buttonIsLoading
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.account_editor_button_save),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.alpha(if (state.buttonIsLoading) 0f else 1f)
                         )
+
+                        if (state.buttonIsLoading) {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -127,7 +127,7 @@ private fun AccountEditorTopBar(
         title = {
             Text(
                 text = stringResource(
-                    if (state.id != 0) R.string.account_editor_top_bar_edit_title
+                    if (state.id != -1) R.string.account_editor_top_bar_edit_title
                     else R.string.account_editor_top_bar_create_title
                 )
             )
@@ -140,7 +140,6 @@ private fun AccountEditorTopBar(
                 )
             }
         },
-        windowInsets = WindowInsets(0),
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     )
 }
@@ -173,6 +172,7 @@ private fun AccountEditorCard(
                 } else {
                     null
                 },
+                textStyle = MaterialTheme.typography.bodyMedium,
                 isError = state.nameError.isNotEmpty(),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -193,6 +193,7 @@ private fun AccountEditorCard(
                         )
                     )
                 },
+                textStyle = MaterialTheme.typography.bodyMedium,
                 label = { Hint(value = stringResource(R.string.account_editor_amount_field_hint)) },
                 singleLine = true,
                 supportingText = if (state.amountError.isNotEmpty()) {
@@ -252,6 +253,7 @@ private fun CurrencyTextField(
                     )
                 )
             },
+            textStyle = MaterialTheme.typography.bodyMedium,
             readOnly = true,
             singleLine = true,
         )
@@ -262,7 +264,12 @@ private fun CurrencyTextField(
         ) {
             state.currencies.forEach {
                 DropdownMenuItem(
-                    text = { Text(text = "${it.code} - ${it.name}") },
+                    text = {
+                        Text(
+                            text = "${it.code} - ${it.name}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
                     onClick = {
                         handleViewAction(
                             AccountEditorViewAction.SelectCurrency(

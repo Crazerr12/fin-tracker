@@ -9,6 +9,7 @@ android {
 dependencies {
     implementation(project(":core:utils"))
     implementation(project(":feature:main:presentation"))
+    implementation(project(":feature:transactions:presentation"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

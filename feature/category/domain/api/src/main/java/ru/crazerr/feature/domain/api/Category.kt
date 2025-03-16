@@ -4,6 +4,11 @@ data class Category(
     val id: Int,
     val name: String,
     val color: Long,
-    val iconId: String,
+    val icon: Icon,
     val isTemplate: Boolean,
+)
+
+data class Icon(
+    val id: Int,
+    val icon: ByteArray,
 )

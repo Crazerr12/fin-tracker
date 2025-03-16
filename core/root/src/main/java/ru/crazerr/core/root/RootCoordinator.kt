@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,6 +41,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.snackbar.SnackbarManager
 import ru.crazerr.feature.main.presentation.mainStory.ui.MainStoryCoordinator
+import ru.crazerr.feature.transactions.presentation.transactionsStory.ui.TransactionsStoryCoordinator
 
 @Composable
 fun RootCoordinator(modifier: Modifier = Modifier, component: RootComponent) {
@@ -59,7 +61,7 @@ fun RootCoordinator(modifier: Modifier = Modifier, component: RootComponent) {
                 )
             }
         },
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        contentWindowInsets = WindowInsets(0),
     ) { paddingValues ->
         Children(
             stack = stack,
@@ -71,7 +73,7 @@ fun RootCoordinator(modifier: Modifier = Modifier, component: RootComponent) {
             when (val child = it.instance) {
                 is RootComponent.Child.AuthStory -> Box() {}
                 is RootComponent.Child.MainStory -> MainStoryCoordinator(component = child.component)
-                is RootComponent.Child.TransactionsStory -> Box() {}
+                is RootComponent.Child.TransactionsStory -> TransactionsStoryCoordinator(component = child.component)
                 is RootComponent.Child.BudgetStory -> Box() {}
                 is RootComponent.Child.AnalysisStory -> Box() {}
                 is RootComponent.Child.ProfileStory -> Box() {}

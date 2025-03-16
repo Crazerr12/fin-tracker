@@ -12,6 +12,7 @@ class CoilPlugin : Plugin<Project> {
                 implementation(platform(libs.coil.bom))
                 implementation(libs.coil.compose)
                 implementation(libs.coil.network.ktor3)
+                implementation(libs.coil.svg)
             }
         }
     }

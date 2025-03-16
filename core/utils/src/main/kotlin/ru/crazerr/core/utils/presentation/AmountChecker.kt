@@ -24,11 +24,9 @@ fun Long.toAmountFormat(currencySign: Char): String {
 
 fun Long.toAmountFormat(): String {
     val stringNum = this.toString()
+    val (integerPart, decimalPart) = stringNum.split('.', limit = 2)
+        .let { it[0] to it.getOrNull(1) }
 
-    return if (stringNum.contains('.')) {
-        stringNum.substringBefore('.').chunked(3)
-            .joinToString(" ") + '.' + stringNum.substringAfter('.')
-    } else {
-        stringNum.substringBefore('.').chunked(3).joinToString(" ")
-    }
+    val formattedInteger = integerPart.reversed().chunked(3).joinToString(" ").reversed()
+    return if (decimalPart != null) "$formattedInteger.$decimalPart" else formattedInteger
 }

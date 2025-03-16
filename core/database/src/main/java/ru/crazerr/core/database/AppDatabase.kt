@@ -13,6 +13,7 @@ import ru.crazerr.core.database.converters.IntListConverter
 import ru.crazerr.core.database.converters.LocalDateConverter
 import ru.crazerr.core.database.currencies.dao.CurrenciesDao
 import ru.crazerr.core.database.currencies.model.CurrencyEntity
+import ru.crazerr.core.database.icons.model.IconEntity
 import ru.crazerr.core.database.repeatTransactions.dao.RepeatTransactionsDao
 import ru.crazerr.core.database.repeatTransactions.model.RepeatTransactionEntity
 import ru.crazerr.core.database.transactions.dao.TransactionsDao
@@ -21,12 +22,15 @@ import ru.crazerr.core.database.transactions.model.TransactionEntity
 private const val CURRENT_DATABASE_VERSION = 1
 
 @Database(
-    entities = [TransactionEntity::class,
+    entities = [
+        TransactionEntity::class,
         RepeatTransactionEntity::class,
         CurrencyEntity::class,
         AccountEntity::class,
         BudgetEntity::class,
-        CategoryEntity::class],
+        CategoryEntity::class,
+        IconEntity::class
+    ],
     version = CURRENT_DATABASE_VERSION,
     exportSchema = false,
 )

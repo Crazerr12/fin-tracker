@@ -1,4 +1,3 @@
-import com.android.build.gradle.ProguardFiles.getDefaultProguardFile
 import ru.crazerr.conventionplugins.base.libs
 
 plugins {
@@ -45,6 +44,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(platform(libs.coil.bom))
+    implementation(libs.coil.network.ktor3)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.svg)
 
     // Koin
     implementation(platform(libs.koin.bom))

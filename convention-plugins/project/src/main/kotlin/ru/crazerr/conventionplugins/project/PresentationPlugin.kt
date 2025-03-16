@@ -37,6 +37,10 @@ class PresentationPlugin: Plugin<Project> {
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
 
+                // Paging
+                implementation(libs.paging.runtime)
+                implementation(libs.paging.compose)
+
                 // Utils
                 implementation(project(":core:utils"))
             }

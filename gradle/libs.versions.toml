@@ -15,7 +15,7 @@ compose-gradle-plugin = "1.7.3"
 
 # Kotlin
 agp = "8.7.3"
-kotlin = "2.1.0"
+kotlin = "2.1.10"
 coreKtx = "1.15.0"
 lifecycleRuntimeKtx = "2.8.7"
 appcompat = "1.7.0"
@@ -50,7 +50,9 @@ serialization-json = "1.8.0"
 
 # Coil
 coil = "3.0.4"
-uiTooling = "1.7.8"
+
+# Paging
+paging = "3.3.6"
 
 [libraries]
 # Plugins for composite build
@@ -86,8 +88,8 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
-ktor-client-content-negotiation = {module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor"}
-ktor-serialization = {module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor"}
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 # Koin
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
@@ -113,6 +115,12 @@ serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-jso
 coil-bom = { module = "io.coil-kt.coil3:coil-bom", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3" }
+coil-svg = { module = "io.coil-kt.coil3:coil-svg" }
+
+# Paging
+paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
+paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 
 [plugins]
 # Android
