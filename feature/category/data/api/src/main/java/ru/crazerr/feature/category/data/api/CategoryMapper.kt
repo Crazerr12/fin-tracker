@@ -8,7 +8,7 @@ fun Category.toCategoryEntity() = CategoryEntity(
     id = id,
     name = name,
     color = color,
-    iconId = icon.id,
+    iconId = iconModel.id,
     isTemplate = isTemplate
 )
 
@@ -16,6 +16,6 @@ fun CategoryWithIcon.toCategory() = Category(
     id = categoryEntity.id,
     name = categoryEntity.name,
     color = categoryEntity.color,
-    icon = iconEntity.toIcon(),
+    iconModel = iconEntity.toIcon(),
     isTemplate = categoryEntity.isTemplate,
 )

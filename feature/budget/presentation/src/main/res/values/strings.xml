@@ -1,0 +1,14 @@
+<resources>
+    <string name="budget_editor_create_title">Создать бюджет</string>
+    <string name="budget_editor_update_title">Обновить бюджет</string>
+
+    <string name="budget_editor_only_digits_field">Поле должно содержать только цифры</string>
+
+    <string name="budget_editor_expenses_category_hint">Категория расходов</string>
+    <string name="budget_editor_amount_hint">Сумма</string>
+    <string name="budget_editor_current_amount_supporting_text">Потраченная сумма в этом месяце</string>
+    <string name="budget_editor_is_regular_budget">Регулярный</string>
+    <string name="budget_editor_notifications">Уведомления</string>
+    <string name="budget_editor_budget_exceeded">Уведомлять, когда бюджет превышен</string>
+    <string name="budget_editor_budget_closed_to_70">Предупреждать при достижении 70% бюджета</string>
+</resources>

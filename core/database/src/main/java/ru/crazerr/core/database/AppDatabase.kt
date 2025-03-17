@@ -6,7 +6,9 @@ import androidx.room.TypeConverters
 import ru.crazerr.core.database.accounts.dao.AccountsDao
 import ru.crazerr.core.database.accounts.model.AccountEntity
 import ru.crazerr.core.database.budgets.dao.BudgetsDao
+import ru.crazerr.core.database.budgets.dao.RepeatBudgetsDao
 import ru.crazerr.core.database.budgets.model.BudgetEntity
+import ru.crazerr.core.database.budgets.model.RepeatBudgetEntity
 import ru.crazerr.core.database.categories.dao.CategoriesDao
 import ru.crazerr.core.database.categories.model.CategoryEntity
 import ru.crazerr.core.database.converters.IntListConverter
@@ -29,7 +31,8 @@ private const val CURRENT_DATABASE_VERSION = 1
         AccountEntity::class,
         BudgetEntity::class,
         CategoryEntity::class,
-        IconEntity::class
+        IconEntity::class,
+        RepeatBudgetEntity::class,
     ],
     version = CURRENT_DATABASE_VERSION,
     exportSchema = false,
@@ -47,4 +50,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun budgetsDao(): BudgetsDao
 
     abstract fun categoriesDao(): CategoriesDao
+
+    abstract fun repeatBudgetsDao(): RepeatBudgetsDao
 }

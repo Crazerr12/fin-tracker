@@ -341,7 +341,7 @@ private fun TransactionItem(
         ) {
             AsyncImage(
                 modifier = Modifier.size(20.dp),
-                model = transaction.category.icon.icon,
+                model = transaction.category.iconModel.icon,
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(color = Color(transaction.category.color))
             )

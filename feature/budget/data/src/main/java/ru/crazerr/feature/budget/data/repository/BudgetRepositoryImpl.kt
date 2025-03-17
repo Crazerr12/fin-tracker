@@ -1,0 +1,32 @@
+package ru.crazerr.feature.budget.data.repository
+
+import ru.crazerr.feature.budget.data.dataSource.BudgetLocalDataSource
+import ru.crazerr.feature.budget.data.workManager.BudgetManager
+import ru.crazerr.feature.budget.domain.BudgetRepository
+import ru.crazerr.feature.domain.api.Budget
+
+internal class BudgetRepositoryImpl(
+    private val budgetLocalDataSource: BudgetLocalDataSource,
+    private val budgetManager: BudgetManager,
+) : BudgetRepository {
+    override suspend fun getBudgetById(id: Int): Result<Budget> =
+        budgetLocalDataSource.getBudgetById(id = id)
+
+    override suspend fun createBudget(budget: Budget): Result<Budget> =
+        budgetLocalDataSource.createBudget(budget = budget)
+
+    override suspend fun createRepeatBudget(budget: Budget): Result<Budget> {
+        val budget = budgetLocalDataSource.createRepeatBudget(budget = budget)
+        budgetManager.createNewBudget(budget = budget.getOrElse { return budget })
+        return budget
+    }
+
+    override suspend fun updateBudget(budget: Budget): Result<Budget> =
+        if (budget.repeatBudgetId != null) {
+            val budget = budgetLocalDataSource.updateRepeatBudget(budget = budget)
+            budgetManager.createNewBudget(budget = budget.getOrElse { return budget })
+            budget
+        } else {
+            budgetLocalDataSource.updateBudget(budget = budget)
+        }
+}

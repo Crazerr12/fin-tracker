@@ -7,7 +7,7 @@ import ru.crazerr.core.utils.presentation.componentCoroutineScope
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.category.presentation.R
 import ru.crazerr.feature.domain.api.Category
-import ru.crazerr.feature.domain.api.Icon
+import ru.crazerr.feature.domain.api.IconModel
 
 class CategoryEditorComponent(
     componentContext: ComponentContext,
@@ -29,7 +29,7 @@ class CategoryEditorComponent(
             CategoryEditorViewAction.BackClick -> onAction(CategoryEditorComponentAction.BackClick)
             CategoryEditorViewAction.SaveClick -> onSaveClick()
             is CategoryEditorViewAction.UpdateColor -> onUpdateColor(color = action.color)
-            is CategoryEditorViewAction.UpdateIcon -> onUpdateIcon(icon = action.icon)
+            is CategoryEditorViewAction.UpdateIcon -> onUpdateIcon(iconModel = action.iconModel)
             is CategoryEditorViewAction.UpdateName -> onUpdateName(name = action.name)
         }
     }
@@ -44,7 +44,7 @@ class CategoryEditorComponent(
                             id = state.value.id,
                             name = state.value.name,
                             color = state.value.selectedColor,
-                            icon = state.value.selectedIcon,
+                            iconModel = state.value.selectedIconModel,
                             isTemplate = false,
                         )
                     )
@@ -54,7 +54,7 @@ class CategoryEditorComponent(
                             id = 0,
                             name = state.value.name,
                             color = state.value.selectedColor,
-                            icon = state.value.selectedIcon,
+                            iconModel = state.value.selectedIconModel,
                             isTemplate = false
                         )
                     )
@@ -84,8 +84,8 @@ class CategoryEditorComponent(
         reduceState { copy(name = name, nameError = "") }
     }
 
-    private fun onUpdateIcon(icon: Icon) {
-        reduceState { copy(selectedIcon = icon) }
+    private fun onUpdateIcon(iconModel: IconModel) {
+        reduceState { copy(selectedIconModel = iconModel) }
     }
 
     private fun getCategory() {
@@ -100,7 +100,7 @@ class CategoryEditorComponent(
                         copy(
                             id = it.id,
                             name = it.name,
-                            selectedIcon = it.icon,
+                            selectedIconModel = it.iconModel,
                             selectedColor = it.color,
                             buttonIsLoading = false
                         )

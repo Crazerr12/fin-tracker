@@ -58,4 +58,16 @@ interface TransactionsDao : BaseDao<TransactionEntity> {
         startDate: String?,
         endDate: String?
     ): List<LocalDate>
+
+    @Query(
+        """
+        SELECT SUM(amount) 
+        FROM transactions 
+        WHERE type = 1 
+        AND category_id = :categoryId 
+        AND strftime('%m', date) = strftime('%m', :date) 
+        AND strftime('%Y', date) = strftime('%Y', :date)
+    """
+    )
+    suspend fun getSpentAmountByDateAndCategory(categoryId: Int, date: String): Long
 }
