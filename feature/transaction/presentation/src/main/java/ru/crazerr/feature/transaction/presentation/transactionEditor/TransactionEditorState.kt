@@ -3,7 +3,7 @@ package ru.crazerr.feature.transaction.presentation.transactionEditor
 import ru.crazerr.feature.account.domain.api.Account
 import ru.crazerr.feature.currency.domain.api.Currency
 import ru.crazerr.feature.domain.api.Category
-import ru.crazerr.feature.domain.api.Icon
+import ru.crazerr.feature.domain.api.IconModel
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 import java.time.LocalDate
 
@@ -41,7 +41,7 @@ internal val InitialTransactionEditorState = TransactionEditorState(
         id = -1,
         name = "",
         color = 0L,
-        icon = Icon(id = -1, icon = ByteArray(0)),
+        iconModel = IconModel(id = -1, icon = ByteArray(0)),
         isTemplate = true,
     ),
     date = LocalDate.now(),

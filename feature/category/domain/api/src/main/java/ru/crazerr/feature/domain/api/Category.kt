@@ -4,11 +4,11 @@ data class Category(
     val id: Int,
     val name: String,
     val color: Long,
-    val icon: Icon,
+    val iconModel: IconModel,
     val isTemplate: Boolean,
 )
 
-data class Icon(
+data class IconModel(
     val id: Int,
     val icon: ByteArray,
 )

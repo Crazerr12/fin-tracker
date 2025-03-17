@@ -441,7 +441,7 @@ private fun CategoryDropdown(
                                 AsyncImage(
                                     modifier = Modifier
                                         .size(20.dp),
-                                    model = category.icon.icon,
+                                    model = category.iconModel.icon,
                                     contentDescription = null,
                                     colorFilter = ColorFilter.tint(color = Color(category.color))
                                 )
