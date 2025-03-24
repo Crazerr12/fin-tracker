@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -275,7 +276,7 @@ private fun TransactionCardByDate(
     modifier: Modifier = Modifier,
     date: LocalDate,
     transactions: List<Transaction>,
-    onTransactionClick: (Int) -> Unit,
+    onTransactionClick: (Long) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -287,8 +288,7 @@ private fun TransactionCardByDate(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
+                .fillMaxWidth(),
         ) {
             Text(
                 modifier = Modifier
@@ -297,8 +297,17 @@ private fun TransactionCardByDate(
                 style = MaterialTheme.typography.bodyLarge,
             )
 
-            transactions.forEach { transaction ->
+            transactions.forEachIndexed { index, transaction ->
                 TransactionItem(
+                    paddingValues = if (index == transactions.size - 1) PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 10.dp,
+                        top = 6.dp
+                    ) else PaddingValues(
+                        horizontal = 16.dp,
+                        vertical = 6.dp
+                    ),
                     transaction = transaction,
                     onClick = { onTransactionClick(transaction.id) }
                 )
@@ -310,23 +319,26 @@ private fun TransactionCardByDate(
 @Composable
 private fun TransactionItem(
     modifier: Modifier = Modifier,
+    paddingValues: PaddingValues = PaddingValues(
+        start = 16.dp,
+        end = 16.dp,
+        bottom = 6.dp,
+        top = 6.dp
+    ),
     transaction: Transaction,
     onClick: () -> Unit
 ) {
-    val sign: Char
-    val color: Color
-    if (transaction.type == TransactionType.Income) {
-        sign = '+'
-        color = Color.Green
+    val (sign, color) = if (transaction.type == TransactionType.Income) {
+        Pair('+', Color.Green)
     } else {
-        sign = '-'
-        color = Color.Red
+        Pair('-', Color.Red)
     }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = { onClick() })
-            .padding(start = 16.dp, end = 16.dp, bottom = 6.dp, top = 6.dp),
+            .clickable { onClick() }
+            .padding(paddingValues),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(

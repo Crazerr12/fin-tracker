@@ -7,7 +7,7 @@ import ru.crazerr.feature.domain.api.Category
 internal class CategoryRepositoryImpl(
     private val categoryLocalDataSource: CategoryLocalDataSource,
 ) : CategoryRepository {
-    override suspend fun getCategoryById(id: Int): Result<Category> {
+    override suspend fun getCategoryById(id: Long): Result<Category> {
         return categoryLocalDataSource.getCategoryById(id = id)
     }
 

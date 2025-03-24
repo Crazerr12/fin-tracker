@@ -3,7 +3,7 @@ package ru.crazerr.feature.account.presentation
 import ru.crazerr.feature.currency.domain.api.Currency
 
 data class AccountEditorState(
-    val id: Int,
+    val id: Long,
     val name: String,
     val nameError: String,
     val amount: String,

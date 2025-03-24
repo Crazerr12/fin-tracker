@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -23,7 +21,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,12 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.snackbar.SnackbarManager
+import ru.crazerr.feature.budgets.presentation.budgetsStory.ui.BudgetsStoryCoordinator
 import ru.crazerr.feature.main.presentation.mainStory.ui.MainStoryCoordinator
 import ru.crazerr.feature.transactions.presentation.transactionsStory.ui.TransactionsStoryCoordinator
 
@@ -74,7 +71,7 @@ fun RootCoordinator(modifier: Modifier = Modifier, component: RootComponent) {
                 is RootComponent.Child.AuthStory -> Box() {}
                 is RootComponent.Child.MainStory -> MainStoryCoordinator(component = child.component)
                 is RootComponent.Child.TransactionsStory -> TransactionsStoryCoordinator(component = child.component)
-                is RootComponent.Child.BudgetStory -> Box() {}
+                is RootComponent.Child.BudgetsStory -> BudgetsStoryCoordinator(component = child.component)
                 is RootComponent.Child.AnalysisStory -> Box() {}
                 is RootComponent.Child.ProfileStory -> Box() {}
             }
@@ -122,7 +119,7 @@ private fun BottomNavigationView(
                     .weight(1f)
                     .clip(RoundedCornerShape(8.dp))
                     .clickable(onClick = { onNavigate(it) })
-                    .padding(top = 6.dp, bottom = 2.dp),
+                    .padding(10.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -132,14 +129,14 @@ private fun BottomNavigationView(
                     tint = if (selectedBottomNavigationItem == it) Color.Blue else LocalContentColor.current
                 )
 
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Text(
-                    text = stringResource(it.stringRes),
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        color = if (selectedBottomNavigationItem == it) Color.Blue else LocalContentColor.current
-                    ),
-                )
+//                Spacer(modifier = Modifier.height(2.dp))
+//
+//                Text(
+//                    text = stringResource(it.stringRes),
+//                    style = MaterialTheme.typography.titleSmall.copy(
+//                        color = if (selectedBottomNavigationItem == it) Color.Blue else LocalContentColor.current
+//                    ),
+//                )
             }
         }
     }

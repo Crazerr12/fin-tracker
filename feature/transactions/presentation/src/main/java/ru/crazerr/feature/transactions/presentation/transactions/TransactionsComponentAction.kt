@@ -4,12 +4,12 @@ import java.time.LocalDate
 
 sealed interface TransactionsComponentAction {
     data class GoToFilter(
-        val accountIds: IntArray,
-        val categoryIds: IntArray,
+        val accountIds: LongArray,
+        val categoryIds: LongArray,
         val startDate: LocalDate?,
         val endDate: LocalDate?,
         val isFilterEnabled: Boolean
     ) : TransactionsComponentAction
 
-    data class OpenTransactionEditor(val id: Int) : TransactionsComponentAction
+    data class OpenTransactionEditor(val id: Long) : TransactionsComponentAction
 }

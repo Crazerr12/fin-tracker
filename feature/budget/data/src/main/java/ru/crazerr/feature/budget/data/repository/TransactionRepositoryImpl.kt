@@ -7,7 +7,7 @@ import java.time.LocalDate
 internal class TransactionRepositoryImpl(
     private val transactionLocalDataSource: TransactionLocalDataSource,
 ) : TransactionRepository {
-    override suspend fun getCurrentAmount(categoryId: Int, date: LocalDate): Result<Long> =
+    override suspend fun getCurrentAmount(categoryId: Long, date: LocalDate): Result<Double> =
         transactionLocalDataSource.getAmountSpentByDateAndCategoryId(
             categoryId = categoryId,
             date = date,

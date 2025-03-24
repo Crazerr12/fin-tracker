@@ -6,5 +6,5 @@ import ru.crazerr.feature.account.domain.api.Account
 interface AccountRepository {
     suspend fun getAccounts(): Flow<Result<List<Account>>>
 
-    suspend fun deleteAccountById(id: Int): Result<Int>
+    suspend fun deleteAccountById(id: Long): Result<Long>
 }

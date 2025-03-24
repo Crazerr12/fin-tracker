@@ -8,8 +8,8 @@ import java.time.LocalDate
 
 interface TransactionRepository {
     fun getTransactions(
-        accountIds: IntArray,
-        categoryIds: IntArray,
+        accountIds: LongArray,
+        categoryIds: LongArray,
         transactionType: TransactionType,
         startDate: LocalDate?,
         endDate: LocalDate?,

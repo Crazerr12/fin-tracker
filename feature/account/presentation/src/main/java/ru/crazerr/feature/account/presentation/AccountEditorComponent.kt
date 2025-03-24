@@ -22,7 +22,7 @@ internal class AccountEditorComponentImpl(
     private val coroutineScope = componentCoroutineScope()
 
     init {
-        if (dependencies.args.accountId != -1) {
+        if (dependencies.args.accountId != -1L) {
             reduceState { copy(id = dependencies.args.accountId) }
         }
         getInitData()
@@ -84,7 +84,7 @@ internal class AccountEditorComponentImpl(
                 reduceState {
                     copy(
                         currencies = it,
-                        selectedCurrency = if (selectedCurrency.id == 0) it[0] else selectedCurrency
+                        selectedCurrency = if (selectedCurrency.id == 0L) it[0] else selectedCurrency
                     )
                 }
             },
@@ -96,7 +96,7 @@ internal class AccountEditorComponentImpl(
         coroutineScope.launch {
             val currenciesDeferred = async { getCurrencies() }
 
-            if (dependencies.args.accountId != -1) {
+            if (dependencies.args.accountId != -1L) {
                 reduceState { copy(isLoading = true) }
                 val accountDeferred = async { getAccount() }
                 accountDeferred.await()
@@ -111,12 +111,12 @@ internal class AccountEditorComponentImpl(
         validateUserInput {
             coroutineScope.launch {
                 reduceState { copy(buttonIsLoading = true) }
-                val result = if (dependencies.args.accountId != -1) {
+                val result = if (dependencies.args.accountId != -1L) {
                     dependencies.accountRepository.updateAccount(
                         account = Account(
                             id = dependencies.args.accountId,
                             name = state.value.name,
-                            amount = state.value.amount.toLong(),
+                            amount = state.value.amount.toDouble(),
                             iconId = "",
                             currency = state.value.selectedCurrency,
                         )
@@ -126,7 +126,7 @@ internal class AccountEditorComponentImpl(
                         account = Account(
                             id = 0,
                             name = state.value.name,
-                            amount = state.value.amount.toLong(),
+                            amount = state.value.amount.toDouble(),
                             iconId = "",
                             currency = state.value.selectedCurrency
                         )

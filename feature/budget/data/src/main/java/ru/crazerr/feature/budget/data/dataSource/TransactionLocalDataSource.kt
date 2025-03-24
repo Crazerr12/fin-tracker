@@ -6,7 +6,10 @@ import java.time.LocalDate
 internal class TransactionLocalDataSource(
     private val transactionsDao: TransactionsDao
 ) {
-    suspend fun getAmountSpentByDateAndCategoryId(categoryId: Int, date: LocalDate): Result<Long> =
+    suspend fun getAmountSpentByDateAndCategoryId(
+        categoryId: Long,
+        date: LocalDate
+    ): Result<Double> =
         runCatching {
             transactionsDao.getSpentAmountByDateAndCategory(
                 categoryId = categoryId,

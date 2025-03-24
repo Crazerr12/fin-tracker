@@ -11,6 +11,7 @@ import com.arkivanov.decompose.value.Value
 import kotlinx.serialization.Serializable
 import ru.crazerr.core.utils.snackbar.SnackbarManager
 import ru.crazerr.core.utils.snackbar.snackbarManager
+import ru.crazerr.feature.budgets.presentation.budgetsStory.BudgetsStoryComponent
 import ru.crazerr.feature.main.presentation.mainStory.MainStoryComponent
 import ru.crazerr.feature.transactions.presentation.transactionsStory.TransactionsStoryComponent
 
@@ -28,7 +29,7 @@ interface RootComponent {
         class MainStory(val component: MainStoryComponent) : Child
         class TransactionsStory(val component: TransactionsStoryComponent) : Child
         class AnalysisStory() : Child
-        class BudgetStory() : Child
+        class BudgetsStory(val component: BudgetsStoryComponent) : Child
         class ProfileStory() : Child
     }
 
@@ -44,7 +45,7 @@ interface RootComponent {
         data object AnalysisStoryConfig : Config
 
         @Serializable
-        data object BudgetStoryConfig : Config
+        data object BudgetsStoryConfig : Config
 
         @Serializable
         data object ProfileStoryConfig : Config
@@ -89,7 +90,7 @@ internal class RootComponentImpl(
             BottomNavigationItem.Main -> navigation.pushToFront(RootComponent.Config.MainStoryConfig)
             BottomNavigationItem.Transactions -> navigation.pushToFront(RootComponent.Config.TransactionsStoryConfig)
             BottomNavigationItem.Analysis -> navigation.pushToFront(RootComponent.Config.AnalysisStoryConfig)
-            BottomNavigationItem.Budget -> navigation.pushToFront(RootComponent.Config.BudgetStoryConfig)
+            BottomNavigationItem.Budget -> navigation.pushToFront(RootComponent.Config.BudgetsStoryConfig)
             BottomNavigationItem.Profile -> navigation.pushToFront(RootComponent.Config.ProfileStoryConfig)
         }
         _selectedBottomNavigationItem.value = item
@@ -100,7 +101,7 @@ internal class RootComponentImpl(
             is RootComponent.Child.MainStory,
             is RootComponent.Child.TransactionsStory,
             is RootComponent.Child.AnalysisStory,
-            is RootComponent.Child.BudgetStory,
+            is RootComponent.Child.BudgetsStory,
             is RootComponent.Child.ProfileStory -> true
 
             else -> false
@@ -114,7 +115,7 @@ internal class RootComponentImpl(
         return when (config) {
             RootComponent.Config.AnalysisStoryConfig -> createAnalysisStory(componentContext = componentContext)
             RootComponent.Config.AuthStoryConfig -> createAuthStory(componentContext = componentContext)
-            RootComponent.Config.BudgetStoryConfig -> createBudgetStory(componentContext = componentContext)
+            RootComponent.Config.BudgetsStoryConfig -> createBudgetsStory(componentContext = componentContext)
             RootComponent.Config.MainStoryConfig -> createMainStory(componentContext = componentContext)
             RootComponent.Config.ProfileStoryConfig -> createProfileStory(componentContext = componentContext)
             RootComponent.Config.TransactionsStoryConfig -> createTransactionsStory(componentContext = componentContext)
@@ -144,8 +145,12 @@ internal class RootComponentImpl(
     private fun createProfileStory(componentContext: ComponentContext): RootComponent.Child.ProfileStory =
         RootComponent.Child.ProfileStory()
 
-    private fun createBudgetStory(componentContext: ComponentContext): RootComponent.Child.BudgetStory =
-        RootComponent.Child.BudgetStory()
+    private fun createBudgetsStory(componentContext: ComponentContext): RootComponent.Child.BudgetsStory =
+        RootComponent.Child.BudgetsStory(
+            component = di.budgetsStoryComponentFactory.create(
+                componentContext = componentContext
+            )
+        )
 
     internal class FactoryImpl() : RootComponent.Factory {
         override fun create(componentContext: ComponentContext) =

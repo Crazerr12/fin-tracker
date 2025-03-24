@@ -17,16 +17,17 @@ import java.time.LocalDate
     ), ForeignKey(
         entity = RepeatBudgetEntity::class,
         parentColumns = arrayOf("id"),
-        childColumns = arrayOf("repeat_budget_id")
+        childColumns = arrayOf("repeat_budget_id"),
+        onDelete = ForeignKey.SET_NULL,
     )],
-    indices = [Index("category_id"), Index("repeat_budget_id")]
+    indices = [Index("repeat_budget_id"), Index("category_id", "date")]
 )
 data class BudgetEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "category_id") val categoryId: Int,
-    @ColumnInfo(name = "max_amount") val maxAmount: Long,
-    @ColumnInfo(name = "current_amount") val currentAmount: Long,
-    @ColumnInfo(name = "repeat_budget_id") val repeatBudgetId: Int?,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(name = "category_id") val categoryId: Long,
+    @ColumnInfo(name = "max_amount") val maxAmount: Double,
+    @ColumnInfo(name = "current_amount") val currentAmount: Double,
+    @ColumnInfo(name = "repeat_budget_id") val repeatBudgetId: Long?,
     val date: LocalDate,
     @ColumnInfo(name = "is_alarm") val isAlarm: Boolean,
     @ColumnInfo(name = "is_warning") val isWarning: Boolean,

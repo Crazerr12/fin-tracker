@@ -17,9 +17,9 @@ import ru.crazerr.core.database.icons.model.IconEntity
     indices = [Index("icon_id")]
 )
 data class CategoryEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val color: Long,
-    @ColumnInfo(name = "icon_id") val iconId: Int,
+    @ColumnInfo(name = "icon_id") val iconId: Long,
     @ColumnInfo(name = "is_template") val isTemplate: Boolean,
 )

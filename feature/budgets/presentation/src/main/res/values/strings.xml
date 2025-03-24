@@ -1,0 +1,12 @@
+<resources>
+    <string name="budgets_add_new_budget_content_description">Добавить новый бюджет</string>
+
+    <string name="budgets_previous_month_content_description">Предыдущий месяц</string>
+    <string name="budgets_next_month_content_description">Следующий месяц</string>
+
+    <string name="budgets_total_budget_title">Общий бюджет</string>
+    <string name="budgets_spent_money">Потрачено %1$s / %2$s</string>
+
+    <string name="budgets_empty">У вас пока нет бюджетов на этот месяц</string>
+    <string name="budgets_category">Категории бюджетов</string>
+</resources>

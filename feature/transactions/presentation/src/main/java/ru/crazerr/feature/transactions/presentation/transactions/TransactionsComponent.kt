@@ -61,11 +61,11 @@ class TransactionsComponent(
             val categoriesDeferred = async { dependencies.categoryRepository.getCategories() }
 
             accountsDeferred.await().fold(
-                onSuccess = { reduceState { copy(accountIds = it.map { it.id }.toIntArray()) } },
+                onSuccess = { reduceState { copy(accountIds = it.map { it.id }.toLongArray()) } },
                 onFailure = { snackbarManager.showSnackbar(message = it.localizedMessage ?: "") }
             )
             categoriesDeferred.await().fold(
-                onSuccess = { reduceState { copy(categoryIds = it.map { it.id }.toIntArray()) } },
+                onSuccess = { reduceState { copy(categoryIds = it.map { it.id }.toLongArray()) } },
                 onFailure = { snackbarManager.showSnackbar(message = it.localizedMessage ?: "") }
             )
 
@@ -110,8 +110,8 @@ class TransactionsComponent(
 
     sealed interface Input {
         data class Filter(
-            val accountIds: IntArray,
-            val categoryIds: IntArray,
+            val accountIds: LongArray,
+            val categoryIds: LongArray,
             val startDate: LocalDate?,
             val endDate: LocalDate?,
             val isFilterEnabled: Boolean,

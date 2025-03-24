@@ -17,11 +17,11 @@ interface AccountsDao : BaseDao<AccountEntity> {
 
     @Transaction
     @Query("SELECT * FROM accounts WHERE id = :id")
-    suspend fun getAccountById(id: Int): AccountWithCurrency
+    suspend fun getAccountById(id: Long): AccountWithCurrency
 
     @Query("DELETE FROM accounts WHERE id = :id")
-    suspend fun deleteAccountById(id: Int)
+    suspend fun deleteAccountById(id: Long)
 
     @Query("UPDATE accounts SET amount = amount + :transactionAmount WHERE id = :id ")
-    suspend fun updateAccountBalance(id: Int, transactionAmount: Long): Int
+    suspend fun updateAccountBalance(id: Long, transactionAmount: Double): Int
 }

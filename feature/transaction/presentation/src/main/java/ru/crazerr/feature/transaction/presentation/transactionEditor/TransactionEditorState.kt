@@ -8,10 +8,11 @@ import ru.crazerr.feature.transaction.domain.api.TransactionType
 import java.time.LocalDate
 
 data class TransactionEditorState(
-    val id: Int,
+    val id: Long,
     val transactionType: TransactionType,
     val accounts: List<Account>,
     val selectedAccount: Account,
+    val selectedAccountError: String,
     val accountsDropdownIsExpanded: Boolean,
     val amount: String,
     val amountError: String,
@@ -30,10 +31,11 @@ internal val InitialTransactionEditorState = TransactionEditorState(
     selectedAccount = Account(
         id = -1,
         name = "",
-        amount = 0,
+        amount = 0.0,
         iconId = "",
-        currency = Currency(id = -1, name = "", symbol = "", code = "")
+        currency = Currency(id = -1, name = "", symbol = "₽", code = "")
     ),
+    selectedAccountError = "",
     amount = "",
     amountError = "",
     categories = emptyList(),

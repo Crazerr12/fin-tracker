@@ -1,7 +1,7 @@
 package ru.crazerr.feature.domain.api
 
 data class Category(
-    val id: Int,
+    val id: Long,
     val name: String,
     val color: Long,
     val iconModel: IconModel,
@@ -9,6 +9,6 @@ data class Category(
 )
 
 data class IconModel(
-    val id: Int,
+    val id: Long,
     val icon: ByteArray,
 )

@@ -16,10 +16,11 @@ fun BudgetWithCategory.toBudget() = Budget(
     date = budgetEntity.date,
     isAlarm = budgetEntity.isAlarm,
     isWarning = budgetEntity.isWarning,
+    isRegular = budgetEntity.repeatBudgetId != null,
 )
 
 fun Budget.toBudgetEntity() = BudgetEntity(
-    id = id,
+    id = if (id == -1L) 0 else id,
     categoryId = category.id,
     maxAmount = maxAmount,
     currentAmount = currentAmount,
@@ -31,7 +32,7 @@ fun Budget.toBudgetEntity() = BudgetEntity(
 
 fun Budget.toRepeatBudgetEntity() =
     RepeatBudgetEntity(
-        id = id,
+        id = repeatBudgetId ?: 0,
         categoryId = category.id,
         maxAmount = maxAmount,
         isAlarm = isAlarm,

@@ -1,4 +1,4 @@
-package ru.crazerr.feature.transaction.domain
+package ru.crazerr.feature.transaction.domain.repository
 
 import ru.crazerr.feature.domain.api.Category
 

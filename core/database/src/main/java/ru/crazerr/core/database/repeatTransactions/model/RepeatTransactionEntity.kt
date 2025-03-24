@@ -28,12 +28,12 @@ import java.time.LocalDate
     indices = [Index("category_id", "account_id")]
 )
 data class RepeatTransactionEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    @ColumnInfo(name = "category_id") val categoryId: Int,
-    val amount: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long,
+    @ColumnInfo(name = "category_id") val categoryId: Long,
+    val amount: Double,
     val type: Boolean,
     @ColumnInfo(name = "completion_date") val completionDate: LocalDate,
-    @ColumnInfo(name = "account_id") val accountId: Int,
+    @ColumnInfo(name = "account_id") val accountId: Long,
     @ColumnInfo(name = "repeat_type") val repeatType: Int,
     @ColumnInfo(name = "repeat_interval") val repeatInterval: Int,
     @ColumnInfo(name = "repeat_units") val repeatUnits: List<Int>,

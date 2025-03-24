@@ -32,9 +32,9 @@ class AmountVisualTransformation(private val sign: Char) : VisualTransformation 
         return TransformedText(
             text = AnnotatedString(result),
             offsetMapping = AmountOffsetMapping(
-                wholeLength = formattedWhole.length,
+                formattedWholeLength = formattedWhole.length,
                 decimalLength = (if (text.text.contains('.')) 1 else 0) + decimalPart.length,
-                realLength = wholePart.length,
+                wholeLength = wholePart.length,
             )
         )
     }
@@ -54,23 +54,26 @@ class AmountVisualTransformation(private val sign: Char) : VisualTransformation 
     }
 
     private class AmountOffsetMapping(
+        private val formattedWholeLength: Int,
         private val wholeLength: Int,
-        private val realLength: Int,
         private val decimalLength: Int,
     ) : OffsetMapping {
         override fun originalToTransformed(offset: Int): Int {
-            if (offset >= realLength && decimalLength != 0) {
-                return offset + (realLength - 1) / 3
+            if (offset >= wholeLength && decimalLength != 0) {
+                return offset + (wholeLength - 1) / 3
             }
 
-            return offset + ((offset - 1) / 3)
+            val k = wholeLength - 1 - offset
+            val spaces = formattedWholeLength - wholeLength
+
+            return offset + (spaces - k / 3)
         }
 
         override fun transformedToOriginal(offset: Int): Int {
-            val spaceCount = (realLength - 1) / 3
+            val spaceCount = formattedWholeLength - wholeLength
 
-            return if (offset > wholeLength) {
-                (offset - spaceCount).coerceAtMost(realLength + decimalLength)
+            return if (offset > formattedWholeLength) {
+                (offset - spaceCount).coerceAtMost(wholeLength + decimalLength)
             } else {
                 (offset - (offset / 4)).coerceAtLeast(0)
             }

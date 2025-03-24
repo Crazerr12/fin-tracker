@@ -14,7 +14,12 @@
     <string name="error_happens">Произошла ошибка</string>
     <string name="retry_button">Повторить</string>
 
+    <string name="empty_field_error">Поле не должно быть пустым</string>
+
     <string name="tomorrow">Завтра</string>
     <string name="today">Сегодня</string>
     <string name="yesterday">Вчера</string>
+
+    <string name="budget_channel_name">Бюджеты</string>
+    <string name="budget_channel_description">Уведомления о заполнении бюджета и приближении к лимиту расходов</string>
 </resources>

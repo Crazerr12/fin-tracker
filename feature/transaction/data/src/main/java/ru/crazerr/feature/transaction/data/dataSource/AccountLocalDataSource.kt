@@ -6,7 +6,7 @@ import ru.crazerr.core.database.accounts.dao.AccountsDao
 import ru.crazerr.feature.account.data.api.toAccount
 import ru.crazerr.feature.account.domain.api.Account
 
-internal class LocalAccountDataSource(
+internal class AccountLocalDataSource(
     private val accountsDao: AccountsDao
 ) {
     fun getAccounts(): Flow<Result<List<Account>>> = accountsDao.getAllAccounts().map { entities ->

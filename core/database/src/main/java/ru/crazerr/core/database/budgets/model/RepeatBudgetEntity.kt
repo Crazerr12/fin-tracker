@@ -17,9 +17,9 @@ import ru.crazerr.core.database.categories.model.CategoryEntity
     indices = [Index("category_id")]
 )
 data class RepeatBudgetEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "category_id") val categoryId: Int,
-    @ColumnInfo(name = "max_amount") val maxAmount: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(name = "category_id") val categoryId: Long,
+    @ColumnInfo(name = "max_amount") val maxAmount: Double,
     @ColumnInfo(name = "is_alarm") val isAlarm: Boolean,
     @ColumnInfo(name = "is_warning") val isWarning: Boolean,
 )

@@ -11,10 +11,10 @@ sealed interface TransactionsFilterViewAction {
     data object ResetAllFilters : TransactionsFilterViewAction
     data class SelectFilterType(val filterType: FilterType) : TransactionsFilterViewAction
 
-    data class ManageCategory(val id: Int) : TransactionsFilterViewAction
+    data class ManageCategory(val id: Long) : TransactionsFilterViewAction
     data object ManageAllCategories : TransactionsFilterViewAction
 
-    data class ManageAccount(val id: Int) : TransactionsFilterViewAction
+    data class ManageAccount(val id: Long) : TransactionsFilterViewAction
     data object ManageAllAccounts : TransactionsFilterViewAction
 
     data object ManageStartDateDialog : TransactionsFilterViewAction

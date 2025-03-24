@@ -1,8 +1,8 @@
 package ru.crazerr.feature.main.domain.models
 
 data class IncomeAndExpenses(
-    val currentIncome: Long,
-    val lastMonthIncome: Long,
-    val currentExpenses: Long,
-    val lastMonthExpenses: Long,
+    val currentIncome: Double,
+    val lastMonthIncome: Double,
+    val currentExpenses: Double,
+    val lastMonthExpenses: Double,
 )

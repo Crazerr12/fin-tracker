@@ -27,13 +27,13 @@ internal class RepeatBudgetWorker(
             val lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH)
 
             if (now.get(Calendar.DAY_OF_MONTH) == lastDay) {
-                val repeatBudgetId = inputData.getInt("repeatBudgetId", -1)
-                val maxAmount = inputData.getLong("maxAmount", 0)
-                val categoryId = inputData.getInt("categoryId", -1)
+                val repeatBudgetId = inputData.getLong("repeatBudgetId", -1)
+                val maxAmount = inputData.getDouble("maxAmount", 0.0)
+                val categoryId = inputData.getLong("categoryId", -1)
                 val isAlarm = inputData.getBoolean("isAlarm", false)
                 val isWarning = inputData.getBoolean("isWarning", false)
 
-                if (repeatBudgetId == -1 || categoryId == -1) {
+                if (repeatBudgetId == -1L || categoryId == -1L) {
                     return Result.failure()
                 }
 
@@ -45,7 +45,7 @@ internal class RepeatBudgetWorker(
                             maxAmount = maxAmount,
                             isAlarm = isAlarm,
                             isWarning = isWarning,
-                            currentAmount = 0L,
+                            currentAmount = 0.0,
                             date = LocalDate.now().plusDays(1)
                         )
                     )

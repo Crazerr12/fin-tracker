@@ -1,19 +1,24 @@
 package ru.crazerr.feature.transactions.data.dataSource
 
+import androidx.room.InvalidationTracker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.crazerr.core.database.transactions.dao.TransactionsDao
+import ru.crazerr.core.database.AppDatabase
 import ru.crazerr.feature.transaction.data.api.toTransaction
 import ru.crazerr.feature.transaction.domain.api.Transaction
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 import java.time.LocalDate
 
 internal class LocalTransactionsDataSource(
-    private val transactionsDao: TransactionsDao,
+    appDatabase: AppDatabase,
 ) {
+    private val transactionsDao = appDatabase.transactionsDao()
+
+    private val invalidationTracker = appDatabase.invalidationTracker
+
     fun getTransactionsByFilter(
-        categoryIds: IntArray,
-        accountIds: IntArray,
+        categoryIds: LongArray,
+        accountIds: LongArray,
         dates: List<String>,
         transactionType: TransactionType,
     ): Result<Flow<List<Transaction>>> = try {
@@ -45,5 +50,13 @@ internal class LocalTransactionsDataSource(
         Result.success(dates)
     } catch (ex: Exception) {
         Result.failure(ex)
+    }
+
+    fun addObserver(observer: InvalidationTracker.Observer) {
+        invalidationTracker.addObserver(observer = observer)
+    }
+
+    fun removeObserver(observer: InvalidationTracker.Observer) {
+        invalidationTracker.removeObserver(observer = observer)
     }
 }

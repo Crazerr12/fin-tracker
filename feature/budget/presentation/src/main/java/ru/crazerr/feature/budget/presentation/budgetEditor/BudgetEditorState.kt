@@ -5,12 +5,13 @@ import ru.crazerr.feature.domain.api.IconModel
 import java.time.LocalDate
 
 data class BudgetEditorState(
-    val id: Int,
-    val repeatBudgetId: Int?,
+    val id: Long,
+    val repeatBudgetId: Long?,
     val categories: List<Category>,
     val selectedCategory: Category,
+    val selectedCategoryError: String,
     val categoriesDropdownIsExpand: Boolean,
-    val currentAmount: Long,
+    val currentAmount: Double,
     val maxAmount: String,
     val maxAmountError: String,
     val isRegular: Boolean,
@@ -31,13 +32,14 @@ internal val InitialBudgetEditorState = BudgetEditorState(
         iconModel = IconModel(id = -1, icon = ByteArray(0)),
         isTemplate = true,
     ),
+    selectedCategoryError = "",
     categoriesDropdownIsExpand = false,
-    currentAmount = 0,
+    currentAmount = 0.0,
     maxAmount = "",
     maxAmountError = "",
     isRegular = false,
     isAlarm = false,
-    isWarning = true,
+    isWarning = false,
     date = LocalDate.now(),
     buttonIsLoading = false,
 )

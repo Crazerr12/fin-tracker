@@ -83,7 +83,7 @@ private fun AccountEditorContentView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
+                    .padding(16.dp),
             ) {
                 AccountEditorCard(state = state, handleViewAction = handleViewAction)
 
@@ -127,7 +127,7 @@ private fun AccountEditorTopBar(
         title = {
             Text(
                 text = stringResource(
-                    if (state.id != -1) R.string.account_editor_top_bar_edit_title
+                    if (state.id != -1L) R.string.account_editor_top_bar_edit_title
                     else R.string.account_editor_top_bar_create_title
                 )
             )
@@ -152,8 +152,7 @@ private fun AccountEditorCard(
 ) {
     ElevatedCard(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
+            .fillMaxWidth(),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp)
     ) {
         Column(
