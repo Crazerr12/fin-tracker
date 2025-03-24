@@ -22,8 +22,8 @@
     <string name="transactions_filter_accounts_empty">У вас нет ни одного счёта</string>
     <string name="transactions_filter_date">Дата</string>
 
-    <string name="transactions_filter_start_date_hint">Начальная дата</string>
-    <string name="transactions_filter_end_date_hint">Конечная дата</string>
+    <string name="transactions_filter_start_date_hint">Дата начала</string>
+    <string name="transactions_filter_end_date_hint">Дата окончания</string>
     <string name="transactions_filter_clear_date_content_description">Очистить дату</string>
 
     <string name="transactions_filter_confirm_button">Подтвердить</string>

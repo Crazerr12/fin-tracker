@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="bottom_item_main_title">Main</string>
-    <string name="bottom_item_transactions_titile">Transactions</string>
+    <string name="bottom_item_transactions_title">Transactions</string>
     <string name="bottom_item_analysis_title">Analysis</string>
     <string name="bottom_item_budget_title">Budget</string>
     <string name="bottom_item_profile_title">Profile</string>

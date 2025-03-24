@@ -16,6 +16,8 @@ import ru.crazerr.feature.transaction.domain.api.Transaction
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 import ru.crazerr.feature.transaction.presentation.R
 import java.time.LocalDate
+import kotlin.math.abs
+import ru.crazerr.core.utils.R as utilsR
 
 class TransactionEditorComponent(
     componentContext: ComponentContext,
@@ -27,7 +29,7 @@ class TransactionEditorComponent(
     private val snackbarManager = snackbarManager()
 
     init {
-        if (dependencies.args.id != -1) {
+        if (dependencies.args.id != -1L) {
             getTransaction()
         }
         getAccountsAndCategories()
@@ -80,7 +82,13 @@ class TransactionEditorComponent(
     }
 
     private fun onSelectAccount(account: Account) {
-        reduceState { copy(selectedAccount = account, accountsDropdownIsExpanded = false) }
+        reduceState {
+            copy(
+                selectedAccount = account,
+                accountsDropdownIsExpanded = false,
+                selectedAccountError = "",
+            )
+        }
     }
 
     private fun onSelectCategory(category: Category) {
@@ -100,12 +108,12 @@ class TransactionEditorComponent(
             coroutineScope.launch {
                 reduceState { copy(buttonIsLoading = true) }
 
-                val result = if (state.value.id == -1) {
+                val result = if (state.value.id == -1L) {
                     dependencies.transactionRepository.createTransaction(
                         transaction = Transaction(
                             id = state.value.id,
                             category = state.value.selectedCategory,
-                            amount = state.value.amount.toLong(),
+                            amount = abs(state.value.amount.toDouble()),
                             type = state.value.transactionType,
                             date = state.value.date,
                             account = state.value.selectedAccount
@@ -116,7 +124,7 @@ class TransactionEditorComponent(
                         transaction = Transaction(
                             id = state.value.id,
                             category = state.value.selectedCategory,
-                            amount = state.value.amount.toLong(),
+                            amount = abs(state.value.amount.toDouble()),
                             type = state.value.transactionType,
                             date = state.value.date,
                             account = state.value.selectedAccount,
@@ -125,7 +133,27 @@ class TransactionEditorComponent(
                 }
 
                 result.fold(
-                    onSuccess = { onAction(TransactionEditorComponentAction.SavedClick(it)) },
+                    onSuccess = {
+                        if (it.second.percentage > 1.0 && it.second.isAlarm) {
+                            dependencies.notificationSender.sendNotification(
+                                title = dependencies.resourceManager.getString(
+                                    R.string.transaction_editor_budget_exceeded_title,
+                                    it.first.category.name,
+                                ),
+                                textContent = dependencies.resourceManager.getString(R.string.transaction_editor_budget_exceeded_description)
+                            )
+                        } else if (it.second.percentage >= 0.7 && it.second.isWarning) {
+                            dependencies.notificationSender.sendNotification(
+                                title = dependencies.resourceManager.getString(
+                                    R.string.transaction_editor_budget_is_almost_exhausted_title,
+                                    it.first.category.name,
+                                ),
+                                textContent = dependencies.resourceManager.getString(R.string.transaction_editor_budget_is_almost_exhausted_description)
+                            )
+                        }
+
+                        onAction(TransactionEditorComponentAction.SavedClick(it.first))
+                    },
                     onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") }
                 )
 
@@ -191,6 +219,11 @@ class TransactionEditorComponent(
             isValid = false
         }
 
+        if (state.value.selectedAccount.id == -1L) {
+            reduceState { copy(selectedAccountError = dependencies.resourceManager.getString(utilsR.string.empty_field_error)) }
+            isValid = false
+        }
+
         if (isValid) {
             block()
         }
@@ -203,14 +236,16 @@ class TransactionEditorComponent(
                     is Input.AccountInput -> reduceState {
                         copy(
                             selectedAccount = it.account,
-                            accounts = accounts + it.account
+                            accounts = accounts + it.account,
+                            accountsDropdownIsExpanded = false,
                         )
                     }
 
                     is Input.CategoryInput -> reduceState {
                         copy(
                             selectedCategory = it.category,
-                            categories = categories + it.category
+                            categories = categories + it.category,
+                            categoriesDropdownIsExpanded = false,
                         )
                     }
                 }

@@ -12,12 +12,13 @@ fun TransactionWithAccountAndCategory.toTransaction() = Transaction(
     id = transaction.id,
     category = category.toCategory(),
     amount = transaction.amount,
-    type = TransactionType.entries.first { it.id == transaction.type },
+    type = TransactionType.fromId(transaction.type)!!,
     date = transaction.date,
     account = accountWithCurrency.toAccount(),
 )
 
 fun Transaction.toTransactionEntity() = TransactionEntity(
+    id = if (id == -1L) 0 else id,
     categoryId = this.category.id,
     amount = amount,
     type = type.id,

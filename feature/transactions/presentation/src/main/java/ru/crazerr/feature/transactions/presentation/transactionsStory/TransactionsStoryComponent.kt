@@ -141,8 +141,8 @@ class TransactionsStoryComponent(
 
         @Serializable
         data class TransactionsFilter(
-            val accountIds: IntArray,
-            val categoryIds: IntArray,
+            val accountIds: LongArray,
+            val categoryIds: LongArray,
             val isFilterEnabled: Boolean,
             @Serializable(with = LocalDateSerializer::class)
             val startDate: LocalDate?,
@@ -151,7 +151,7 @@ class TransactionsStoryComponent(
         ) : Config
 
         @Serializable
-        data class TransactionEditorStory(val transactionId: Int) : Config
+        data class TransactionEditorStory(val transactionId: Long) : Config
     }
 
     sealed interface Child {

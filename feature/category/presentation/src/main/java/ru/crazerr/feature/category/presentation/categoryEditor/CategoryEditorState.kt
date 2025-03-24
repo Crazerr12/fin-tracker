@@ -4,7 +4,7 @@ import ru.crazerr.feature.domain.api.IconModel
 
 
 data class CategoryEditorState(
-    val id: Int,
+    val id: Long,
     val name: String,
     val nameError: String,
     val selectedIconModel: IconModel,

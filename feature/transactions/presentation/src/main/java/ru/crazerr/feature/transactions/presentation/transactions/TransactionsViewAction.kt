@@ -8,5 +8,5 @@ sealed interface TransactionsViewAction {
     data class SelectTransactionsTypeTab(val transactionType: TransactionType) :
         TransactionsViewAction
 
-    data class OpenTransactionEditor(val id: Int = -1) : TransactionsViewAction
+    data class OpenTransactionEditor(val id: Long = -1) : TransactionsViewAction
 }

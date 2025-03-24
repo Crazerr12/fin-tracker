@@ -12,7 +12,7 @@ internal class AccountLocalDataSource(
         try {
             val idList = accountsDao.insert(account.toAccountEntity())
 
-            Result.success(account.copy(id = idList[0].toInt()))
+            Result.success(account.copy(id = idList[0]))
         } catch (ex: Exception) {
             Result.failure(ex)
         }
@@ -27,7 +27,7 @@ internal class AccountLocalDataSource(
             Result.failure(ex)
         }
 
-    suspend fun getAccountById(id: Int): Result<Account> =
+    suspend fun getAccountById(id: Long): Result<Account> =
         try {
             val accountEntity = accountsDao.getAccountById(id = id)
 

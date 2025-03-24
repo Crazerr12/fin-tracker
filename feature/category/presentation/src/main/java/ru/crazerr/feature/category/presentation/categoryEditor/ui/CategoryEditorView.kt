@@ -150,7 +150,7 @@ private fun CategoryEditorTopBar(
         title = {
             Text(
                 text = stringResource(
-                    if (state.id != -1) R.string.category_editor_top_bar_title_update
+                    if (state.id != -1L) R.string.category_editor_top_bar_title_update
                     else R.string.category_editor_top_bar_title_create
                 ),
                 style = MaterialTheme.typography.titleLarge

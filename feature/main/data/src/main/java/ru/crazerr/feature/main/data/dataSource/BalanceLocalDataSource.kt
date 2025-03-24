@@ -6,21 +6,22 @@ import ru.crazerr.core.database.transactions.dao.TransactionsDao
 import ru.crazerr.feature.main.domain.models.IncomeAndExpenses
 import java.time.LocalDateTime
 
-internal class LocalBalanceDataSource(
+internal class BalanceLocalDataSource(
     private val transactionsDao: TransactionsDao,
 ) {
     fun getIncomeAndExpenses(): Flow<Result<IncomeAndExpenses>> {
         val date = LocalDateTime.now()
-        var lastIncome = 0L
-        var currentIncome = 0L
-        var lastExpenses = 0L
-        var currentExpenses = 0L
 
         return transactionsDao.getTransactionsByPeriod(
             date.minusMonths(1).withDayOfMonth(1).toString(),
             date.plusMonths(1).withDayOfMonth(1).minusDays(1).toString()
         ).map { entities ->
             try {
+                var lastIncome = 0.0
+                var currentIncome = 0.0
+                var lastExpenses = 0.0
+                var currentExpenses = 0.0
+
                 for (transaction in entities) {
                     when {
                         transaction.date.month == date.month && transaction.type == 0 -> {

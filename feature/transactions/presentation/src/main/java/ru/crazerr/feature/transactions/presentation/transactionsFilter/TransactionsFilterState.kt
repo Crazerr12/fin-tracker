@@ -8,8 +8,8 @@ import java.time.LocalDate
 data class TransactionsFilterState(
     val accounts: List<Account>,
     val categories: List<Category>,
-    val selectedAccountIds: List<Int>,
-    val selectedCategoryIds: List<Int>,
+    val selectedAccountIds: List<Long>,
+    val selectedCategoryIds: List<Long>,
     val isFilterEnabled: Boolean,
     val startDate: LocalDate?,
     val startDateDialogIsOpen: Boolean,

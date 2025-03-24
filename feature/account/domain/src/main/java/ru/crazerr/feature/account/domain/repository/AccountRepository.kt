@@ -7,5 +7,5 @@ interface AccountRepository {
 
     suspend fun updateAccount(account: Account): Result<Account>
 
-    suspend fun getAccountById(id: Int): Result<Account>
+    suspend fun getAccountById(id: Long): Result<Account>
 }

@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import ru.crazerr.conventionplugins.base.implementation
 import ru.crazerr.conventionplugins.base.libs
 
-class PresentationPlugin: Plugin<Project> {
+class PresentationPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
@@ -21,6 +21,7 @@ class PresentationPlugin: Plugin<Project> {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.androidx.appcompat)
                 implementation(libs.material)
+                implementation(libs.androidx.activity.compose)
                 implementation(platform(libs.androidx.compose.bom))
                 implementation(libs.androidx.ui)
                 implementation(libs.androidx.ui.graphics)

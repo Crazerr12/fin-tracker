@@ -3,6 +3,7 @@ package ru.crazerr.feature.transactions.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.room.InvalidationTracker
 import kotlinx.coroutines.flow.Flow
 import ru.crazerr.feature.transaction.domain.api.Transaction
 import ru.crazerr.feature.transaction.domain.api.TransactionType
@@ -14,9 +15,21 @@ import java.time.LocalDate
 internal class TransactionRepositoryImpl(
     private val localTransactionsDataSource: LocalTransactionsDataSource,
 ) : TransactionRepository {
+
+    private var transactionsPagingSource: TransactionsPagingSource? = null
+
+    init {
+        localTransactionsDataSource.addObserver(observer = object :
+            InvalidationTracker.Observer("transactions") {
+            override fun onInvalidated(tables: Set<String>) {
+                transactionsPagingSource?.invalidate()
+            }
+        })
+    }
+
     override fun getTransactions(
-        accountIds: IntArray,
-        categoryIds: IntArray,
+        accountIds: LongArray,
+        categoryIds: LongArray,
         transactionType: TransactionType,
         startDate: LocalDate?,
         endDate: LocalDate?,
@@ -31,7 +44,7 @@ internal class TransactionRepositoryImpl(
                     startDate = startDate,
                     endDate = endDate,
                     localTransactionsDataSource = localTransactionsDataSource
-                )
+                ).also { transactionsPagingSource = it }
             }
         ).flow
     }

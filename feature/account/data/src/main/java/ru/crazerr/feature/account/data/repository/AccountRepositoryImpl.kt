@@ -13,6 +13,6 @@ internal class AccountRepositoryImpl(
     override suspend fun updateAccount(account: Account): Result<Account> =
         accountLocalDataSource.updateAccount(account = account)
 
-    override suspend fun getAccountById(id: Int): Result<Account> =
+    override suspend fun getAccountById(id: Long): Result<Account> =
         accountLocalDataSource.getAccountById(id = id)
 }

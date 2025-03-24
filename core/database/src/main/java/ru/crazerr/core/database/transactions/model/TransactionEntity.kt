@@ -28,10 +28,10 @@ import java.time.LocalDate
     ]
 )
 data class TransactionEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "category_id", index = true) val categoryId: Int,
-    val amount: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(name = "category_id", index = true) val categoryId: Long,
+    val amount: Double,
     val type: Int,
     val date: LocalDate,
-    @ColumnInfo(name = "account_id", index = true) val accountId: Int,
+    @ColumnInfo(name = "account_id", index = true) val accountId: Long,
 )

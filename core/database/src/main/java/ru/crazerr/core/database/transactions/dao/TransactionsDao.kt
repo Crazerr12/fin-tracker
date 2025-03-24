@@ -16,7 +16,7 @@ interface TransactionsDao : BaseDao<TransactionEntity> {
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE id = :id")
-    suspend fun getTransactionById(id: Int): TransactionWithAccountAndCategory
+    suspend fun getTransactionById(id: Long): TransactionWithAccountAndCategory
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE date >= :startDate AND date <= :endDate")
@@ -37,8 +37,8 @@ interface TransactionsDao : BaseDao<TransactionEntity> {
     """
     )
     fun getTransactionsByFilters(
-        accountIds: IntArray,
-        categoryIds: IntArray,
+        accountIds: LongArray,
+        categoryIds: LongArray,
         transactionType: Int,
         dates: List<String>,
     ): Flow<List<TransactionWithAccountAndCategory>>
@@ -69,5 +69,5 @@ interface TransactionsDao : BaseDao<TransactionEntity> {
         AND strftime('%Y', date) = strftime('%Y', :date)
     """
     )
-    suspend fun getSpentAmountByDateAndCategory(categoryId: Int, date: String): Long
+    suspend fun getSpentAmountByDateAndCategory(categoryId: Long, date: String): Double
 }

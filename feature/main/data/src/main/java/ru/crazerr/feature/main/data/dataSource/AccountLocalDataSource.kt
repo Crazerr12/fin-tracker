@@ -6,10 +6,10 @@ import ru.crazerr.core.database.accounts.dao.AccountsDao
 import ru.crazerr.feature.account.data.api.toAccount
 import ru.crazerr.feature.account.domain.api.Account
 
-internal class LocalAccountsDataSource(
+internal class AccountLocalDataSource(
     private val accountsDao: AccountsDao,
 ) {
-    suspend fun deleteAccountById(id: Int): Result<Int> = try {
+    suspend fun deleteAccountById(id: Long): Result<Long> = try {
         accountsDao.deleteAccountById(id = id)
 
         Result.success(id)

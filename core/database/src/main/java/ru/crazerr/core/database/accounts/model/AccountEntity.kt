@@ -19,9 +19,9 @@ import ru.crazerr.core.database.currencies.model.CurrencyEntity
     indices = [Index("currency_id")]
 )
 data class AccountEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
-    val amount: Long,
+    val amount: Double,
     @ColumnInfo(name = "icon_id") val iconId: String,
-    @ColumnInfo(name = "currency_id") val currencyId: Int,
+    @ColumnInfo(name = "currency_id") val currencyId: Long,
 )

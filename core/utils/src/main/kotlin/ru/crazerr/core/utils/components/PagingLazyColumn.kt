@@ -66,3 +66,48 @@ fun PagingLazyColumn(
         }
     }
 }
+
+
+@Composable
+fun LazyListScope.PagingLazyColumnContent(
+    isEmpty: Boolean,
+    loadStates: CombinedLoadStates,
+    onRetry: () -> Unit,
+    onRefresh: () -> Unit,
+    initialLoading: @Composable () -> Unit = { LoadingView() },
+    initialError: @Composable (String, () -> Unit) -> Unit = { message, onRefresh ->
+        ErrorView(
+            message = message,
+            onRetry = onRefresh
+        )
+    },
+    appendLoading: @Composable () -> Unit = { LoadingView() },
+    appendError: @Composable (String, () -> Unit) -> Unit = { message, onRetry ->
+        ErrorView(message = message, onRetry = onRetry)
+    },
+    empty: @Composable () -> Unit,
+    listContent: LazyListScope.() -> Unit,
+) {
+    val loadStateAppend = loadStates.append
+    val loadStateRefresh = loadStates.refresh
+
+    when {
+        loadStateRefresh is LoadState.Loading -> initialLoading()
+        loadStateRefresh is LoadState.Error -> initialError(
+            loadStateRefresh.error.localizedMessage ?: "", onRefresh
+        )
+
+        loadStateRefresh is LoadState.NotLoading && isEmpty -> empty()
+        loadStateRefresh is LoadState.NotLoading -> {
+            listContent()
+
+            item {
+                if (loadStateAppend is LoadState.Loading) {
+                    appendLoading()
+                } else if (loadStateAppend is LoadState.Error) {
+                    appendError(loadStateAppend.error.localizedMessage ?: "", onRetry)
+                }
+            }
+        }
+    }
+}

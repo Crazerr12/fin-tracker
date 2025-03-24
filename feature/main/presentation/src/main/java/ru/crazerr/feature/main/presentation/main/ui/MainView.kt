@@ -133,7 +133,11 @@ private fun MainViewContent(
 }
 
 @Composable
-private fun MainViewHeader(modifier: Modifier = Modifier, currentAmount: Long, currencySign: Char) {
+private fun MainViewHeader(
+    modifier: Modifier = Modifier,
+    currentAmount: Double,
+    currencySign: Char
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -183,15 +187,15 @@ private fun IncomeAndExpensesRow(modifier: Modifier = Modifier, state: MainState
 private fun BalanceCard(
     modifier: Modifier = Modifier,
     title: String,
-    currentBalance: Long,
-    lastMonthBalance: Long,
+    currentBalance: Double,
+    lastMonthBalance: Double,
     color: Color,
     currencySign: Char,
 ) {
-    val percentage = if (lastMonthBalance != 0L) {
+    val percentage = if (lastMonthBalance != 0.0) {
         (currentBalance - lastMonthBalance) / lastMonthBalance * 100
     } else {
-        0
+        0.0
     }
 
     Card(
@@ -213,9 +217,9 @@ private fun BalanceCard(
                 style = MaterialTheme.typography.titleMedium.copy(color = color)
             )
 
-            if (percentage != 0L) {
+            if (percentage != 0.0) {
                 Text(
-                    text = "${if (percentage > 0) '+' else '-'}$percentage%",
+                    text = "${if (percentage > 0.0) '+' else '-'}$percentage%",
                     style = MaterialTheme.typography.bodyLarge.copy(if (percentage > 0) Color.Green else Color.Red)
                 )
             }

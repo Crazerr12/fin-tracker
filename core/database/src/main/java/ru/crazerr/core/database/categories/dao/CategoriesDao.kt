@@ -12,5 +12,5 @@ interface CategoriesDao : BaseDao<CategoryEntity> {
     suspend fun getAllCategories(): List<CategoryWithIcon>
 
     @Query("SELECT * FROM categories WHERE id = :id")
-    suspend fun getCategoryById(id: Int): CategoryWithIcon
+    suspend fun getCategoryById(id: Long): CategoryWithIcon
 }

@@ -19,7 +19,7 @@ class CategoryEditorComponent(
     private val snackbarManager = snackbarManager()
 
     init {
-        if (dependencies.args.id != -1) {
+        if (dependencies.args.id != -1L) {
             getCategory()
         }
     }
@@ -38,7 +38,7 @@ class CategoryEditorComponent(
         validateUserInput {
             reduceState { copy(buttonIsLoading = true) }
             coroutineScope.launch {
-                val result = if (dependencies.args.id != -1) {
+                val result = if (dependencies.args.id != -1L) {
                     dependencies.categoryRepository.updateCategory(
                         category = Category(
                             id = state.value.id,

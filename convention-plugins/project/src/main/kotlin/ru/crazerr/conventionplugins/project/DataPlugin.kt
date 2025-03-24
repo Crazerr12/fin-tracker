@@ -41,6 +41,7 @@ class DataPlugin : Plugin<Project> {
                 // Database
                 implementation(project(":core:database"))
 
+                // WorkManager
                 implementation(libs.work.runtime)
             }
         }

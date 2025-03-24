@@ -11,12 +11,12 @@ internal class CategoryLocalDataSource(
     suspend fun createCategory(category: Category): Result<Category> = try {
         val id = categoriesDao.insert(category.toCategoryEntity())[0]
 
-        Result.success(category.copy(id = id.toInt()))
+        Result.success(category.copy(id = id))
     } catch (ex: Exception) {
         Result.failure(ex)
     }
 
-    suspend fun getCategoryById(id: Int): Result<Category> = try {
+    suspend fun getCategoryById(id: Long): Result<Category> = try {
         val categoryEntity = categoriesDao.getCategoryById(id = id)
 
         Result.success(categoryEntity.toCategory())

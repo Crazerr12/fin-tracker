@@ -15,7 +15,7 @@ fun AccountWithCurrency.toAccount() = Account(
 )
 
 fun Account.toAccountEntity() = AccountEntity(
-    id = id,
+    id = if (id == -1L) 0 else id,
     name = name,
     amount = amount,
     iconId = iconId,

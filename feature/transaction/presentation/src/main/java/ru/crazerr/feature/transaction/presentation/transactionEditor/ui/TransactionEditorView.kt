@@ -109,7 +109,7 @@ private fun TransactionEditorTopBar(
         title = {
             Text(
                 text = stringResource(
-                    if (state.id != -1) R.string.transaction_editor_top_bar_title_update
+                    if (state.id != -1L) R.string.transaction_editor_top_bar_title_update
                     else R.string.transaction_editor_top_bar_title_create
                 ),
                 style = MaterialTheme.typography.titleLarge,
@@ -333,6 +333,10 @@ private fun AccountDropdown(
                     )
                 )
             },
+            isError = state.selectedAccountError.isNotEmpty(),
+            supportingText = if (state.selectedAccountError.isNotEmpty()) {
+                { Hint(value = state.selectedAccountError) }
+            } else null,
             textStyle = MaterialTheme.typography.bodyMedium,
             label = { Hint(stringResource(R.string.transaction_editor_account_hint)) }
         )

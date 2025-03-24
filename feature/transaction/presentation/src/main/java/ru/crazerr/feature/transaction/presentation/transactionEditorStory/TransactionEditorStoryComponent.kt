@@ -119,7 +119,7 @@ class TransactionEditorStoryComponent(
     @Serializable
     sealed interface Config {
         @Serializable
-        data class TransactionEditor(val id: Int = -1) : Config
+        data class TransactionEditor(val id: Long = -1) : Config
 
         @Serializable
         data object AccountEditor : Config

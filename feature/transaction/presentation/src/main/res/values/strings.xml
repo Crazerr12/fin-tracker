@@ -7,7 +7,7 @@
     <string name="transaction_editor_transaction_type_expense">Расход</string>
 
     <string name="transaction_editor_account_hint">Счёт списания</string>
-    <string name="transaction_editor_account_add">Добавить аккаунт</string>
+    <string name="transaction_editor_account_add">Добавить счёт</string>
 
     <string name="transaction_editor_amount_hint">Сумма</string>
     <string name="transaction_editor_amount_only_digits_error">Поле принимает только цифры</string>
@@ -20,4 +20,10 @@
     <string name="transaction_editor_date_content_description">Выбрать дату</string>
 
     <string name="transaction_editor_save_button">Сохранить</string>
+
+    <string name="transaction_editor_budget_is_almost_exhausted_title">Бюджет на \'%1$s\' почти исчерпан!</string>
+    <string name="transaction_editor_budget_is_almost_exhausted_description">Вы израсходовали более 70% бюджета. Проверьте расходы, чтобы избежать превышения</string>
+
+    <string name="transaction_editor_budget_exceeded_title">Бюджет на \'%1$s\' превышен!</string>
+    <string name="transaction_editor_budget_exceeded_description">Вы потратили больше, чем запланировано. Проверьте свои финансы и скорректируйте расходы</string>
 </resources>

@@ -9,8 +9,8 @@ import java.time.LocalDate
 
 data class TransactionsState(
     val transactions: Flow<PagingData<Pair<LocalDate, List<Transaction>>>>,
-    val categoryIds: IntArray,
-    val accountIds: IntArray,
+    val categoryIds: LongArray,
+    val accountIds: LongArray,
     val selectedTransactionType: TransactionType,
     val isFilterEnabled: Boolean,
     val startDate: LocalDate?,
@@ -19,8 +19,8 @@ data class TransactionsState(
 
 internal val InitialTransactionsState = TransactionsState(
     transactions = emptyFlow(),
-    categoryIds = intArrayOf(),
-    accountIds = intArrayOf(),
+    categoryIds = longArrayOf(),
+    accountIds = longArrayOf(),
     selectedTransactionType = TransactionType.All,
     isFilterEnabled = false,
     startDate = null,

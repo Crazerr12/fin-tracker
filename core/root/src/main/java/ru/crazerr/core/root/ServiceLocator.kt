@@ -8,6 +8,8 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import ru.crazerr.core.root.RootComponentImpl.FactoryImpl
 import ru.crazerr.core.utils.utilsModule
+import ru.crazerr.feature.budgets.presentation.budgetsPresentationModule
+import ru.crazerr.feature.budgets.presentation.budgetsStory.BudgetsStoryComponentFactory
 import ru.crazerr.feature.main.presentation.mainPresentationModule
 import ru.crazerr.feature.main.presentation.mainStory.MainStoryComponentFactory
 import ru.crazerr.feature.transactions.presentation.transactionsPresentationModule
@@ -20,12 +22,13 @@ val rootModule = module {
 }
 
 internal val storyModules = module {
-    includes(mainPresentationModule, transactionsPresentationModule)
+    includes(mainPresentationModule, transactionsPresentationModule, budgetsPresentationModule)
 }
 
 internal class DiInjector : KoinComponent {
     val mainStoryComponentFactory: MainStoryComponentFactory by inject()
     val transactionsStoryComponentFactory: TransactionsStoryComponentFactory by inject()
+    val budgetsStoryComponentFactory: BudgetsStoryComponentFactory by inject()
 
     companion object {
         fun create(): DiInjector {

@@ -34,8 +34,8 @@ class TransactionsFilterComponent(
             TransactionsFilterViewAction.ResetAllFilters -> onResetAllFilters()
             TransactionsFilterViewAction.SaveButtonClick -> onAction(
                 SaveButtonClick(
-                    accountIds = state.value.selectedAccountIds.toIntArray(),
-                    categoryIds = state.value.selectedCategoryIds.toIntArray(),
+                    accountIds = state.value.selectedAccountIds.toLongArray(),
+                    categoryIds = state.value.selectedCategoryIds.toLongArray(),
                     startDate = state.value.startDate,
                     endDate = state.value.endDate,
                     isFilterEnabled = state.value.isFilterEnabled,
@@ -89,7 +89,7 @@ class TransactionsFilterComponent(
         reduceState { copy(selectedFilterType = filterType, searchQuery = "") }
     }
 
-    private fun onManageCategory(id: Int) {
+    private fun onManageCategory(id: Long) {
         reduceState {
             copy(
                 selectedCategoryIds = if (selectedCategoryIds.contains(id)) {
@@ -102,7 +102,7 @@ class TransactionsFilterComponent(
         checkForFilterEnable()
     }
 
-    private fun onManageAccount(id: Int) {
+    private fun onManageAccount(id: Long) {
         reduceState {
             copy(
                 selectedAccountIds = if (selectedAccountIds.contains(id)) {

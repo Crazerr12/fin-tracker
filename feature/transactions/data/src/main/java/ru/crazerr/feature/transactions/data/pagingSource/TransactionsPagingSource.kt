@@ -9,13 +9,14 @@ import ru.crazerr.feature.transactions.data.dataSource.LocalTransactionsDataSour
 import java.time.LocalDate
 
 internal class TransactionsPagingSource(
-    private val categoryIds: IntArray,
-    private val accountIds: IntArray,
+    private val categoryIds: LongArray,
+    private val accountIds: LongArray,
     private val transactionType: TransactionType,
     private val startDate: LocalDate?,
     private val endDate: LocalDate?,
     private val localTransactionsDataSource: LocalTransactionsDataSource,
 ) : PagingSource<Int, Pair<LocalDate, List<Transaction>>>() {
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pair<LocalDate, List<Transaction>>> {
         val page = params.key ?: INITIAL_PAGE_NUMBER
         val offset = page * params.loadSize

@@ -5,9 +5,9 @@ import ru.crazerr.feature.domain.api.Category
 import java.time.LocalDate
 
 data class Transaction(
-    val id: Int,
+    val id: Long,
     val category: Category,
-    val amount: Long,
+    val amount: Double,
     val type: TransactionType,
     val date: LocalDate,
     val account: Account,

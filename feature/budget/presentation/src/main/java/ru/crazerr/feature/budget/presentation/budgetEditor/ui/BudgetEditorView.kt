@@ -1,5 +1,12 @@
 package ru.crazerr.feature.budget.presentation.budgetEditor.ui
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,8 +51,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import coil3.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.components.Hint
@@ -63,7 +72,7 @@ fun BudgetEditorView(modifier: Modifier = Modifier, component: BudgetEditorCompo
     val state by component.state.subscribeAsState()
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         topBar = {
             BudgetEditorTopBar(state = state, onBackClick = {
                 component.handleViewAction(
@@ -91,7 +100,8 @@ private fun BudgetEditorViewContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
     ) {
         BudgetCard(state = state, handleViewAction = handleViewAction)
 
@@ -102,9 +112,8 @@ private fun BudgetEditorViewContent(
                 enabled = !state.buttonIsLoading,
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                onClick = { handleViewAction(BudgetEditorViewAction.BackClick) },
+                    .fillMaxWidth(),
+                onClick = { handleViewAction(BudgetEditorViewAction.SaveClick) },
             ) {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
@@ -136,7 +145,7 @@ private fun BudgetEditorTopBar(
         modifier = modifier,
         title = {
             Text(
-                text = stringResource(if (state.id != -1) R.string.budget_editor_update_title else R.string.budget_editor_create_title),
+                text = stringResource(if (state.id != -1L) R.string.budget_editor_update_title else R.string.budget_editor_create_title),
                 style = MaterialTheme.typography.titleLarge,
             )
         },
@@ -148,7 +157,7 @@ private fun BudgetEditorTopBar(
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
     )
 }
 
@@ -160,8 +169,7 @@ private fun BudgetCard(
 ) {
     ElevatedCard(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .fillMaxWidth(),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background),
     ) {
@@ -181,23 +189,43 @@ private fun BudgetCard(
                 label = { Hint(value = stringResource(R.string.budget_editor_amount_hint)) },
                 textStyle = MaterialTheme.typography.bodyMedium,
                 singleLine = true,
+                isError = state.maxAmountError.isNotEmpty(),
                 visualTransformation = AmountVisualTransformation(sign = '₽'),
                 supportingText = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.budget_editor_current_amount_supporting_text),
-                            style = MaterialTheme.typography.bodySmall,
-                        )
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                text = stringResource(R.string.budget_editor_current_amount_supporting_text),
+                                style = MaterialTheme.typography.bodySmall,
+                            )
 
-                        Text(
-                            text = state.currentAmount.toAmountFormat('₽'),
-                            style = MaterialTheme.typography.bodySmall,
-                        )
+                            Text(
+                                text = state.currentAmount.toAmountFormat('₽'),
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
+
+                        if (state.maxAmountError.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(2.dp))
+
+                            Hint(
+                                value = state.maxAmountError,
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
                     }
                 },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            CheckboxRow(
+                isChecked = state.isRegular,
+                onCheck = { handleViewAction(BudgetEditorViewAction.CheckIsRegular) },
+                title = stringResource(R.string.budget_editor_is_regular_budget),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -205,14 +233,6 @@ private fun BudgetCard(
             Text(
                 text = stringResource(R.string.budget_editor_notifications),
                 style = MaterialTheme.typography.titleSmall,
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            CheckboxRow(
-                isChecked = state.isRegular,
-                onCheck = { handleViewAction(BudgetEditorViewAction.CheckIsRegular) },
-                title = stringResource(R.string.budget_editor_is_regular_budget),
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -252,6 +272,10 @@ private fun CategoryDropdown(
                 .menuAnchor(MenuAnchorType.PrimaryNotEditable),
             value = state.selectedCategory.name,
             onValueChange = {},
+            isError = state.selectedCategoryError.isNotEmpty(),
+            supportingText = if (state.selectedCategoryError.isNotEmpty()) {
+                { Hint(state.selectedCategoryError) }
+            } else null,
             readOnly = true,
             singleLine = true,
             label = { Hint(value = stringResource(R.string.budget_editor_expenses_category_hint)) },
@@ -310,9 +334,44 @@ private fun CheckboxRow(
     onCheck: () -> Unit,
     title: String,
 ) {
+    val context = LocalContext.current
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                onCheck()
+            }
+        }
+
     Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(checked = isChecked, onCheckedChange = { onCheck() })
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = {
+                checkForNotificationPermission(
+                    launcher = launcher,
+                    context = context,
+                    action = onCheck
+                )
+            })
 
         Text(text = title, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+private fun checkForNotificationPermission(
+    launcher: ManagedActivityResultLauncher<String, Boolean>,
+    context: Context,
+    action: () -> Unit,
+) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) -> action()
+
+            else -> launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    } else {
+        action()
     }
 }
