@@ -15,6 +15,8 @@ data class TransactionsState(
     val isFilterEnabled: Boolean,
     val startDate: LocalDate?,
     val endDate: LocalDate?,
+    val dialog: Boolean,
+    val selectedTransaction: Transaction?,
 )
 
 internal val InitialTransactionsState = TransactionsState(
@@ -25,4 +27,6 @@ internal val InitialTransactionsState = TransactionsState(
     isFilterEnabled = false,
     startDate = null,
     endDate = null,
+    dialog = false,
+    selectedTransaction = null,
 )

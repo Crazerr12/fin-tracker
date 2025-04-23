@@ -1,0 +1,19 @@
+<resources>
+    <string name="analysis_incomes">Доходы</string>
+    <string name="analysis_expenses">Расходы</string>
+
+    <string name="analysis_next_period_content_description">Следующий период</string>
+    <string name="analysis_previous_period_content_description">Предыдущий период</string>
+
+    <string name="analysis_period_week">Неделя</string>
+    <string name="analysis_period_month">Месяц</string>
+    <string name="analysis_period_year">Год</string>
+
+    <string name="analysis_empty_categories">У вас не было транзакций в заданном промежутке времени!</string>
+
+    <string name="analysis_category_expenses">Категории расходов</string>
+    <string name="analysis_category_incomes">Категории доходов</string>
+
+    <string name="analysis_percent_from_expenses">%1$s%% от общих расходов</string>
+    <string name="analysis_percent_from_incomes">%1$s%% от общих доходов</string>
+</resources>

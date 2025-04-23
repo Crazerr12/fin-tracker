@@ -2,14 +2,20 @@ package ru.crazerr.feature.transactions.presentation.transactions
 
 import androidx.paging.cachedIn
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.lifecycle.doOnStart
+import com.arkivanov.essenty.lifecycle.doOnStop
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ru.crazerr.core.utils.navigation.hideBottomBar
+import ru.crazerr.core.utils.navigation.showBottomBar
 import ru.crazerr.core.utils.presentation.BaseComponent
 import ru.crazerr.core.utils.presentation.componentCoroutineScope
 import ru.crazerr.core.utils.snackbar.snackbarManager
+import ru.crazerr.feature.transaction.domain.api.Transaction
 import ru.crazerr.feature.transaction.domain.api.TransactionType
+import ru.crazerr.feature.transactions.presentation.transactions.TransactionsComponentAction.*
 import java.time.LocalDate
 
 class TransactionsComponent(
@@ -22,6 +28,8 @@ class TransactionsComponent(
     private val snackbarManager = snackbarManager()
 
     init {
+        doOnStart { showBottomBar() }
+        doOnStop { hideBottomBar() }
         handleInputFlow(flow = dependencies.args.inputFlow)
         getInitialData()
     }
@@ -33,7 +41,7 @@ class TransactionsComponent(
             )
 
             TransactionsViewAction.GoToFilter -> onAction(
-                TransactionsComponentAction.GoToFilter(
+                GoToFilter(
                     accountIds = state.value.accountIds,
                     categoryIds = state.value.categoryIds,
                     startDate = state.value.startDate,
@@ -43,10 +51,40 @@ class TransactionsComponent(
             )
 
             is TransactionsViewAction.OpenTransactionEditor -> onAction(
-                TransactionsComponentAction.OpenTransactionEditor(
+                OpenTransactionEditor(
                     id = action.id
                 )
             )
+
+            TransactionsViewAction.DeleteSelectedTransaction -> onDeleteSelectedTransaction()
+            is TransactionsViewAction.SelectTransaction -> onSelectTransaction(transaction = action.transaction)
+        }
+    }
+
+    private fun onDeleteSelectedTransaction() {
+        if (state.value.selectedTransaction != null) {
+            coroutineScope.launch {
+                val result =
+                    dependencies.transactionRepository.deleteTransaction(transaction = state.value.selectedTransaction!!)
+
+                result.fold(
+                    onSuccess = {
+                        reduceState {
+                            copy(
+                                dialog = false,
+                                selectedTransaction = null,
+                            )
+                        }
+                    },
+                    onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") },
+                )
+            }
+        }
+    }
+
+    private fun onSelectTransaction(transaction: Transaction?) {
+        reduceState {
+            copy(selectedTransaction = transaction, dialog = transaction != null)
         }
     }
 
@@ -57,14 +95,34 @@ class TransactionsComponent(
 
     private fun getInitialData() {
         coroutineScope.launch {
-            val accountsDeferred = async { dependencies.accountRepository.getAccounts() }
-            val categoriesDeferred = async { dependencies.categoryRepository.getCategories() }
+            reduceState {
+                copy(
+                    accountIds = dependencies.args.accountIds ?: longArrayOf(),
+                    categoryIds = dependencies.args.categoryIds ?: longArrayOf(),
+                    selectedTransactionType = dependencies.args.transactionType,
+                    startDate = dependencies.args.startDate,
+                    endDate = dependencies.args.endDate,
+                    isFilterEnabled = dependencies.args.accountIds != null || dependencies.args.categoryIds != null
+                            || dependencies.args.startDate != null || dependencies.args.endDate != null,
+                )
+            }
 
-            accountsDeferred.await().fold(
+            val accountsDeferred = if (state.value.accountIds.isEmpty()) {
+                async { dependencies.accountRepository.getAccounts() }
+            } else {
+                null
+            }
+            val categoriesDeferred = if (state.value.categoryIds.isEmpty()) {
+                async { dependencies.categoryRepository.getCategories() }
+            } else {
+                null
+            }
+
+            accountsDeferred?.await()?.fold(
                 onSuccess = { reduceState { copy(accountIds = it.map { it.id }.toLongArray()) } },
                 onFailure = { snackbarManager.showSnackbar(message = it.localizedMessage ?: "") }
             )
-            categoriesDeferred.await().fold(
+            categoriesDeferred?.await()?.fold(
                 onSuccess = { reduceState { copy(categoryIds = it.map { it.id }.toLongArray()) } },
                 onFailure = { snackbarManager.showSnackbar(message = it.localizedMessage ?: "") }
             )
@@ -79,7 +137,7 @@ class TransactionsComponent(
             categoryIds = state.value.categoryIds,
             transactionType = state.value.selectedTransactionType,
             startDate = state.value.startDate,
-            endDate = state.value.endDate
+            endDate = state.value.endDate,
         ).cachedIn(coroutineScope)
 
         reduceState { copy(transactions = transactionsFlow) }

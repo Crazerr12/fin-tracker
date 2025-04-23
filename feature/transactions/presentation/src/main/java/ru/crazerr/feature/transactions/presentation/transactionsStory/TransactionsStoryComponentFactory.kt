@@ -6,7 +6,10 @@ import ru.crazerr.feature.transactions.presentation.transactions.TransactionsCom
 import ru.crazerr.feature.transactions.presentation.transactionsFilter.TransactionsFilterComponentFactory
 
 interface TransactionsStoryComponentFactory {
-    fun create(componentContext: ComponentContext): TransactionsStoryComponent
+    fun create(
+        componentContext: ComponentContext,
+        args: TransactionsStoryArgs,
+    ): TransactionsStoryComponent
 }
 
 internal class TransactionsStoryComponentFactoryImpl(
@@ -14,13 +17,16 @@ internal class TransactionsStoryComponentFactoryImpl(
     private val transactionsFilterComponentFactory: TransactionsFilterComponentFactory,
     private val transactionEditorStoryComponentFactory: TransactionEditorStoryComponentFactory,
 ) : TransactionsStoryComponentFactory {
-    override fun create(componentContext: ComponentContext): TransactionsStoryComponent =
-        TransactionsStoryComponent(
-            componentContext = componentContext,
-            dependencies = TransactionsStoryDependencies(
-                transactionsComponentFactory = transactionsComponentFactory,
-                transactionsFilterComponentFactory = transactionsFilterComponentFactory,
-                transactionEditorStoryComponentFactory = transactionEditorStoryComponentFactory,
-            )
+    override fun create(
+        componentContext: ComponentContext,
+        args: TransactionsStoryArgs,
+    ): TransactionsStoryComponent = TransactionsStoryComponent(
+        componentContext = componentContext,
+        dependencies = TransactionsStoryDependencies(
+            transactionsComponentFactory = transactionsComponentFactory,
+            transactionsFilterComponentFactory = transactionsFilterComponentFactory,
+            transactionEditorStoryComponentFactory = transactionEditorStoryComponentFactory,
+            args = args,
         )
+    )
 }

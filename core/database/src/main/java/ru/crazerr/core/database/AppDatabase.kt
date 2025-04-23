@@ -15,6 +15,7 @@ import ru.crazerr.core.database.converters.IntListConverter
 import ru.crazerr.core.database.converters.LocalDateConverter
 import ru.crazerr.core.database.currencies.dao.CurrenciesDao
 import ru.crazerr.core.database.currencies.model.CurrencyEntity
+import ru.crazerr.core.database.icons.dao.IconsDao
 import ru.crazerr.core.database.icons.model.IconEntity
 import ru.crazerr.core.database.repeatTransactions.dao.RepeatTransactionsDao
 import ru.crazerr.core.database.repeatTransactions.model.RepeatTransactionEntity
@@ -52,4 +53,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoriesDao(): CategoriesDao
 
     abstract fun repeatBudgetsDao(): RepeatBudgetsDao
+
+    abstract fun iconsDao(): IconsDao
 }

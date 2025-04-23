@@ -10,4 +10,6 @@ interface BudgetRepository {
     fun getBudgetsForCurrentDate(date: LocalDate): Flow<PagingData<Budget>>
 
     fun getTotalBudget(date: LocalDate): Result<Flow<TotalBudget>>
+
+    suspend fun deleteBudget(budget: Budget): Result<Budget>
 }

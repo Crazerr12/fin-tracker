@@ -1,7 +1,7 @@
 package ru.crazerr.feature.budget.presentation.budgetEditor
 
 import ru.crazerr.feature.domain.api.Category
-import ru.crazerr.feature.domain.api.IconModel
+import ru.crazerr.feature.icon.domain.api.IconModel
 import java.time.LocalDate
 
 data class BudgetEditorState(
@@ -29,7 +29,7 @@ internal val InitialBudgetEditorState = BudgetEditorState(
         id = -1,
         name = "",
         color = 0,
-        iconModel = IconModel(id = -1, icon = ByteArray(0)),
+        iconModel = IconModel(id = -1, icon = ByteArray(0), purpose = ""),
         isTemplate = true,
     ),
     selectedCategoryError = "",

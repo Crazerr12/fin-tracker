@@ -5,10 +5,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.crazerr.core.utils.presentation.BaseComponent
 import ru.crazerr.core.utils.presentation.componentCoroutineScope
+import ru.crazerr.core.utils.presentation.formatWithAmountZeros
 import ru.crazerr.core.utils.presentation.isValidAmount
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.account.domain.api.Account
 import ru.crazerr.feature.currency.domain.api.Currency
+import ru.crazerr.feature.icon.domain.api.IconModel
 
 abstract class AccountEditorComponent :
     BaseComponent<AccountEditorState, AccountEditorViewAction>(InitialAccountEditorState)
@@ -36,7 +38,12 @@ internal class AccountEditorComponentImpl(
             is AccountEditorViewAction.SelectCurrency -> onSelectCurrency(currency = action.currency)
             is AccountEditorViewAction.UpdateCurrentAmount -> onUpdateCurrentAmount(amount = action.amount)
             is AccountEditorViewAction.UpdateName -> onUpdateName(name = action.name)
+            is AccountEditorViewAction.SelectIcon -> onSelectIcon(icon = action.icon)
         }
+    }
+
+    private fun onSelectIcon(icon: IconModel) {
+        reduceState { copy(selectedIcon = icon) }
     }
 
     private fun onSelectCurrency(currency: Currency) {
@@ -67,8 +74,9 @@ internal class AccountEditorComponentImpl(
                 reduceState {
                     copy(
                         name = it.name,
-                        amount = it.amount.toString(),
+                        amount = it.amount.formatWithAmountZeros(),
                         selectedCurrency = it.currency,
+                        selectedIcon = it.icon,
                     )
                 }
             },
@@ -94,17 +102,36 @@ internal class AccountEditorComponentImpl(
 
     private fun getInitData() {
         coroutineScope.launch {
+            reduceState { copy(isLoading = true) }
             val currenciesDeferred = async { getCurrencies() }
+            val iconsDeferred = async { getIcons() }
+
+            iconsDeferred.await()
 
             if (dependencies.args.accountId != -1L) {
-                reduceState { copy(isLoading = true) }
                 val accountDeferred = async { getAccount() }
                 accountDeferred.await()
-                reduceState { copy(isLoading = false) }
             }
+            reduceState { copy(isLoading = false) }
 
             currenciesDeferred.await()
         }
+    }
+
+    private suspend fun getIcons() {
+        val result = dependencies.iconRepository.getIcons()
+
+        result.fold(
+            onSuccess = {
+                reduceState {
+                    copy(
+                        icons = it,
+                        selectedIcon = it[0],
+                    )
+                }
+            },
+            onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") },
+        )
     }
 
     private fun saveAccount() {
@@ -117,7 +144,7 @@ internal class AccountEditorComponentImpl(
                             id = dependencies.args.accountId,
                             name = state.value.name,
                             amount = state.value.amount.toDouble(),
-                            iconId = "",
+                            icon = state.value.selectedIcon,
                             currency = state.value.selectedCurrency,
                         )
                     )
@@ -127,7 +154,7 @@ internal class AccountEditorComponentImpl(
                             id = 0,
                             name = state.value.name,
                             amount = state.value.amount.toDouble(),
-                            iconId = "",
+                            icon = state.value.selectedIcon,
                             currency = state.value.selectedCurrency
                         )
                     )

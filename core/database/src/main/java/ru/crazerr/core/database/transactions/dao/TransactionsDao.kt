@@ -5,6 +5,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import ru.crazerr.core.database.base.dao.BaseDao
+import ru.crazerr.core.database.categories.model.CategoryWithIconAndSum
 import ru.crazerr.core.database.transactions.model.TransactionEntity
 import ru.crazerr.core.database.transactions.model.TransactionWithAccountAndCategory
 import java.time.LocalDate
@@ -70,4 +71,36 @@ interface TransactionsDao : BaseDao<TransactionEntity> {
     """
     )
     suspend fun getSpentAmountByDateAndCategory(categoryId: Long, date: String): Double
+
+    @Query(
+        """
+        SELECT SUM(amount)
+        FROM transactions 
+        WHERE date BETWEEN :startDate and :endDate
+        AND type = :transactionType
+        """
+    )
+    fun getTotalAmountByPeriodAndType(
+        transactionType: Int,
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ): Flow<Double>
+
+    @Query(
+        """
+            SELECT c.*, i.*, SUM(t.amount) as total_sum
+            FROM transactions t
+            JOIN categories c ON t.category_id = c.id
+            JOIN icons i ON c.icon_id = i.id
+            WHERE t.date BETWEEN :startDate AND :endDate
+            AND t.type = :transactionType
+            GROUP BY t.category_id
+            ORDER BY total_sum DESC
+        """
+    )
+    fun getAnalysisCategoriesByDateAndType(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        transactionType: Int,
+    ): Flow<List<CategoryWithIconAndSum>>
 }

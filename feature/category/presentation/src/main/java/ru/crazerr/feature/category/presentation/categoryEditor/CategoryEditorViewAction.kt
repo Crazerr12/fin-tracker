@@ -1,6 +1,7 @@
 package ru.crazerr.feature.category.presentation.categoryEditor
 
-import ru.crazerr.feature.domain.api.IconModel
+import ru.crazerr.feature.icon.domain.api.IconModel
+
 
 sealed interface CategoryEditorViewAction {
     data object BackClick : CategoryEditorViewAction

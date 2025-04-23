@@ -11,5 +11,5 @@ enum class BottomNavigationItem(@StringRes val stringRes: Int, @DrawableRes val 
     ),
     Budget(stringRes = R.string.bottom_item_budget_title, iconRes = R.drawable.ic_budget),
     Analysis(stringRes = R.string.bottom_item_analysis_title, iconRes = R.drawable.ic_analysis),
-    Profile(stringRes = R.string.bottom_item_profile_title, iconRes = R.drawable.ic_profile);
+    //   Profile(stringRes = R.string.bottom_item_profile_title, iconRes = R.drawable.ic_profile);
 }

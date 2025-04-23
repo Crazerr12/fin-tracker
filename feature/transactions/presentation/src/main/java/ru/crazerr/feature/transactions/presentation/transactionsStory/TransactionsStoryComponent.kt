@@ -45,12 +45,12 @@ class TransactionsStoryComponent(
             Transactions -> createTransactionsComponent(componentContext = componentContext)
             is TransactionsFilter -> createTransactionsFilterComponent(
                 config = config,
-                componentContext = componentContext
+                componentContext = componentContext,
             )
 
             is TransactionEditorStory -> createTransactionEditorStory(
                 config = config,
-                componentContext = componentContext
+                componentContext = componentContext,
             )
         }
 
@@ -65,7 +65,6 @@ class TransactionsStoryComponent(
                             TransactionsFilter(
                                 accountIds = action.accountIds,
                                 categoryIds = action.categoryIds,
-                                isFilterEnabled = action.isFilterEnabled,
                                 startDate = action.startDate,
                                 endDate = action.endDate
                             )
@@ -76,7 +75,13 @@ class TransactionsStoryComponent(
                         )
                     }
                 },
-                args = TransactionsArgs(inputFlow = transactionsInput)
+                args = TransactionsArgs(
+                    inputFlow = transactionsInput,
+                    categoryIds = dependencies.args.categoryIds,
+                    accountIds = dependencies.args.accountIds,
+                    startDate = dependencies.args.startDate,
+                    endDate = dependencies.args.endDate,
+                )
             )
         )
 
@@ -108,7 +113,6 @@ class TransactionsStoryComponent(
                 categoryIds = config.categoryIds,
                 startDate = config.startDate,
                 endDate = config.endDate,
-                isFilterEnabled = config.isFilterEnabled
             )
         )
     )
@@ -143,7 +147,6 @@ class TransactionsStoryComponent(
         data class TransactionsFilter(
             val accountIds: LongArray,
             val categoryIds: LongArray,
-            val isFilterEnabled: Boolean,
             @Serializable(with = LocalDateSerializer::class)
             val startDate: LocalDate?,
             @Serializable(with = LocalDateSerializer::class)

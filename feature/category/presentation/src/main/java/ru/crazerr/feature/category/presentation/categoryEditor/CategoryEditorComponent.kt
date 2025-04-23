@@ -7,7 +7,7 @@ import ru.crazerr.core.utils.presentation.componentCoroutineScope
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.category.presentation.R
 import ru.crazerr.feature.domain.api.Category
-import ru.crazerr.feature.domain.api.IconModel
+import ru.crazerr.feature.icon.domain.api.IconModel
 
 class CategoryEditorComponent(
     componentContext: ComponentContext,
@@ -19,9 +19,7 @@ class CategoryEditorComponent(
     private val snackbarManager = snackbarManager()
 
     init {
-        if (dependencies.args.id != -1L) {
-            getCategory()
-        }
+        getInitData()
     }
 
     override fun handleViewAction(action: CategoryEditorViewAction) {
@@ -31,6 +29,24 @@ class CategoryEditorComponent(
             is CategoryEditorViewAction.UpdateColor -> onUpdateColor(color = action.color)
             is CategoryEditorViewAction.UpdateIcon -> onUpdateIcon(iconModel = action.iconModel)
             is CategoryEditorViewAction.UpdateName -> onUpdateName(name = action.name)
+        }
+    }
+
+    private fun getInitData() {
+        coroutineScope.launch {
+            reduceState { copy(buttonIsLoading = true) }
+            val iconsResult = dependencies.iconRepository.getIcons()
+
+            iconsResult.fold(
+                onSuccess = { reduceState { copy(selectedIconModel = it[0], icons = it) } },
+                onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") },
+            )
+
+            if (dependencies.args.id != -1L) {
+                getCategory()
+            }
+
+            reduceState { copy(buttonIsLoading = false) }
         }
     }
 
@@ -62,9 +78,7 @@ class CategoryEditorComponent(
 
                 result.fold(
                     onSuccess = {
-                        reduceState {
-                            copy(buttonIsLoading = false)
-                        }
+                        reduceState { copy(buttonIsLoading = false) }
                         onAction(CategoryEditorComponentAction.SaveClick(it))
                     },
                     onFailure = {
@@ -88,30 +102,26 @@ class CategoryEditorComponent(
         reduceState { copy(selectedIconModel = iconModel) }
     }
 
-    private fun getCategory() {
-        coroutineScope.launch {
-            reduceState { copy(buttonIsLoading = true) }
+    private suspend fun getCategory() {
+        reduceState { copy(buttonIsLoading = true) }
 
-            val result = dependencies.categoryRepository.getCategoryById(id = dependencies.args.id)
+        val result = dependencies.categoryRepository.getCategoryById(id = dependencies.args.id)
 
-            result.fold(
-                onSuccess = {
-                    reduceState {
-                        copy(
-                            id = it.id,
-                            name = it.name,
-                            selectedIconModel = it.iconModel,
-                            selectedColor = it.color,
-                            buttonIsLoading = false
-                        )
-                    }
-                },
-                onFailure = {
-                    snackbarManager.showSnackbar(it.localizedMessage ?: "")
-                    reduceState { copy(buttonIsLoading = false) }
+        result.fold(
+            onSuccess = {
+                reduceState {
+                    copy(
+                        id = it.id,
+                        name = it.name,
+                        selectedIconModel = it.iconModel,
+                        selectedColor = it.color,
+                    )
                 }
-            )
-        }
+            },
+            onFailure = {
+                snackbarManager.showSnackbar(it.localizedMessage ?: "")
+            }
+        )
     }
 
     private fun validateUserInput(block: () -> Unit) {

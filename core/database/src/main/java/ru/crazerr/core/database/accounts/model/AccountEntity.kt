@@ -22,6 +22,6 @@ data class AccountEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val amount: Double,
-    @ColumnInfo(name = "icon_id") val iconId: String,
+    @ColumnInfo(name = "icon_id") val iconId: Long,
     @ColumnInfo(name = "currency_id") val currencyId: Long,
 )

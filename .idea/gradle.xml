@@ -70,6 +70,11 @@
             <option value="$PROJECT_DIR$/feature/currency/data/api" />
             <option value="$PROJECT_DIR$/feature/currency/domain" />
             <option value="$PROJECT_DIR$/feature/currency/domain/api" />
+            <option value="$PROJECT_DIR$/feature/icon" />
+            <option value="$PROJECT_DIR$/feature/icon/data" />
+            <option value="$PROJECT_DIR$/feature/icon/data/api" />
+            <option value="$PROJECT_DIR$/feature/icon/domain" />
+            <option value="$PROJECT_DIR$/feature/icon/domain/api" />
             <option value="$PROJECT_DIR$/feature/main" />
             <option value="$PROJECT_DIR$/feature/main/data" />
             <option value="$PROJECT_DIR$/feature/main/domain" />

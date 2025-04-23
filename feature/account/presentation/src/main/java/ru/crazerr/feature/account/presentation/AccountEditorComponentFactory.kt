@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import ru.crazerr.core.utils.resourceManager.ResourceManager
 import ru.crazerr.feature.account.domain.repository.AccountRepository
 import ru.crazerr.feature.account.domain.repository.CurrencyRepository
+import ru.crazerr.feature.account.domain.repository.IconRepository
 
 interface AccountEditorComponentFactory {
     fun create(
@@ -16,6 +17,7 @@ interface AccountEditorComponentFactory {
 internal class AccountEditorComponentFactoryImpl(
     private val accountRepository: AccountRepository,
     private val currencyRepository: CurrencyRepository,
+    private val iconRepository: IconRepository,
     private val resourceManager: ResourceManager,
 ) : AccountEditorComponentFactory {
     override fun create(
@@ -29,6 +31,7 @@ internal class AccountEditorComponentFactoryImpl(
             accountRepository = accountRepository,
             currencyRepository = currencyRepository,
             resourceManager = resourceManager,
+            iconRepository = iconRepository,
             args = args,
         )
     )

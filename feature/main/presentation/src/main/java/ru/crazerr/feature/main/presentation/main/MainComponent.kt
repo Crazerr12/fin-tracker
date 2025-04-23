@@ -1,9 +1,13 @@
 package ru.crazerr.feature.main.presentation.main
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.lifecycle.doOnStart
+import com.arkivanov.essenty.lifecycle.doOnStop
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ru.crazerr.core.utils.navigation.hideBottomBar
+import ru.crazerr.core.utils.navigation.showBottomBar
 import ru.crazerr.core.utils.presentation.BaseComponent
 import ru.crazerr.core.utils.presentation.componentCoroutineScope
 import ru.crazerr.core.utils.snackbar.snackbarManager
@@ -22,6 +26,8 @@ class MainComponent(
     private val snackbarManager = snackbarManager()
 
     init {
+        doOnStart { showBottomBar() }
+        doOnStop { hideBottomBar() }
         getInitData()
     }
 

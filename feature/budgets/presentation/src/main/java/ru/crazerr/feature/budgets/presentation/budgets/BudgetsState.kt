@@ -12,6 +12,8 @@ data class BudgetsState(
     val currentMaxBudget: Double,
     val date: LocalDate,
     val totalBudgetIsLoading: Boolean,
+    val bottomSheet: Boolean,
+    val selectedBudget: Budget?,
 )
 
 internal val InitialBudgetsState = BudgetsState(
@@ -20,4 +22,6 @@ internal val InitialBudgetsState = BudgetsState(
     currentMaxBudget = 0.0,
     date = LocalDate.now(),
     totalBudgetIsLoading = true,
+    bottomSheet = false,
+    selectedBudget = null,
 )

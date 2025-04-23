@@ -6,29 +6,18 @@ import ru.crazerr.feature.transactions.presentation.transactionsFilter.model.Fil
 import java.time.LocalDate
 
 data class TransactionsFilterState(
-    val accounts: List<Account>,
-    val categories: List<Category>,
+    val accounts: List<Account> = emptyList(),
+    val categories: List<Category> = emptyList(),
     val selectedAccountIds: List<Long>,
     val selectedCategoryIds: List<Long>,
-    val isFilterEnabled: Boolean,
-    val startDate: LocalDate?,
-    val startDateDialogIsOpen: Boolean,
-    val endDate: LocalDate?,
-    val endDateDialogIsOpen: Boolean,
-    val selectedFilterType: FilterType,
-    val searchQuery: String,
-)
-
-internal val InitialTransactionsFilterState = TransactionsFilterState(
-    accounts = emptyList(),
-    categories = emptyList(),
-    selectedAccountIds = emptyList(),
-    selectedCategoryIds = emptyList(),
-    isFilterEnabled = false,
-    startDate = null,
-    startDateDialogIsOpen = false,
-    endDate = null,
-    endDateDialogIsOpen = false,
-    selectedFilterType = FilterType.Category,
-    searchQuery = "",
-)
+    val isFilterChanged: Boolean = false,
+    val startDate: LocalDate? = null,
+    val startDateDialogIsOpen: Boolean = false,
+    val endDate: LocalDate? = null,
+    val endDateDialogIsOpen: Boolean = false,
+    val selectedFilterType: FilterType = FilterType.Category,
+    val searchQuery: String = "",
+) {
+    val resetButtonIsVisible: Boolean = selectedCategoryIds.size != categories.size
+            || selectedAccountIds.size != accounts.size || startDate != null || endDate != null
+}

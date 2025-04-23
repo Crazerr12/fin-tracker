@@ -23,3 +23,8 @@ fun LocalDate.toMonthYearFormat(): String {
     val formatter = DateTimeFormatter.ofPattern("LLLL yyyy", Locale.getDefault())
     return this.format(formatter)
 }
+
+fun LocalDate.toYearFormat(): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy", Locale.getDefault())
+    return this.format(formatter)
+}

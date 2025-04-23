@@ -1,9 +1,9 @@
 package ru.crazerr.feature.transactions.presentation.transactions.ui
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,13 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -27,8 +27,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -36,18 +38,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil3.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import ru.crazerr.core.utils.components.CategoryIcon
 import ru.crazerr.core.utils.components.PagingLazyColumn
+import ru.crazerr.core.utils.components.expenseColor
+import ru.crazerr.core.utils.components.incomeColor
 import ru.crazerr.core.utils.date.toFormatDate
 import ru.crazerr.core.utils.presentation.toAmountFormat
 import ru.crazerr.feature.transaction.domain.api.Transaction
@@ -57,10 +58,15 @@ import ru.crazerr.feature.transactions.presentation.transactions.TransactionsCom
 import ru.crazerr.feature.transactions.presentation.transactions.TransactionsState
 import ru.crazerr.feature.transactions.presentation.transactions.TransactionsViewAction
 import java.time.LocalDate
+import ru.crazerr.core.utils.R as utilsR
 
 @Composable
 fun TransactionsView(modifier: Modifier = Modifier, component: TransactionsComponent) {
     val state by component.state.subscribeAsState()
+
+    if (state.dialog) {
+        TransactionDialog(handleViewAction = component::handleViewAction)
+    }
 
     TransactionsViewContent(
         modifier = modifier,
@@ -224,12 +230,12 @@ private fun TabItem(title: String, isSelected: Boolean, onClick: () -> Unit) {
     Card(
         shape = CircleShape,
         onClick = onClick,
-        colors = CardDefaults.cardColors(containerColor = if (isSelected) Color.Blue else MaterialTheme.colorScheme.background)
+        colors = CardDefaults.cardColors(containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background)
     ) {
         Text(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             text = title,
-            style = MaterialTheme.typography.titleSmall.copy(color = if (isSelected) Color.White else Color.DarkGray)
+            style = MaterialTheme.typography.titleSmall.copy(color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground)
         )
     }
 }
@@ -258,13 +264,7 @@ private fun TransactionList(
                 TransactionCardByDate(
                     date = pair.first,
                     transactions = pair.second,
-                    onTransactionClick = {
-                        handleViewAction(
-                            TransactionsViewAction.OpenTransactionEditor(
-                                id = it
-                            )
-                        )
-                    }
+                    handleViewAction = handleViewAction,
                 )
             }
         }
@@ -276,7 +276,7 @@ private fun TransactionCardByDate(
     modifier: Modifier = Modifier,
     date: LocalDate,
     transactions: List<Transaction>,
-    onTransactionClick: (Long) -> Unit,
+    handleViewAction: (TransactionsViewAction) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -309,13 +309,27 @@ private fun TransactionCardByDate(
                         vertical = 6.dp
                     ),
                     transaction = transaction,
-                    onClick = { onTransactionClick(transaction.id) }
+                    onClick = {
+                        handleViewAction(
+                            TransactionsViewAction.OpenTransactionEditor(
+                                transaction.id
+                            )
+                        )
+                    },
+                    onLongClick = {
+                        handleViewAction(
+                            TransactionsViewAction.SelectTransaction(
+                                transaction
+                            )
+                        )
+                    },
                 )
             }
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TransactionItem(
     modifier: Modifier = Modifier,
@@ -323,41 +337,26 @@ private fun TransactionItem(
         start = 16.dp,
         end = 16.dp,
         bottom = 6.dp,
-        top = 6.dp
+        top = 6.dp,
     ),
     transaction: Transaction,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
 ) {
     val (sign, color) = if (transaction.type == TransactionType.Income) {
-        Pair('+', Color.Green)
+        Pair('+', incomeColor)
     } else {
-        Pair('-', Color.Red)
+        Pair('-', expenseColor)
     }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
             .padding(paddingValues),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            modifier = Modifier
-                .size(30.dp)
-                .clip(CircleShape)
-                .background(
-                    color = Color(transaction.category.color).copy(alpha = 0.15f),
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center,
-        ) {
-            AsyncImage(
-                modifier = Modifier.size(20.dp),
-                model = transaction.category.iconModel.icon,
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(color = Color(transaction.category.color))
-            )
-        }
+        CategoryIcon(color = transaction.category.color, icon = transaction.category.iconModel.icon)
 
         Spacer(modifier = Modifier.width(12.dp))
 
@@ -392,6 +391,36 @@ private fun EmptyTransactionsList(modifier: Modifier = Modifier) {
             text = stringResource(R.string.transactions_empty_transactions),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TransactionDialog(
+    modifier: Modifier = Modifier,
+    handleViewAction: (TransactionsViewAction) -> Unit,
+) {
+    ModalBottomSheet(
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
+        onDismissRequest = { handleViewAction(TransactionsViewAction.SelectTransaction(null)) },
+    ) {
+        ListItem(
+            modifier = Modifier.clickable(onClick = { handleViewAction(TransactionsViewAction.DeleteSelectedTransaction) }),
+            headlineContent = {
+                Text(
+                    text = stringResource(utilsR.string.delete),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            },
+            leadingContent = {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = expenseColor,
+                )
+            },
         )
     }
 }

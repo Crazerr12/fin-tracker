@@ -1,7 +1,11 @@
 package ru.crazerr.feature.account.presentation.ui
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -36,19 +41,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.components.Hint
 import ru.crazerr.core.utils.components.LoadingView
+import ru.crazerr.core.utils.components.incomeColor
+import ru.crazerr.core.utils.presentation.conditional
 import ru.crazerr.core.utils.visualTransformations.AmountVisualTransformation
 import ru.crazerr.feature.account.presentation.AccountEditorComponent
 import ru.crazerr.feature.account.presentation.AccountEditorState
 import ru.crazerr.feature.account.presentation.AccountEditorViewAction
 import ru.crazerr.feature.account.presentation.R
+import ru.crazerr.feature.icon.domain.api.IconModel
+import kotlin.collections.chunked
+import kotlin.collections.forEach
+
+private const val ICON_ROW_SIZE = 6
 
 @Composable
 fun AccountEditorView(modifier: Modifier = Modifier, component: AccountEditorComponent) {
@@ -92,7 +107,7 @@ private fun AccountEditorContentView(
                 Button(
                     shape = RoundedCornerShape(8.dp),
                     onClick = { handleViewAction(AccountEditorViewAction.SaveClick) },
-                    enabled = !state.buttonIsLoading
+                    enabled = !state.buttonIsLoading,
                 ) {
                     Box(
                         modifier = Modifier.fillMaxWidth(),
@@ -153,7 +168,8 @@ private fun AccountEditorCard(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth(),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background),
     ) {
         Column(
             modifier = Modifier
@@ -212,6 +228,10 @@ private fun AccountEditorCard(
                         defaultValue = { Char.MIN_VALUE })
                 ),
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            IconGrid(state = state, handleViewAction = handleViewAction)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -284,6 +304,86 @@ private fun CurrencyTextField(
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun IconGrid(
+    modifier: Modifier = Modifier,
+    state: AccountEditorState,
+    handleViewAction: (AccountEditorViewAction) -> Unit,
+) {
+    Text(
+        text = stringResource(R.string.account_editor_icon_hint),
+        style = MaterialTheme.typography.titleSmall,
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        state.icons.chunked(ICON_ROW_SIZE).forEach { icons ->
+            IconRow(
+                icons = icons,
+                selectedIcon = state.selectedIcon,
+                handleViewAction = handleViewAction,
+            )
+        }
+    }
+}
+
+
+@Composable
+private fun IconRow(
+    modifier: Modifier = Modifier,
+    icons: List<IconModel>,
+    selectedIcon: IconModel,
+    handleViewAction: (AccountEditorViewAction) -> Unit,
+) {
+    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        icons.forEach {
+            IconView(
+                icon = it,
+                isSelected = selectedIcon.id == it.id,
+                onClick = { handleViewAction(AccountEditorViewAction.SelectIcon(it)) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun IconView(
+    modifier: Modifier = Modifier,
+    icon: IconModel,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .clip(CircleShape)
+            .size(32.dp)
+            .clickable(onClick = onClick)
+            .conditional(
+                condition = isSelected,
+                ifTrue = { border(width = 2.dp, color = incomeColor, shape = CircleShape) }),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (icon.id == 21L || icon.id == 22L) {
+            AsyncImage(
+                model = icon.icon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onBackground),
+            )
+        } else {
+            AsyncImage(
+                model = icon.icon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+            )
         }
     }
 }
