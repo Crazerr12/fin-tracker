@@ -1,6 +1,5 @@
 package ru.crazerr.feature.transaction.presentation.transactionEditor.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -274,13 +273,13 @@ private fun TransactionTypeButton(
 ) {
     val containerColor =
         if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-    val contentColor = if (isSelected) Color.White else Color(0xFF374151)
+    val contentColor =
+        if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
 
     Button(
         shape = RoundedCornerShape(8.dp),
         modifier = modifier,
         onClick = onSelect,
-        border = BorderStroke(width = 1.dp, color = Color(0xFFE5E7EB)),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor,

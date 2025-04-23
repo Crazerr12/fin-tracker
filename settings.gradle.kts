@@ -68,15 +68,19 @@ include(":feature:account:data")
 include(":feature:account:data:api")
 include(":feature:account:domain")
 include(":feature:account:domain:api")
-
 include(":feature:account:presentation")
+
 include(":feature:category:data")
 include(":feature:category:data:api")
 include(":feature:category:domain")
 include(":feature:category:domain:api")
-
 include(":feature:category:presentation")
 
 include(":feature:budgets:data")
 include(":feature:budgets:domain")
 include(":feature:budgets:presentation")
+
+include(":feature:icon:domain")
+include(":feature:icon:domain:api")
+include(":feature:icon:data")
+include(":feature:icon:data:api")

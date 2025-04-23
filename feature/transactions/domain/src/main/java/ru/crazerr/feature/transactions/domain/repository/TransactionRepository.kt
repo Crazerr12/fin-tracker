@@ -14,4 +14,6 @@ interface TransactionRepository {
         startDate: LocalDate?,
         endDate: LocalDate?,
     ): Flow<PagingData<Pair<LocalDate, List<Transaction>>>>
+
+    suspend fun deleteTransaction(transaction: Transaction): Result<Transaction>
 }

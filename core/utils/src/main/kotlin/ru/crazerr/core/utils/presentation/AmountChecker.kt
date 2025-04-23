@@ -1,5 +1,6 @@
 package ru.crazerr.core.utils.presentation
 
+import android.annotation.SuppressLint
 import kotlin.text.Regex
 
 fun String.isValidAmount(): Result<String> {
@@ -18,6 +19,13 @@ fun String.isValidAmount(): Result<String> {
     }
 }
 
+@SuppressLint("DefaultLocale")
+fun Double.formatWithAmountZeros(): String = when {
+    this % 1 != 0.0 -> String.format("%.1f", this)
+    this % 1 != 0.00 -> String.format("%.2f", this)
+    else -> String.format("%.0f", this)
+}
+
 fun Double.toAmountFormat(currencySign: Char): String {
     return "${this.toAmountFormat()} $currencySign"
 }
@@ -28,5 +36,5 @@ fun Double.toAmountFormat(): String {
         .let { it[0] to it.getOrNull(1) }
 
     val formattedInteger = integerPart.reversed().chunked(3).joinToString(" ").reversed()
-    return if (decimalPart != null && decimalPart.toDouble() % 1 != 0.00) "$formattedInteger.$decimalPart" else formattedInteger
+    return if (decimalPart != null && decimalPart.toDouble() / 1 > 0.00) "$formattedInteger.$decimalPart" else formattedInteger
 }

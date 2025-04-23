@@ -15,7 +15,12 @@ class TransactionsFilterComponent(
     private val onAction: (TransactionsFilterComponentAction) -> Unit,
     private val dependencies: TransactionsFilterDependencies,
 ) : BaseComponent<TransactionsFilterState, TransactionsFilterViewAction>(
-    InitialTransactionsFilterState
+    TransactionsFilterState(
+        selectedAccountIds = dependencies.args.accountIds.toList(),
+        selectedCategoryIds = dependencies.args.categoryIds.toList(),
+        startDate = dependencies.args.startDate,
+        endDate = dependencies.args.endDate,
+    )
 ), ComponentContext by componentContext {
     private val coroutineScope = componentCoroutineScope()
     private val snackbarManager = snackbarManager()
@@ -38,7 +43,7 @@ class TransactionsFilterComponent(
                     categoryIds = state.value.selectedCategoryIds.toLongArray(),
                     startDate = state.value.startDate,
                     endDate = state.value.endDate,
-                    isFilterEnabled = state.value.isFilterEnabled,
+                    isFilterEnabled = state.value.isFilterChanged,
                 )
             )
 
@@ -53,12 +58,12 @@ class TransactionsFilterComponent(
 
     private fun onUpdateEndDate(endDate: LocalDate?) {
         reduceState { copy(endDate = endDate) }
-        checkForFilterEnable()
+        checkForFilterChange()
     }
 
     private fun onUpdateStartDate(startDate: LocalDate?) {
         reduceState { copy(startDate = startDate) }
-        checkForFilterEnable()
+        checkForFilterChange()
     }
 
     private fun onManageStartDateDialog() {
@@ -82,7 +87,7 @@ class TransactionsFilterComponent(
                 endDate = null,
             )
         }
-        checkForFilterEnable()
+        checkForFilterChange()
     }
 
     private fun onSelectFilterType(filterType: FilterType) {
@@ -99,7 +104,7 @@ class TransactionsFilterComponent(
                 }
             )
         }
-        checkForFilterEnable()
+        checkForFilterChange()
     }
 
     private fun onManageAccount(id: Long) {
@@ -112,7 +117,7 @@ class TransactionsFilterComponent(
                 }
             )
         }
-        checkForFilterEnable()
+        checkForFilterChange()
     }
 
     private fun onManageAllCategories() {
@@ -125,7 +130,7 @@ class TransactionsFilterComponent(
                 }
             )
         }
-        checkForFilterEnable()
+        checkForFilterChange()
     }
 
     private fun onManageAllAccounts() {
@@ -138,13 +143,13 @@ class TransactionsFilterComponent(
                 }
             )
         }
-        checkForFilterEnable()
+        checkForFilterChange()
     }
 
-    private fun checkForFilterEnable() {
+    private fun checkForFilterChange() {
         reduceState {
             copy(
-                isFilterEnabled = selectedCategoryIds.size != dependencies.args.categoryIds.size || endDate != null
+                isFilterChanged = selectedCategoryIds.size != dependencies.args.categoryIds.size || endDate != null
                         || selectedAccountIds.size != dependencies.args.accountIds.size || startDate != null
             )
         }
@@ -165,19 +170,7 @@ class TransactionsFilterComponent(
                 onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") },
             )
 
-            handleArgs()
+            checkForFilterChange()
         }
-    }
-
-    private fun handleArgs() {
-        reduceState {
-            copy(
-                selectedAccountIds = dependencies.args.accountIds.toList(),
-                selectedCategoryIds = dependencies.args.categoryIds.toList(),
-                startDate = dependencies.args.startDate,
-                endDate = dependencies.args.endDate,
-            )
-        }
-        checkForFilterEnable()
     }
 }

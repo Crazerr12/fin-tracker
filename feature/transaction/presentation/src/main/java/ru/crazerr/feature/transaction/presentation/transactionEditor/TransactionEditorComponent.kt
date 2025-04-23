@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.crazerr.core.utils.presentation.BaseComponent
 import ru.crazerr.core.utils.presentation.componentCoroutineScope
+import ru.crazerr.core.utils.presentation.formatWithAmountZeros
 import ru.crazerr.core.utils.presentation.isValidAmount
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.account.domain.api.Account
@@ -175,7 +176,7 @@ class TransactionEditorComponent(
                             id = it.id,
                             transactionType = it.type,
                             selectedAccount = it.account,
-                            amount = it.amount.toString(),
+                            amount = it.amount.formatWithAmountZeros(),
                             selectedCategory = it.category,
                             date = it.date,
                         )

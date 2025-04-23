@@ -41,4 +41,7 @@ internal class BudgetRepositoryImpl(
 
     override fun getTotalBudget(date: LocalDate): Result<Flow<TotalBudget>> =
         budgetLocalDataSource.getTotalBudget(date = date)
+
+    override suspend fun deleteBudget(budget: Budget): Result<Budget> =
+        budgetLocalDataSource.deleteBudget(budget)
 }

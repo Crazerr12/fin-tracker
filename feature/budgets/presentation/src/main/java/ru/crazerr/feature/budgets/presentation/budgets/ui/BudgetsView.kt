@@ -4,7 +4,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,13 +30,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -56,6 +62,7 @@ import coil3.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.components.ErrorView
 import ru.crazerr.core.utils.components.LoadingView
+import ru.crazerr.core.utils.components.expenseColor
 import ru.crazerr.core.utils.date.toMonthYearFormat
 import ru.crazerr.core.utils.presentation.toAmountFormat
 import ru.crazerr.feature.budgets.presentation.R
@@ -63,10 +70,15 @@ import ru.crazerr.feature.budgets.presentation.budgets.BudgetsComponent
 import ru.crazerr.feature.budgets.presentation.budgets.BudgetsState
 import ru.crazerr.feature.budgets.presentation.budgets.BudgetsViewAction
 import ru.crazerr.feature.domain.api.Budget
+import ru.crazerr.core.utils.R as utilsR
 
 @Composable
 fun BudgetsView(modifier: Modifier = Modifier, component: BudgetsComponent) {
     val state by component.state.subscribeAsState()
+
+    if (state.selectedBudget != null) {
+        BudgetsBottomSheet(handleViewAction = component::handleViewAction)
+    }
 
     BudgetsViewContent(
         modifier = modifier,
@@ -180,7 +192,7 @@ private fun LazyListScope.budgetItems(
                 if (budgets[index] != null) {
                     BudgetCardItem(
                         budget = budgets[index]!!,
-                        onClick = { handleViewAction(BudgetsViewAction.GoToBudgetEditor(budgetId = it)) },
+                        handleViewAction = handleViewAction,
                         shape = if (index == budgets.itemCount - 1) RoundedCornerShape(
                             bottomEnd = 12.dp,
                             bottomStart = 12.dp
@@ -225,11 +237,16 @@ private fun CurrentMonthCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(
+            Box(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 6.dp),
-                onClick = { handleViewAction(BudgetsViewAction.PreviousMonthClick) },
+                    .padding(vertical = 16.dp, horizontal = 16.dp)
+                    .clickable(
+                        interactionSource = null,
+                        indication = null,
+                        onClick = { handleViewAction(BudgetsViewAction.PreviousMonthClick) }
+                    ),
+                contentAlignment = Alignment.CenterStart,
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -242,15 +259,20 @@ private fun CurrentMonthCard(
                 style = MaterialTheme.typography.titleLarge,
             )
 
-            IconButton(
+            Box(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 6.dp),
-                onClick = { handleViewAction(BudgetsViewAction.NextMonthClick) },
+                    .padding(vertical = 16.dp, horizontal = 16.dp)
+                    .clickable(
+                        interactionSource = null,
+                        indication = null,
+                        onClick = { handleViewAction(BudgetsViewAction.NextMonthClick) }
+                    ),
+                contentAlignment = Alignment.CenterEnd,
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = stringResource(R.string.budgets_previous_month_content_description),
+                    contentDescription = stringResource(R.string.budgets_next_month_content_description),
                 )
             }
         }
@@ -328,18 +350,21 @@ private fun EmptyBudgets(modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BudgetCardItem(
     modifier: Modifier = Modifier,
     budget: Budget,
-    onClick: (Long) -> Unit,
+    handleViewAction: (BudgetsViewAction) -> Unit,
     shape: Shape = RectangleShape,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.combinedClickable(
+            onClick = { handleViewAction(BudgetsViewAction.GoToBudgetEditor(budget.id)) },
+            onLongClick = { handleViewAction(BudgetsViewAction.SelectBudget(budget)) },
+        ),
         shape = shape,
-        onClick = { onClick(budget.id) },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
         Row(
@@ -384,5 +409,35 @@ private fun BudgetCardItem(
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BudgetsBottomSheet(
+    modifier: Modifier = Modifier,
+    handleViewAction: (BudgetsViewAction) -> Unit,
+) {
+    ModalBottomSheet(
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
+        onDismissRequest = { handleViewAction(BudgetsViewAction.SelectBudget(null)) },
+    ) {
+        ListItem(
+            modifier = Modifier.clickable(onClick = { handleViewAction(BudgetsViewAction.DeleteSelectedBudget) }),
+            headlineContent = {
+                Text(
+                    text = stringResource(utilsR.string.delete),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            },
+            leadingContent = {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = expenseColor,
+                )
+            },
+        )
     }
 }

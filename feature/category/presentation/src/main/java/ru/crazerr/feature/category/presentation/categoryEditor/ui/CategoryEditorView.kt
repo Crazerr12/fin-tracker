@@ -1,6 +1,7 @@
 package ru.crazerr.feature.category.presentation.categoryEditor.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,16 +37,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.components.Hint
+import ru.crazerr.core.utils.components.incomeColor
+import ru.crazerr.core.utils.presentation.conditional
 import ru.crazerr.feature.category.presentation.R
 import ru.crazerr.feature.category.presentation.categoryEditor.CategoryEditorComponent
 import ru.crazerr.feature.category.presentation.categoryEditor.CategoryEditorState
 import ru.crazerr.feature.category.presentation.categoryEditor.CategoryEditorViewAction
 import ru.crazerr.feature.category.presentation.categoryEditor.InitialCategoryEditorState
+import ru.crazerr.feature.icon.domain.api.IconModel
+import kotlin.collections.chunked
 
 private const val COLOR_ROW_SIZE = 6
 
@@ -109,14 +116,7 @@ private fun CategoryEditorViewContent(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = stringResource(R.string.category_editor_icon_hint),
-                    style = MaterialTheme.typography.titleSmall,
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-
+                IconGrid(state = state, handleViewAction = handleViewAction)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -196,6 +196,33 @@ private fun ColorGrid(
 }
 
 @Composable
+private fun IconGrid(
+    modifier: Modifier = Modifier,
+    state: CategoryEditorState,
+    handleViewAction: (CategoryEditorViewAction) -> Unit,
+) {
+    Text(
+        text = stringResource(R.string.category_editor_icon_hint),
+        style = MaterialTheme.typography.titleSmall,
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        state.icons.chunked(COLOR_ROW_SIZE).forEach { icons ->
+            IconRow(
+                icons = icons,
+                selectedIcon = state.selectedIconModel,
+                handleViewAction = handleViewAction,
+            )
+        }
+    }
+}
+
+@Composable
 private fun ColorRow(
     modifier: Modifier = Modifier,
     colors: List<Long>,
@@ -217,6 +244,50 @@ private fun ColorRow(
 }
 
 @Composable
+private fun IconRow(
+    modifier: Modifier = Modifier,
+    icons: List<IconModel>,
+    selectedIcon: IconModel,
+    handleViewAction: (CategoryEditorViewAction) -> Unit,
+) {
+    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        icons.forEach {
+            IconView(
+                icon = it,
+                isSelected = selectedIcon.id == it.id,
+                onClick = { handleViewAction(CategoryEditorViewAction.UpdateIcon(it)) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun IconView(
+    modifier: Modifier = Modifier,
+    icon: IconModel,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .clip(CircleShape)
+            .size(32.dp)
+            .clickable(onClick = onClick)
+            .conditional(
+                condition = isSelected,
+                ifTrue = { border(width = 2.dp, color = incomeColor, shape = CircleShape) }),
+        contentAlignment = Alignment.Center,
+    ) {
+        AsyncImage(
+            model = icon.icon,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onBackground),
+        )
+    }
+}
+
+@Composable
 private fun ColorView(
     modifier: Modifier = Modifier,
     color: Long,
@@ -229,7 +300,7 @@ private fun ColorView(
             .size(32.dp)
             .background(color = Color(color), shape = CircleShape)
             .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         if (isSelected) {
             Icon(

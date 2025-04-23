@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.crazerr.core.utils.presentation.BaseComponent
 import ru.crazerr.core.utils.presentation.componentCoroutineScope
+import ru.crazerr.core.utils.presentation.formatWithAmountZeros
 import ru.crazerr.core.utils.presentation.isValidAmount
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.budget.presentation.R
@@ -142,7 +143,7 @@ class BudgetEditorComponent(
                                 isWarning = it.isWarning,
                                 date = it.date,
                                 currentAmount = it.currentAmount,
-                                maxAmount = it.maxAmount.toString(),
+                                maxAmount = it.maxAmount.formatWithAmountZeros(),
                             )
                         }
                     },

@@ -1,6 +1,7 @@
 package ru.crazerr.feature.account.presentation
 
 import ru.crazerr.feature.currency.domain.api.Currency
+import ru.crazerr.feature.icon.domain.api.IconModel
 
 data class AccountEditorState(
     val id: Long,
@@ -13,6 +14,8 @@ data class AccountEditorState(
     val currencies: List<Currency>,
     val isLoading: Boolean,
     val buttonIsLoading: Boolean,
+    val icons: List<IconModel>,
+    val selectedIcon: IconModel,
 )
 
 internal val InitialAccountEditorState = AccountEditorState(
@@ -26,4 +29,6 @@ internal val InitialAccountEditorState = AccountEditorState(
     isDropdownExpanded = false,
     isLoading = false,
     buttonIsLoading = false,
+    icons = emptyList(),
+    selectedIcon = IconModel(id = -1, icon = ByteArray(0), purpose = ""),
 )

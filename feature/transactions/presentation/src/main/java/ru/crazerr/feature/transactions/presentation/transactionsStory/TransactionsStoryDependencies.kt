@@ -5,6 +5,7 @@ import ru.crazerr.feature.transactions.presentation.transactions.TransactionsCom
 import ru.crazerr.feature.transactions.presentation.transactionsFilter.TransactionsFilterComponentFactory
 
 class TransactionsStoryDependencies(
+    val args: TransactionsStoryArgs,
     val transactionsComponentFactory: TransactionsComponentFactory,
     val transactionsFilterComponentFactory: TransactionsFilterComponentFactory,
     val transactionEditorStoryComponentFactory: TransactionEditorStoryComponentFactory,

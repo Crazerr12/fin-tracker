@@ -9,6 +9,8 @@
     <string name="account_editor_name_field_hint">Название счёта</string>
     <string name="account_editor_amount_field_hint">Начальный баланс</string>
     <string name="account_editor_currency_field_hint">Валюта</string>
+    <string name="account_editor_icon_hint">Иконка</string>
+
     <string name="account_editor_currency_up_content_description">Свернуть</string>
     <string name="account_editor_currency_down_content_description">Развернуть</string>
 

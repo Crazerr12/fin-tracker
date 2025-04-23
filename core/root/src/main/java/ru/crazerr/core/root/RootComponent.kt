@@ -3,32 +3,41 @@ package ru.crazerr.core.root
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.backhandler.BackCallback
+import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import kotlinx.serialization.Serializable
+import ru.crazerr.core.utils.navigation.navigationManager
+import ru.crazerr.core.utils.serializators.LocalDateSerializer
 import ru.crazerr.core.utils.snackbar.SnackbarManager
 import ru.crazerr.core.utils.snackbar.snackbarManager
+import ru.crazerr.feature.analysis.presentation.analysisStory.AnalysisStoryComponent
+import ru.crazerr.feature.analysis.presentation.analysisStory.AnalysisStoryComponentAction
 import ru.crazerr.feature.budgets.presentation.budgetsStory.BudgetsStoryComponent
 import ru.crazerr.feature.main.presentation.mainStory.MainStoryComponent
+import ru.crazerr.feature.transaction.domain.api.TransactionType
+import ru.crazerr.feature.transactions.presentation.transactionsStory.TransactionsStoryArgs
 import ru.crazerr.feature.transactions.presentation.transactionsStory.TransactionsStoryComponent
+import java.time.LocalDate
+import kotlin.system.exitProcess
 
-interface RootComponent {
+interface RootComponent : BackHandlerOwner {
     val stack: Value<ChildStack<*, Child>>
     val selectedBottomNavigationItem: Value<BottomNavigationItem>
     val snackbarManager: SnackbarManager
+    val bottomNavigation: Value<Boolean>
 
     fun obtainBottomNavigation(item: BottomNavigationItem)
-
-    fun isBottomNavigationVisible(): Boolean
 
     sealed interface Child {
         class AuthStory() : Child
         class MainStory(val component: MainStoryComponent) : Child
         class TransactionsStory(val component: TransactionsStoryComponent) : Child
-        class AnalysisStory() : Child
+        class AnalysisStory(val component: AnalysisStoryComponent) : Child
         class BudgetsStory(val component: BudgetsStoryComponent) : Child
         class ProfileStory() : Child
     }
@@ -51,7 +60,15 @@ interface RootComponent {
         data object ProfileStoryConfig : Config
 
         @Serializable
-        data object TransactionsStoryConfig : Config
+        data class TransactionsStoryConfig(
+            val categoryIds: LongArray? = null,
+            val accountIds: LongArray? = null,
+            @Serializable(with = LocalDateSerializer::class)
+            val startDate: LocalDate? = null,
+            @Serializable(with = LocalDateSerializer::class)
+            val endDate: LocalDate? = null,
+            val transactionType: TransactionType = TransactionType.Income,
+        ) : Config
     }
 
     interface Factory {
@@ -68,11 +85,16 @@ internal class RootComponentImpl(
         DiInjector.create()
     }
 
+    private val navigationManager = navigationManager()
+
+    override val bottomNavigation: Value<Boolean>
+        get() = navigationManager.bottomBar
+
     override val stack: Value<ChildStack<*, RootComponent.Child>> = childStack(
         source = navigation,
         serializer = RootComponent.Config.serializer(),
         initialConfiguration = RootComponent.Config.MainStoryConfig,
-        handleBackButton = true,
+        handleBackButton = false,
         childFactory = ::child,
     )
 
@@ -84,28 +106,40 @@ internal class RootComponentImpl(
 
     override val snackbarManager: SnackbarManager = snackbarManager()
 
+    private val backCallback = BackCallback {
+        if (stack.value.backStack.isNotEmpty()) navigation.pop() else exitProcess(0)
+        when (stack.value.active.configuration) {
+            RootComponent.Config.MainStoryConfig -> {
+                _selectedBottomNavigationItem.value = BottomNavigationItem.Main
+            }
+
+            RootComponent.Config.TransactionsStoryConfig -> {
+                _selectedBottomNavigationItem.value = BottomNavigationItem.Transactions
+            }
+
+            RootComponent.Config.BudgetsStoryConfig -> {
+                _selectedBottomNavigationItem.value = BottomNavigationItem.Budget
+            }
+
+            RootComponent.Config.AnalysisStoryConfig -> {
+                _selectedBottomNavigationItem.value = BottomNavigationItem.Analysis
+            }
+        }
+    }
+
+    init {
+        backHandler.register(backCallback)
+    }
 
     override fun obtainBottomNavigation(item: BottomNavigationItem) {
         when (item) {
             BottomNavigationItem.Main -> navigation.pushToFront(RootComponent.Config.MainStoryConfig)
-            BottomNavigationItem.Transactions -> navigation.pushToFront(RootComponent.Config.TransactionsStoryConfig)
+            BottomNavigationItem.Transactions -> navigation.pushToFront(RootComponent.Config.TransactionsStoryConfig())
             BottomNavigationItem.Analysis -> navigation.pushToFront(RootComponent.Config.AnalysisStoryConfig)
             BottomNavigationItem.Budget -> navigation.pushToFront(RootComponent.Config.BudgetsStoryConfig)
-            BottomNavigationItem.Profile -> navigation.pushToFront(RootComponent.Config.ProfileStoryConfig)
+            // BottomNavigationItem.Profile -> navigation.pushToFront(RootComponent.Config.ProfileStoryConfig)
         }
         _selectedBottomNavigationItem.value = item
-    }
-
-    override fun isBottomNavigationVisible(): Boolean {
-        return when (stack.active.instance) {
-            is RootComponent.Child.MainStory,
-            is RootComponent.Child.TransactionsStory,
-            is RootComponent.Child.AnalysisStory,
-            is RootComponent.Child.BudgetsStory,
-            is RootComponent.Child.ProfileStory -> true
-
-            else -> false
-        }
     }
 
     private fun child(
@@ -118,7 +152,10 @@ internal class RootComponentImpl(
             RootComponent.Config.BudgetsStoryConfig -> createBudgetsStory(componentContext = componentContext)
             RootComponent.Config.MainStoryConfig -> createMainStory(componentContext = componentContext)
             RootComponent.Config.ProfileStoryConfig -> createProfileStory(componentContext = componentContext)
-            RootComponent.Config.TransactionsStoryConfig -> createTransactionsStory(componentContext = componentContext)
+            is RootComponent.Config.TransactionsStoryConfig -> createTransactionsStory(
+                componentContext = componentContext,
+                config = config,
+            )
         }
     }
 
@@ -133,12 +170,41 @@ internal class RootComponentImpl(
         RootComponent.Child.AuthStory()
 
     private fun createAnalysisStory(componentContext: ComponentContext): RootComponent.Child.AnalysisStory =
-        RootComponent.Child.AnalysisStory()
+        RootComponent.Child.AnalysisStory(
+            component = di.analysisStoryComponentFactory.create(
+                componentContext = componentContext,
+                onAction = { action ->
+                    when (action) {
+                        is AnalysisStoryComponentAction.OnCategoryClick -> {
+                            obtainBottomNavigation(BottomNavigationItem.Transactions)
+                            navigation.pushToFront(
+                                RootComponent.Config.TransactionsStoryConfig(
+                                    categoryIds = longArrayOf(action.categoryId),
+                                    startDate = action.startDate,
+                                    endDate = action.endDate,
+                                    transactionType = action.transactionType,
+                                )
+                            )
+                        }
+                    }
+                }
+            )
+        )
 
-    private fun createTransactionsStory(componentContext: ComponentContext): RootComponent.Child.TransactionsStory =
+    private fun createTransactionsStory(
+        componentContext: ComponentContext,
+        config: RootComponent.Config.TransactionsStoryConfig,
+    ): RootComponent.Child.TransactionsStory =
         RootComponent.Child.TransactionsStory(
             component = di.transactionsStoryComponentFactory.create(
-                componentContext
+                componentContext = componentContext,
+                args = TransactionsStoryArgs(
+                    categoryIds = config.categoryIds,
+                    accountIds = config.accountIds,
+                    startDate = config.startDate,
+                    endDate = config.endDate,
+                    transactionType = config.transactionType,
+                )
             )
         )
 

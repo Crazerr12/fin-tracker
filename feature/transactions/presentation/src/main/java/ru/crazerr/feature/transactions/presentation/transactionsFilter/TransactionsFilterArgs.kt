@@ -7,5 +7,4 @@ class TransactionsFilterArgs(
     val categoryIds: LongArray,
     val startDate: LocalDate?,
     val endDate: LocalDate?,
-    val isFilterEnabled: Boolean,
 )

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,13 +30,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.snackbar.SnackbarManager
+import ru.crazerr.feature.analysis.presentation.analysisStory.ui.AnalysisStoryCoordinator
 import ru.crazerr.feature.budgets.presentation.budgetsStory.ui.BudgetsStoryCoordinator
 import ru.crazerr.feature.main.presentation.mainStory.ui.MainStoryCoordinator
 import ru.crazerr.feature.transactions.presentation.transactionsStory.ui.TransactionsStoryCoordinator
@@ -44,6 +45,7 @@ import ru.crazerr.feature.transactions.presentation.transactionsStory.ui.Transac
 fun RootCoordinator(modifier: Modifier = Modifier, component: RootComponent) {
     val stack by component.stack.subscribeAsState()
     val selectedBottomNavigationItem by component.selectedBottomNavigationItem.subscribeAsState()
+    val bottomNavigation by component.bottomNavigation.subscribeAsState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -51,14 +53,14 @@ fun RootCoordinator(modifier: Modifier = Modifier, component: RootComponent) {
             GlobalSnackbarHost(snackbarManager = component.snackbarManager)
         },
         bottomBar = {
-            if (component.isBottomNavigationVisible()) {
+            if (bottomNavigation) {
                 BottomNavigationView(
                     selectedBottomNavigationItem = selectedBottomNavigationItem,
-                    onNavigate = component::obtainBottomNavigation
+                    onNavigate = component::obtainBottomNavigation,
                 )
             }
         },
-        contentWindowInsets = WindowInsets(0),
+        contentWindowInsets = if (bottomNavigation) WindowInsets(0) else WindowInsets.navigationBars,
     ) { paddingValues ->
         Children(
             stack = stack,
@@ -72,7 +74,7 @@ fun RootCoordinator(modifier: Modifier = Modifier, component: RootComponent) {
                 is RootComponent.Child.MainStory -> MainStoryCoordinator(component = child.component)
                 is RootComponent.Child.TransactionsStory -> TransactionsStoryCoordinator(component = child.component)
                 is RootComponent.Child.BudgetsStory -> BudgetsStoryCoordinator(component = child.component)
-                is RootComponent.Child.AnalysisStory -> Box() {}
+                is RootComponent.Child.AnalysisStory -> AnalysisStoryCoordinator(component = child.component)
                 is RootComponent.Child.ProfileStory -> Box() {}
             }
         }
@@ -126,7 +128,7 @@ private fun BottomNavigationView(
                 Icon(
                     painter = painterResource(it.iconRes),
                     contentDescription = null,
-                    tint = if (selectedBottomNavigationItem == it) Color.Blue else LocalContentColor.current
+                    tint = if (selectedBottomNavigationItem == it) MaterialTheme.colorScheme.primary else LocalContentColor.current
                 )
 
 //                Spacer(modifier = Modifier.height(2.dp))
@@ -134,7 +136,7 @@ private fun BottomNavigationView(
 //                Text(
 //                    text = stringResource(it.stringRes),
 //                    style = MaterialTheme.typography.titleSmall.copy(
-//                        color = if (selectedBottomNavigationItem == it) Color.Blue else LocalContentColor.current
+//                        color = if (selectedBottomNavigationItem == it) MaterialTheme.colorScheme.primary else LocalContentColor.current
 //                    ),
 //                )
             }

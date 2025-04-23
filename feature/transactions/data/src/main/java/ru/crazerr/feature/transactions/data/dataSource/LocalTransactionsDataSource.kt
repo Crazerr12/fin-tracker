@@ -1,18 +1,23 @@
 package ru.crazerr.feature.transactions.data.dataSource
 
 import androidx.room.InvalidationTracker
+import androidx.room.withTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.crazerr.core.database.AppDatabase
+import ru.crazerr.feature.account.data.api.toAccountEntity
 import ru.crazerr.feature.transaction.data.api.toTransaction
+import ru.crazerr.feature.transaction.data.api.toTransactionEntity
 import ru.crazerr.feature.transaction.domain.api.Transaction
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 import java.time.LocalDate
 
 internal class LocalTransactionsDataSource(
-    appDatabase: AppDatabase,
+    private val appDatabase: AppDatabase,
 ) {
     private val transactionsDao = appDatabase.transactionsDao()
+    private val accountsDao = appDatabase.accountsDao()
+    private val budgetsDao = appDatabase.budgetsDao()
 
     private val invalidationTracker = appDatabase.invalidationTracker
 
@@ -50,6 +55,30 @@ internal class LocalTransactionsDataSource(
         Result.success(dates)
     } catch (ex: Exception) {
         Result.failure(ex)
+    }
+
+    suspend fun deleteTransaction(transaction: Transaction): Result<Transaction> = runCatching {
+        val amount = if (transaction.type == TransactionType.Income) -transaction.amount
+        else transaction.amount
+
+        val budget = budgetsDao.getBudgetByCategoryAndDate(
+            categoryId = transaction.category.id,
+            date = LocalDate.now().toString(),
+        )
+
+        appDatabase.withTransaction {
+            transactionsDao.delete(transaction.toTransactionEntity())
+            accountsDao.update(
+                transaction.account.copy(amount = transaction.account.amount + amount)
+                    .toAccountEntity()
+            )
+
+            if (budget != null) {
+                budgetsDao.update(budget.copy(currentAmount = budget.currentAmount + amount))
+            }
+
+            transaction
+        }
     }
 
     fun addObserver(observer: InvalidationTracker.Observer) {

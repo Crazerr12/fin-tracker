@@ -13,6 +13,7 @@ class UtilsPlugin : Plugin<Project> {
                 apply(libs.plugins.kotlin.compose.get().pluginId)
                 apply("android.library.plugin")
                 apply("serialization.plugin")
+                apply("coil.plugin")
             }
 
             with(dependencies) {

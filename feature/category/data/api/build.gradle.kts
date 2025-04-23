@@ -8,4 +8,5 @@ android {
 
 dependencies {
     implementation(project(":feature:category:domain:api"))
+    api(project(":feature:icon:data:api"))
 }

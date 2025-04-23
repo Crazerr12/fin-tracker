@@ -7,4 +7,5 @@ import androidx.room.PrimaryKey
 data class IconEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val icon: ByteArray,
+    val purpose: String,
 )

@@ -8,5 +8,6 @@ android {
 
 dependencies {
     api(project(":feature:currency:data:api"))
+    api(project(":feature:icon:data:api"))
     implementation(project(":feature:account:domain:api"))
 }

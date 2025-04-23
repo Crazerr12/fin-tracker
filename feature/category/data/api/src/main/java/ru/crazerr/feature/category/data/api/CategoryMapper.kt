@@ -3,6 +3,7 @@ package ru.crazerr.feature.category.data.api
 import ru.crazerr.core.database.categories.model.CategoryEntity
 import ru.crazerr.core.database.categories.model.CategoryWithIcon
 import ru.crazerr.feature.domain.api.Category
+import ru.crazerr.feature.icon.data.api.toIcon
 
 fun Category.toCategoryEntity() = CategoryEntity(
     id = id,

@@ -4,6 +4,7 @@
     <string name="confirm_button">Принять</string>
     <string name="cancel_button">Отменить</string>
     <string name="save_button">Сохранить</string>
+    <string name="delete">Удалить</string>
 
     <string name="keyboard_arrow_down_content_description">Раскрыть список</string>
     <string name="keyboard_arrow_up_content_description">Скрыть список</string>

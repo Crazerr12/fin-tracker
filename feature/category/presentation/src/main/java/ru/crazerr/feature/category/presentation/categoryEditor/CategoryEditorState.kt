@@ -1,6 +1,6 @@
 package ru.crazerr.feature.category.presentation.categoryEditor
 
-import ru.crazerr.feature.domain.api.IconModel
+import ru.crazerr.feature.icon.domain.api.IconModel
 
 
 data class CategoryEditorState(
@@ -8,7 +8,7 @@ data class CategoryEditorState(
     val name: String,
     val nameError: String,
     val selectedIconModel: IconModel,
-    val icons: List<String>,
+    val icons: List<IconModel>,
     val selectedColor: Long,
     val colors: List<Long>,
     val buttonIsLoading: Boolean,
@@ -18,7 +18,7 @@ internal val InitialCategoryEditorState = CategoryEditorState(
     id = -1,
     name = "",
     nameError = "",
-    selectedIconModel = IconModel(id = -1, icon = ByteArray(0)),
+    selectedIconModel = IconModel(id = -1, icon = ByteArray(0), purpose = ""),
     icons = listOf(),
     selectedColor = 0xFFFFD1DC,
     colors = listOf(

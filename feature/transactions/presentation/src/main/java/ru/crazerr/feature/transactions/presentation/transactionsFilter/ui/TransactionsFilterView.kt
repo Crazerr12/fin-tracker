@@ -73,8 +73,8 @@ fun TransactionsFilterView(modifier: Modifier = Modifier, component: Transaction
         contentWindowInsets = WindowInsets(0),
         topBar = {
             TransactionsFilterTopBar(
-                isFilterEnabled = state.isFilterEnabled,
-                handleViewAction = component::handleViewAction
+                resetButtonIsVisible = state.resetButtonIsVisible,
+                handleViewAction = component::handleViewAction,
             )
         },
     ) { paddingValues ->
@@ -83,7 +83,7 @@ fun TransactionsFilterView(modifier: Modifier = Modifier, component: Transaction
                 .fillMaxWidth()
                 .padding(paddingValues),
             state = state,
-            handleViewAction = component::handleViewAction
+            handleViewAction = component::handleViewAction,
         )
     }
 }
@@ -99,13 +99,13 @@ private fun TransactionsFilterViewContent(
             FiltersList(
                 modifier = Modifier.weight(1f),
                 state = state,
-                handleViewAction = handleViewAction
+                handleViewAction = handleViewAction,
             )
 
             Column(
                 modifier = Modifier
                     .weight(2f)
-                    .padding(start = 12.dp, end = 12.dp, top = 12.dp)
+                    .padding(start = 12.dp, end = 12.dp, top = 12.dp),
             ) {
                 when (state.selectedFilterType) {
                     FilterType.Account -> if (state.accounts.isNotEmpty()) {
@@ -183,7 +183,7 @@ private fun TransactionsFilterViewContent(
             }
         }
 
-        if (state.isFilterEnabled) {
+        if (state.isFilterChanged) {
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -236,7 +236,7 @@ private fun FilterItem(
 @Composable
 private fun TransactionsFilterTopBar(
     modifier: Modifier = Modifier,
-    isFilterEnabled: Boolean,
+    resetButtonIsVisible: Boolean,
     handleViewAction: (TransactionsFilterViewAction) -> Unit
 ) {
     CenterAlignedTopAppBar(
@@ -257,7 +257,7 @@ private fun TransactionsFilterTopBar(
             }
         },
         actions = {
-            if (isFilterEnabled) {
+            if (resetButtonIsVisible) {
                 TextButton(onClick = { handleViewAction(TransactionsFilterViewAction.ResetAllFilters) }) {
                     Text(
                         text = stringResource(R.string.transactions_filter_reset_button),

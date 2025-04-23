@@ -48,4 +48,7 @@ internal class TransactionRepositoryImpl(
             }
         ).flow
     }
+
+    override suspend fun deleteTransaction(transaction: Transaction): Result<Transaction> =
+        localTransactionsDataSource.deleteTransaction(transaction)
 }

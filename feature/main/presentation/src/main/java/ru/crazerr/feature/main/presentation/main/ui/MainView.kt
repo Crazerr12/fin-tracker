@@ -32,12 +32,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.components.LoadingView
+import ru.crazerr.core.utils.components.expenseColor
+import ru.crazerr.core.utils.components.incomeColor
 import ru.crazerr.core.utils.presentation.toAmountFormat
 import ru.crazerr.feature.account.domain.api.Account
 import ru.crazerr.feature.main.presentation.R
@@ -166,7 +169,7 @@ private fun IncomeAndExpensesRow(modifier: Modifier = Modifier, state: MainState
             title = stringResource(R.string.main_income),
             currentBalance = state.currentIncome,
             lastMonthBalance = state.lastMonthIncome,
-            color = Color.Green,
+            color = incomeColor,
             currencySign = state.mainCurrencySign,
         )
 
@@ -177,7 +180,7 @@ private fun IncomeAndExpensesRow(modifier: Modifier = Modifier, state: MainState
             title = stringResource(R.string.main_expenses),
             currentBalance = state.currentExpenses,
             lastMonthBalance = state.lastMonthExpenses,
-            color = Color.Red,
+            color = expenseColor,
             currencySign = state.mainCurrencySign,
         )
     }
@@ -220,7 +223,9 @@ private fun BalanceCard(
             if (percentage != 0.0) {
                 Text(
                     text = "${if (percentage > 0.0) '+' else '-'}$percentage%",
-                    style = MaterialTheme.typography.bodyLarge.copy(if (percentage > 0) Color.Green else Color.Red)
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        if (percentage > 0) incomeColor else expenseColor
+                    )
                 )
             }
         }
@@ -250,11 +255,20 @@ private fun AccountCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AsyncImage(
-                    modifier = Modifier.size(20.dp),
-                    contentDescription = null,
-                    model = account.iconId,
-                )
+                if (account.icon.id == 21L || account.icon.id == 22L) {
+                    AsyncImage(
+                        modifier = Modifier.size(24.dp),
+                        contentDescription = null,
+                        model = account.icon.icon,
+                        colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onBackground),
+                    )
+                } else {
+                    AsyncImage(
+                        modifier = Modifier.size(24.dp),
+                        contentDescription = null,
+                        model = account.icon.icon,
+                    )
+                }
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -276,7 +290,7 @@ private fun AccountCard(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(R.string.main_delete_account_content_description),
-                        tint = Color.Red
+                        tint = expenseColor,
                     )
                 }
             }
