@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.arkivanov.decompose.defaultComponentContext
 import org.koin.android.ext.android.inject
 import ru.crazerr.core.root.RootComponent
@@ -15,8 +17,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        window.navigationBarColor = Color.Red.toArgb()
         val rootComponent = rootComponentFactory.create(defaultComponentContext())
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+        )
         setContent {
             FinTrackerTheme {
                 RootCoordinator(

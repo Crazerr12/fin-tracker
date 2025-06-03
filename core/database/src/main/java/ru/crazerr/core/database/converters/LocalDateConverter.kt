@@ -13,7 +13,7 @@ internal class LocalDateConverter {
     }
 
     @TypeConverter
-    fun toLocalDate(value: String): LocalDate {
-        return LocalDate.parse(value, formatter)
+    fun toLocalDate(value: String?): LocalDate {
+        return if (value == null) LocalDate.now() else LocalDate.parse(value, formatter)
     }
 }

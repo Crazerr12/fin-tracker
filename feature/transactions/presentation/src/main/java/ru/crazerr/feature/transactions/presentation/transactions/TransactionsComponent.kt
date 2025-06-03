@@ -4,7 +4,6 @@ import androidx.paging.cachedIn
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnStart
 import com.arkivanov.essenty.lifecycle.doOnStop
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -17,6 +16,8 @@ import ru.crazerr.feature.transaction.domain.api.Transaction
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 import ru.crazerr.feature.transactions.presentation.transactions.TransactionsComponentAction.*
 import java.time.LocalDate
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 class TransactionsComponent(
     componentContext: ComponentContext,
@@ -107,27 +108,46 @@ class TransactionsComponent(
                 )
             }
 
-            val accountsDeferred = if (state.value.accountIds.isEmpty()) {
-                async { dependencies.accountRepository.getAccounts() }
-            } else {
-                null
-            }
-            val categoriesDeferred = if (state.value.categoryIds.isEmpty()) {
-                async { dependencies.categoryRepository.getCategories() }
-            } else {
-                null
+            val remainingInitialData = AtomicInteger(2)
+            val transactionsTriggered = AtomicBoolean(false)
+
+            launch {
+                dependencies.accountRepository.getAccounts().fold(
+                    onSuccess = { flow ->
+                        flow.collect { accounts ->
+                            reduceState {
+                                copy(accountIds = accounts.map { it.id }.toLongArray())
+                            }
+
+                            if (remainingInitialData.decrementAndGet() <= 0) {
+                                getTransactions()
+                            }
+                        }
+                    },
+                    onFailure = {
+                        snackbarManager.showSnackbar(it.localizedMessage ?: "")
+                    },
+                )
             }
 
-            accountsDeferred?.await()?.fold(
-                onSuccess = { reduceState { copy(accountIds = it.map { it.id }.toLongArray()) } },
-                onFailure = { snackbarManager.showSnackbar(message = it.localizedMessage ?: "") }
-            )
-            categoriesDeferred?.await()?.fold(
-                onSuccess = { reduceState { copy(categoryIds = it.map { it.id }.toLongArray()) } },
-                onFailure = { snackbarManager.showSnackbar(message = it.localizedMessage ?: "") }
-            )
+            launch {
+                dependencies.categoryRepository.getCategories().fold(
+                    onSuccess = { flow ->
+                        flow.collect { categories ->
+                            reduceState {
+                                copy(categoryIds = categories.map { it.id }.toLongArray())
+                            }
 
-            getTransactions()
+                            if (remainingInitialData.decrementAndGet() <= 0) {
+                                getTransactions()
+                            }
+                        }
+                    },
+                    onFailure = {
+                        snackbarManager.showSnackbar(it.localizedMessage ?: "")
+                    },
+                )
+            }
         }
     }
 
@@ -148,6 +168,7 @@ class TransactionsComponent(
             flow.collectLatest { input ->
                 when (input) {
                     is Input.Filter -> handleFilterInput(filter = input)
+                    Input.TransactionCreated -> getTransactions()
                 }
             }
         }
@@ -174,5 +195,7 @@ class TransactionsComponent(
             val endDate: LocalDate?,
             val isFilterEnabled: Boolean,
         ) : Input
+
+        data object TransactionCreated : Input
     }
 }

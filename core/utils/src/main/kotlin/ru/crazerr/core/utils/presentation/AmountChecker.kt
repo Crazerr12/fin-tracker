@@ -1,6 +1,7 @@
 package ru.crazerr.core.utils.presentation
 
 import android.annotation.SuppressLint
+import kotlin.math.roundToInt
 import kotlin.text.Regex
 
 fun String.isValidAmount(): Result<String> {
@@ -31,7 +32,7 @@ fun Double.toAmountFormat(currencySign: Char): String {
 }
 
 fun Double.toAmountFormat(): String {
-    val stringNum = this.toString()
+    val stringNum = ((this * 100.0).roundToInt() / 100.0).toString()
     val (integerPart, decimalPart) = stringNum.split('.', limit = 2)
         .let { it[0] to it.getOrNull(1) }
 

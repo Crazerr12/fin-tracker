@@ -14,7 +14,7 @@ import ru.crazerr.core.database.currencies.model.CurrencyEntity
         parentColumns = arrayOf("id"),
         childColumns = arrayOf("currency_id"),
         onUpdate = ForeignKey.RESTRICT,
-        onDelete = ForeignKey.RESTRICT,
+        onDelete = ForeignKey.CASCADE,
     )],
     indices = [Index("currency_id")]
 )

@@ -15,9 +15,11 @@ internal class BudgetRepositoryImpl(
     override suspend fun createBudget(budget: Budget): Result<Budget> =
         budgetLocalDataSource.createBudget(budget = budget)
 
-    override suspend fun createRepeatBudget(budget: Budget): Result<Budget> =
-        budgetLocalDataSource.createRepeatBudget(budget = budget)
-
+    override suspend fun createRepeatBudget(budget: Budget): Result<Budget> {
+        val budget = budgetLocalDataSource.createRepeatBudget(budget = budget)
+        budgetManager.createNewBudget(budget = budget.getOrElse { return budget })
+        return budget
+    }
 
     override suspend fun updateBudget(budget: Budget): Result<Budget> =
         if (budget.repeatBudgetId != null) {

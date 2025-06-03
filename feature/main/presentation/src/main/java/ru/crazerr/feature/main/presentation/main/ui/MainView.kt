@@ -195,12 +195,6 @@ private fun BalanceCard(
     color: Color,
     currencySign: Char,
 ) {
-    val percentage = if (lastMonthBalance != 0.0) {
-        (currentBalance - lastMonthBalance) / lastMonthBalance * 100
-    } else {
-        0.0
-    }
-
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
@@ -219,15 +213,6 @@ private fun BalanceCard(
                 text = currentBalance.toAmountFormat(currencySign = currencySign),
                 style = MaterialTheme.typography.titleMedium.copy(color = color)
             )
-
-            if (percentage != 0.0) {
-                Text(
-                    text = "${if (percentage > 0.0) '+' else '-'}$percentage%",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        if (percentage > 0) incomeColor else expenseColor
-                    )
-                )
-            }
         }
     }
 }

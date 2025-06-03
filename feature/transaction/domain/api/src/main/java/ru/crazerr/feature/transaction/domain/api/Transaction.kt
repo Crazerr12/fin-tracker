@@ -11,4 +11,5 @@ data class Transaction(
     val type: TransactionType,
     val date: LocalDate,
     val account: Account,
+    val budgetId: Long? = null,
 )

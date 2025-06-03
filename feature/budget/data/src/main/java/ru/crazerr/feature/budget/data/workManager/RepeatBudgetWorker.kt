@@ -45,7 +45,6 @@ internal class RepeatBudgetWorker(
                             maxAmount = maxAmount,
                             isAlarm = isAlarm,
                             isWarning = isWarning,
-                            currentAmount = 0.0,
                             date = LocalDate.now().plusDays(1)
                         )
                     )

@@ -17,6 +17,7 @@ data class TransactionsFilterState(
     val endDateDialogIsOpen: Boolean = false,
     val selectedFilterType: FilterType = FilterType.Category,
     val searchQuery: String = "",
+    val isLoading: Boolean = true,
 ) {
     val resetButtonIsVisible: Boolean = selectedCategoryIds.size != categories.size
             || selectedAccountIds.size != accounts.size || startDate != null || endDate != null

@@ -16,13 +16,10 @@ internal class TransactionRepositoryImpl(
     private val localTransactionsDataSource: LocalTransactionsDataSource,
 ) : TransactionRepository {
 
-    private var transactionsPagingSource: TransactionsPagingSource? = null
-
     init {
         localTransactionsDataSource.addObserver(observer = object :
             InvalidationTracker.Observer("transactions") {
             override fun onInvalidated(tables: Set<String>) {
-                transactionsPagingSource?.invalidate()
             }
         })
     }
@@ -43,8 +40,8 @@ internal class TransactionRepositoryImpl(
                     transactionType = transactionType,
                     startDate = startDate,
                     endDate = endDate,
-                    localTransactionsDataSource = localTransactionsDataSource
-                ).also { transactionsPagingSource = it }
+                    localTransactionsDataSource = localTransactionsDataSource,
+                )
             }
         ).flow
     }

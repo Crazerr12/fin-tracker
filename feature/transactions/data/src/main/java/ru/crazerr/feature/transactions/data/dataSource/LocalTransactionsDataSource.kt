@@ -17,7 +17,6 @@ internal class LocalTransactionsDataSource(
 ) {
     private val transactionsDao = appDatabase.transactionsDao()
     private val accountsDao = appDatabase.accountsDao()
-    private val budgetsDao = appDatabase.budgetsDao()
 
     private val invalidationTracker = appDatabase.invalidationTracker
 
@@ -61,21 +60,12 @@ internal class LocalTransactionsDataSource(
         val amount = if (transaction.type == TransactionType.Income) -transaction.amount
         else transaction.amount
 
-        val budget = budgetsDao.getBudgetByCategoryAndDate(
-            categoryId = transaction.category.id,
-            date = LocalDate.now().toString(),
-        )
-
         appDatabase.withTransaction {
             transactionsDao.delete(transaction.toTransactionEntity())
             accountsDao.update(
                 transaction.account.copy(amount = transaction.account.amount + amount)
                     .toAccountEntity()
             )
-
-            if (budget != null) {
-                budgetsDao.update(budget.copy(currentAmount = budget.currentAmount + amount))
-            }
 
             transaction
         }
