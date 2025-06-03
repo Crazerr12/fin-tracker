@@ -2,6 +2,7 @@ package ru.crazerr.feature.transactions.presentation.transactionsFilter
 
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.crazerr.core.utils.presentation.BaseComponent
 import ru.crazerr.core.utils.presentation.componentCoroutineScope
@@ -157,20 +158,29 @@ class TransactionsFilterComponent(
 
     private fun getInitialData() {
         coroutineScope.launch {
-            val categories = async { dependencies.categoryRepository.getCategories() }
-            val accounts = async { dependencies.accountRepository.getAccounts() }
+            reduceState { copy(isLoading = true) }
+            val categoryFlow = async { dependencies.categoryRepository.getCategories() }
+            val accountFlow = async { dependencies.accountRepository.getAccounts() }
 
-            categories.await().fold(
-                onSuccess = { reduceState { copy(categories = it) } },
+            categoryFlow.await().fold(
+                onSuccess = {
+                    val categories = it.first()
+                    reduceState { copy(categories = categories) }
+                },
                 onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") },
             )
 
-            accounts.await().fold(
-                onSuccess = { reduceState { copy(accounts = it) } },
+            accountFlow.await().fold(
+                onSuccess = {
+                    val accounts = it.first()
+                    reduceState { copy(accounts = accounts) }
+                },
                 onFailure = { snackbarManager.showSnackbar(it.localizedMessage ?: "") },
             )
 
             checkForFilterChange()
+
+            reduceState { copy(isLoading = false) }
         }
     }
 }

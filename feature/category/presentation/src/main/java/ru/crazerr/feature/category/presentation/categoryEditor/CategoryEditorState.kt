@@ -20,32 +20,32 @@ internal val InitialCategoryEditorState = CategoryEditorState(
     nameError = "",
     selectedIconModel = IconModel(id = -1, icon = ByteArray(0), purpose = ""),
     icons = listOf(),
-    selectedColor = 0xFFFFD1DC,
+    selectedColor = 0xFFE91E63,
     colors = listOf(
-        0xFFFFD1DC, // Pastel Pink
-        0xFFEFA94A, // Pastel Yellow
-        0xFF7FB5B5, // Pastel Turquoise
-        0xFF5D9B9B, // Pastel Blue
-        0xFFA18594, // Pastel Purple
-        0xFF77DD77, // Pastel Green
-        0xFFFF7514, // Pastel Orange
-        0xFFFF8C69, // Salmon
-        0xFFFF9BAA, // Crayola Salmon
-        0xFFFFB28B, // Light Yellow-Pink
-        0xFFFCE883, // Crayola Yellow
-        0xFFBEBD7F, // Green-Beige
-        0xFFC6DF90, // Very Light Yellow-Green
-        0xFF99FF99, // Salad Green
-        0xFFAFDAFC, // Blue Frost
-        0xFFE6E6FA, // Lavender
-        0xFFFFF0F5, // Pink-Lavender
-        0xFFF5F5DC, // Beige
-        0xFFE4717A, // Caramel Pink
-        0xFFB39F7A, // Cappuccino
-        0xFFE6D690, // Light Ivory
-        0xFFEAE0C8, // Pearl
-        0xFFF2E8C9, // Cream
-        0xFFF2DDC6, // Creamy Cream
+        0xFFE91E63, // Pink
+        0xFF2196F3, // Blue
+        0xFF4CAF50, // Green
+        0xFFFF5722, // Deep Orange
+        0xFF9C27B0, // Purple
+        0xFFFFC107, // Amber
+        0xFF00BCD4, // Cyan
+        0xFF795548, // Brown
+        0xFF3F51B5, // Indigo
+        0xFFFF9800, // Orange
+        0xFF009688, // Teal
+        0xFF673AB7, // Deep Purple
+        0xFF607D8B, // Blue Grey
+        0xFF8BC34A, // Light Green
+        0xFFFFEB3B, // Yellow
+        0xFFCDDC39, // Lime
+        0xFFF44336, // Red
+        0xFF00ACC1, // Dark Cyan
+        0xFF6D4C41, // Dark Brown
+        0xFF1E88E5, // Dark Blue
+        0xFF5E35B1, // Dark Purple
+        0xFF43A047, // Dark Green
+        0xFFD81B60, // Dark Pink
+        0xFF7E57C2  // Muted Violet
     ),
     buttonIsLoading = false,
 )

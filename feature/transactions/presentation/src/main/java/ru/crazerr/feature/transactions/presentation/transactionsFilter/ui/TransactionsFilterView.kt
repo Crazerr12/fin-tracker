@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.components.DatePickerModal
 import ru.crazerr.core.utils.components.Hint
+import ru.crazerr.core.utils.components.LoadingView
 import ru.crazerr.core.utils.date.toFormatDate
 import ru.crazerr.feature.transactions.presentation.R
 import ru.crazerr.feature.transactions.presentation.transactionsFilter.TransactionsFilterComponent
@@ -94,79 +95,77 @@ private fun TransactionsFilterViewContent(
     state: TransactionsFilterState,
     handleViewAction: (TransactionsFilterViewAction) -> Unit,
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
-        Row(modifier = Modifier.weight(1f)) {
-            FiltersList(
+    when {
+        !state.isLoading -> Column(modifier = modifier.fillMaxSize()) {
+            TransactionsFilterViewBody(
                 modifier = Modifier.weight(1f),
                 state = state,
                 handleViewAction = handleViewAction,
             )
 
-            Column(
-                modifier = Modifier
-                    .weight(2f)
-                    .padding(start = 12.dp, end = 12.dp, top = 12.dp),
-            ) {
-                when (state.selectedFilterType) {
-                    FilterType.Account -> if (state.accounts.isNotEmpty()) {
-                        ListFilter(
-                            title = stringResource(R.string.transactions_filter_account),
-                            searchQuery = state.searchQuery,
-                            allItemsText = stringResource(R.string.transactions_filter_select_all_accounts),
-                            allItemsClick = { handleViewAction(TransactionsFilterViewAction.ManageAllAccounts) },
-                            allItemsCheckbox = state.accounts.size == state.selectedAccountIds.size,
-                            handleViewAction = handleViewAction,
-                            listContent = {
-                                val accounts = state.accounts.filter {
-                                    it.name.contains(
-                                        state.searchQuery,
-                                        ignoreCase = true
-                                    )
-                                }
+            if (state.isFilterChanged) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    onClick = { handleViewAction(TransactionsFilterViewAction.SaveButtonClick) },
+                ) {
+                    Text(
+                        text = stringResource(R.string.transactions_filter_confirm_button),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+            }
+        }
 
-                                items(accounts, key = { it.id }) { account ->
-                                    FilterListItem(
-                                        isChecked = state.selectedAccountIds.contains(account.id),
-                                        title = account.name,
-                                        onClick = {
-                                            handleViewAction(
-                                                TransactionsFilterViewAction.ManageAccount(
-                                                    id = account.id
-                                                )
-                                            )
-                                        }
-                                    )
-                                }
-                            },
-                        )
-                    } else {
-                        EmptyAccounts()
-                    }
+        state.isLoading -> LoadingView()
+    }
+}
 
-                    FilterType.Category -> ListFilter(
-                        handleViewAction = handleViewAction,
-                        title = stringResource(R.string.transactions_filter_category),
+@Composable
+private fun TransactionsFilterViewBody(
+    modifier: Modifier = Modifier,
+    state: TransactionsFilterState,
+    handleViewAction: (TransactionsFilterViewAction) -> Unit,
+) {
+    Row(modifier = modifier) {
+        FiltersList(
+            modifier = Modifier.weight(1f),
+            state = state,
+            handleViewAction = handleViewAction,
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(2f)
+                .padding(start = 12.dp, end = 12.dp, top = 12.dp),
+        ) {
+            when (state.selectedFilterType) {
+                FilterType.Account -> if (state.accounts.isNotEmpty()) {
+                    ListFilter(
+                        title = stringResource(R.string.transactions_filter_account),
                         searchQuery = state.searchQuery,
-                        allItemsText = stringResource(R.string.transactions_filter_select_all_categories),
-                        allItemsCheckbox = state.categories.size == state.selectedCategoryIds.size,
-                        allItemsClick = { handleViewAction(TransactionsFilterViewAction.ManageAllCategories) },
+                        allItemsText = stringResource(R.string.transactions_filter_select_all_accounts),
+                        allItemsClick = { handleViewAction(TransactionsFilterViewAction.ManageAllAccounts) },
+                        allItemsCheckbox = state.accounts.size == state.selectedAccountIds.size,
+                        handleViewAction = handleViewAction,
                         listContent = {
-                            val categories =
-                                state.categories.filter {
-                                    it.name.contains(
-                                        state.searchQuery,
-                                        ignoreCase = true
-                                    )
-                                }
+                            val accounts = state.accounts.filter {
+                                it.name.contains(
+                                    state.searchQuery,
+                                    ignoreCase = true
+                                )
+                            }
 
-                            items(categories, key = { it.id }) { category ->
+                            items(accounts, key = { it.id }) { account ->
                                 FilterListItem(
-                                    isChecked = state.selectedCategoryIds.contains(category.id),
-                                    title = category.name,
+                                    isChecked = state.selectedAccountIds.contains(account.id),
+                                    title = account.name,
                                     onClick = {
                                         handleViewAction(
-                                            TransactionsFilterViewAction.ManageCategory(
-                                                id = category.id
+                                            TransactionsFilterViewAction.ManageAccount(
+                                                id = account.id
                                             )
                                         )
                                     }
@@ -174,26 +173,45 @@ private fun TransactionsFilterViewContent(
                             }
                         },
                     )
-
-                    FilterType.Date -> DateFilter(
-                        state = state,
-                        handleViewAction = handleViewAction
-                    )
+                } else {
+                    EmptyAccounts()
                 }
-            }
-        }
 
-        if (state.isFilterChanged) {
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                shape = RoundedCornerShape(8.dp),
-                onClick = { handleViewAction(TransactionsFilterViewAction.SaveButtonClick) },
-            ) {
-                Text(
-                    text = stringResource(R.string.transactions_filter_confirm_button),
-                    style = MaterialTheme.typography.titleMedium,
+                FilterType.Category -> ListFilter(
+                    handleViewAction = handleViewAction,
+                    title = stringResource(R.string.transactions_filter_category),
+                    searchQuery = state.searchQuery,
+                    allItemsText = stringResource(R.string.transactions_filter_select_all_categories),
+                    allItemsCheckbox = state.categories.size == state.selectedCategoryIds.size,
+                    allItemsClick = { handleViewAction(TransactionsFilterViewAction.ManageAllCategories) },
+                    listContent = {
+                        val categories =
+                            state.categories.filter {
+                                it.name.contains(
+                                    state.searchQuery,
+                                    ignoreCase = true
+                                )
+                            }
+
+                        items(categories, key = { it.id }) { category ->
+                            FilterListItem(
+                                isChecked = state.selectedCategoryIds.contains(category.id),
+                                title = category.name,
+                                onClick = {
+                                    handleViewAction(
+                                        TransactionsFilterViewAction.ManageCategory(
+                                            id = category.id
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                    },
+                )
+
+                FilterType.Date -> DateFilter(
+                    state = state,
+                    handleViewAction = handleViewAction,
                 )
             }
         }
@@ -201,7 +219,7 @@ private fun TransactionsFilterViewContent(
 }
 
 @Composable
-private fun FilterItem(
+private fun FilterCategoryItem(
     modifier: Modifier = Modifier,
     title: String,
     filterType: FilterType,
@@ -280,7 +298,7 @@ private fun FiltersList(
             .fillMaxHeight()
             .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        FilterItem(
+        FilterCategoryItem(
             filterType = FilterType.Category,
             title = stringResource(R.string.transactions_filter_category),
             selectedFilterType = state.selectedFilterType,
@@ -288,7 +306,7 @@ private fun FiltersList(
             onClick = handleViewAction,
         )
 
-        FilterItem(
+        FilterCategoryItem(
             filterType = FilterType.Account,
             title = stringResource(R.string.transactions_filter_account),
             selectedFilterType = state.selectedFilterType,
@@ -296,7 +314,7 @@ private fun FiltersList(
             onClick = handleViewAction,
         )
 
-        FilterItem(
+        FilterCategoryItem(
             filterType = FilterType.Date,
             title = stringResource(R.string.transactions_filter_date),
             selectedFilterType = state.selectedFilterType,

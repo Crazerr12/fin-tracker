@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import ru.crazerr.core.database.accounts.model.AccountEntity
+import ru.crazerr.core.database.budgets.model.BudgetEntity
 import ru.crazerr.core.database.categories.model.CategoryEntity
 import java.time.LocalDate
 
@@ -16,15 +17,22 @@ import java.time.LocalDate
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("category_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = AccountEntity::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("account_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
+        ForeignKey(
+            entity = BudgetEntity::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("budget_id"),
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE,
+        ),
     ]
 )
 data class TransactionEntity(
@@ -34,4 +42,5 @@ data class TransactionEntity(
     val type: Int,
     val date: LocalDate,
     @ColumnInfo(name = "account_id", index = true) val accountId: Long,
+    @ColumnInfo(name = "budget_id", index = true) val budgetId: Long?,
 )

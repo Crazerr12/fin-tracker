@@ -10,5 +10,5 @@ class TransactionsArgs(
     val accountIds: LongArray?,
     val startDate: LocalDate?,
     val endDate: LocalDate?,
-    val transactionType: TransactionType = TransactionType.Expense,
+    val transactionType: TransactionType,
 )

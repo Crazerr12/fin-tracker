@@ -36,7 +36,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -54,6 +53,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -62,8 +62,10 @@ import coil3.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.core.utils.components.ErrorView
 import ru.crazerr.core.utils.components.LoadingView
+import ru.crazerr.core.utils.components.ProgressIndicator
 import ru.crazerr.core.utils.components.expenseColor
 import ru.crazerr.core.utils.date.toMonthYearFormat
+import ru.crazerr.core.utils.presentation.capitalizeFirst
 import ru.crazerr.core.utils.presentation.toAmountFormat
 import ru.crazerr.feature.budgets.presentation.R
 import ru.crazerr.feature.budgets.presentation.budgets.BudgetsComponent
@@ -255,7 +257,7 @@ private fun CurrentMonthCard(
             }
 
             Text(
-                text = state.date.toMonthYearFormat(),
+                text = state.date.toMonthYearFormat().capitalizeFirst(),
                 style = MaterialTheme.typography.titleLarge,
             )
 
@@ -299,29 +301,23 @@ private fun TotalBudgetCard(modifier: Modifier = Modifier, state: BudgetsState) 
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = stringResource(R.string.budgets_total_budget_title),
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        )
-
-                        Text(
-                            text = state.date.toMonthYearFormat(),
-                            style = MaterialTheme.typography.titleSmall,
-                        )
-                    }
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(R.string.budgets_total_budget_title),
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    )
 
                     Text(
                         text = state.totalMaxBudget.toAmountFormat(currencySign = '₽'),
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth(),
-                    progress = { state.currentMaxBudget.toFloat() / state.totalMaxBudget.toFloat() },
+                ProgressIndicator(
+                    total = state.totalMaxBudget.toFloat(),
+                    spent = state.currentMaxBudget.toFloat(),
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -346,6 +342,7 @@ private fun EmptyBudgets(modifier: Modifier = Modifier) {
         Text(
             text = stringResource(R.string.budgets_empty),
             style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -395,7 +392,11 @@ private fun BudgetCardItem(
 
                 Spacer(modifier = Modifier.height(2.dp))
 
-                LinearProgressIndicator(progress = { budget.currentAmount.toFloat() / budget.maxAmount.toFloat() })
+                ProgressIndicator(
+                    total = budget.maxAmount.toFloat(),
+                    spent = budget.currentAmount.toFloat(),
+                    progressColor = Color(budget.category.color),
+                )
 
                 Spacer(modifier = Modifier.height(2.dp))
 

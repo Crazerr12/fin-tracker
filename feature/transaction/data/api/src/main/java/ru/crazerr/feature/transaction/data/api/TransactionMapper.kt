@@ -15,6 +15,7 @@ fun TransactionWithAccountAndCategory.toTransaction() = Transaction(
     type = TransactionType.fromId(transaction.type)!!,
     date = transaction.date,
     account = accountWithCurrencyAndIcon.toAccount(),
+    budgetId = transaction.budgetId,
 )
 
 fun Transaction.toTransactionEntity() = TransactionEntity(
@@ -23,5 +24,6 @@ fun Transaction.toTransactionEntity() = TransactionEntity(
     amount = amount,
     type = type.id,
     date = date,
-    accountId = account.id
+    accountId = account.id,
+    budgetId = budgetId,
 )

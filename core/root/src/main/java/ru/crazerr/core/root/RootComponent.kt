@@ -67,7 +67,7 @@ interface RootComponent : BackHandlerOwner {
             val startDate: LocalDate? = null,
             @Serializable(with = LocalDateSerializer::class)
             val endDate: LocalDate? = null,
-            val transactionType: TransactionType = TransactionType.Income,
+            val transactionType: TransactionType = TransactionType.All,
         ) : Config
     }
 

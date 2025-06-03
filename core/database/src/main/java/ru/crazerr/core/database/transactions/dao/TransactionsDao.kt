@@ -26,6 +26,21 @@ interface TransactionsDao : BaseDao<TransactionEntity> {
     @Transaction
     @Query(
         """
+        SELECT * 
+        FROM transactions
+        WHERE strftime('%m', date) = strftime('%m', :date) 
+        AND strftime('%Y', date) = strftime('%Y', :date)
+        AND category_id in (:categories)
+        """
+    )
+    fun getTransactionsByPeriodAndCategory(
+        date: String,
+        categories: List<Long>,
+    ): List<TransactionEntity>
+
+    @Transaction
+    @Query(
+        """
         SELECT *
         FROM transactions
         WHERE 

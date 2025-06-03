@@ -1,7 +1,8 @@
 package ru.crazerr.feature.transactions.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.crazerr.feature.account.domain.api.Account
 
 interface AccountRepository {
-    suspend fun getAccounts(): Result<List<Account>>
+    fun getAccounts(): Result<Flow<List<Account>>>
 }

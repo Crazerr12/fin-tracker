@@ -105,7 +105,7 @@ private fun TransactionsViewContent(
             }
         },
         contentWindowInsets = WindowInsets(0),
-        containerColor = MaterialTheme.colorScheme.surfaceVariant
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
     ) { paddingValues ->
         TransactionsViewContentBody(
             modifier = Modifier

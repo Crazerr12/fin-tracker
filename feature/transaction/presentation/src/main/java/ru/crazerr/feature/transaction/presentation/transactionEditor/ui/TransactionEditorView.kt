@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -138,7 +140,8 @@ private fun TransactionEditorViewContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
     ) {
         TransactionEditorCard(state = state, handleViewAction = handleViewAction)
 
@@ -313,38 +316,51 @@ private fun AccountDropdown(
     state: TransactionEditorState,
     handleViewAction: (TransactionEditorViewAction) -> Unit
 ) {
-    ExposedDropdownMenuBox(
-        modifier = modifier.fillMaxWidth(),
-        expanded = state.accountsDropdownIsExpanded,
-        onExpandedChange = { handleViewAction(TransactionEditorViewAction.ManageAccountDropdown) }
-    ) {
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
-            value = state.selectedAccount.name,
-            onValueChange = {},
-            readOnly = true,
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(
-                    expanded = state.accountsDropdownIsExpanded, modifier = Modifier.menuAnchor(
-                        MenuAnchorType.SecondaryEditable
-                    )
-                )
-            },
-            isError = state.selectedAccountError.isNotEmpty(),
-            supportingText = if (state.selectedAccountError.isNotEmpty()) {
-                { Hint(value = state.selectedAccountError) }
-            } else null,
-            textStyle = MaterialTheme.typography.bodyMedium,
-            label = { Hint(stringResource(R.string.transaction_editor_account_hint)) }
-        )
-
-        ExposedDropdownMenu(
+    Column(modifier = modifier.fillMaxWidth()) {
+        ExposedDropdownMenuBox(
+            modifier = Modifier.fillMaxWidth(),
             expanded = state.accountsDropdownIsExpanded,
-            onDismissRequest = { handleViewAction(TransactionEditorViewAction.ManageAccountDropdown) }
+            onExpandedChange = { handleViewAction(TransactionEditorViewAction.ManageAccountDropdown) }
         ) {
-            Column {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                value = state.selectedAccount.name,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = state.accountsDropdownIsExpanded, modifier = Modifier.menuAnchor(
+                            MenuAnchorType.SecondaryEditable
+                        )
+                    )
+                },
+                isError = state.selectedAccountError.isNotEmpty(),
+                textStyle = MaterialTheme.typography.bodyMedium,
+                label = { Hint(stringResource(R.string.transaction_editor_account_hint)) }
+            )
+
+            ExposedDropdownMenu(
+                expanded = state.accountsDropdownIsExpanded,
+                onDismissRequest = { handleViewAction(TransactionEditorViewAction.ManageAccountDropdown) }
+            ) {
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = stringResource(R.string.transaction_editor_account_add),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    },
+                    onClick = { handleViewAction(TransactionEditorViewAction.CreateNewAccount) },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null
+                        )
+                    }
+                )
+
                 state.accounts.forEach { account ->
                     DropdownMenuItem(
                         text = {
@@ -363,22 +379,11 @@ private fun AccountDropdown(
                     )
                 }
             }
+        }
+        if (state.selectedAccountError.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(4.dp))
 
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        text = stringResource(R.string.transaction_editor_account_add),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                },
-                onClick = { handleViewAction(TransactionEditorViewAction.CreateNewAccount) },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = null
-                    )
-                }
-            )
+            Hint(value = state.selectedAccountError)
         }
     }
 }
@@ -417,43 +422,6 @@ private fun CategoryDropdown(
             expanded = state.categoriesDropdownIsExpanded,
             onDismissRequest = { handleViewAction(TransactionEditorViewAction.ManageCategoryDropdown) },
         ) {
-            Column {
-                state.categories.forEach { category ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = category.name,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        },
-                        onClick = {
-                            handleViewAction(
-                                TransactionEditorViewAction.SelectCategory(
-                                    category
-                                )
-                            )
-                        },
-                        leadingIcon = {
-                            Box(
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .clip(CircleShape)
-                                    .background(color = Color(category.color).copy(alpha = 0.15f)),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                AsyncImage(
-                                    modifier = Modifier
-                                        .size(20.dp),
-                                    model = category.iconModel.icon,
-                                    contentDescription = null,
-                                    colorFilter = ColorFilter.tint(color = Color(category.color))
-                                )
-                            }
-                        },
-                    )
-                }
-            }
-
             DropdownMenuItem(
                 text = {
                     Text(
@@ -469,6 +437,41 @@ private fun CategoryDropdown(
                     )
                 }
             )
+
+            state.categories.forEach { category ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = category.name,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    onClick = {
+                        handleViewAction(
+                            TransactionEditorViewAction.SelectCategory(
+                                category
+                            )
+                        )
+                    },
+                    leadingIcon = {
+                        Box(
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clip(CircleShape)
+                                .background(color = Color(category.color).copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier
+                                    .size(20.dp),
+                                model = category.iconModel.icon,
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(color = Color(category.color))
+                            )
+                        }
+                    },
+                )
+            }
         }
     }
 }

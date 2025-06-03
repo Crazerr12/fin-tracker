@@ -81,6 +81,7 @@ class TransactionsStoryComponent(
                     accountIds = dependencies.args.accountIds,
                     startDate = dependencies.args.startDate,
                     endDate = dependencies.args.endDate,
+                    transactionType = dependencies.args.transactionType,
                 )
             )
         )
@@ -128,6 +129,7 @@ class TransactionsStoryComponent(
                     when (action) {
                         TransactionEditorStoryComponentAction.BackClick -> onBackClick()
                         is TransactionEditorStoryComponentAction.TransactionCreated -> {
+                            transactionsInput.tryEmit(TransactionsComponent.Input.TransactionCreated)
                             onBackClick()
                         }
                     }

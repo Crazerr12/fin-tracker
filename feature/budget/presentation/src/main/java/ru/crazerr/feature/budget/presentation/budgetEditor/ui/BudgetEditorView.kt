@@ -8,7 +8,6 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,9 +18,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -53,6 +54,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import coil3.compose.AsyncImage
@@ -192,32 +194,31 @@ private fun BudgetCard(
                 isError = state.maxAmountError.isNotEmpty(),
                 visualTransformation = AmountVisualTransformation(sign = '₽'),
                 supportingText = {
-                    Column(modifier = Modifier.fillMaxWidth()) {
+                    if (state.maxAmountError.isEmpty()) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Text(
+                                modifier = Modifier.weight(1f),
                                 text = stringResource(R.string.budget_editor_current_amount_supporting_text),
                                 style = MaterialTheme.typography.bodySmall,
                             )
+
+                            Spacer(modifier = Modifier.width(8.dp))
 
                             Text(
                                 text = state.currentAmount.toAmountFormat('₽'),
                                 style = MaterialTheme.typography.bodySmall,
                             )
                         }
-
-                        if (state.maxAmountError.isNotEmpty()) {
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            Hint(
-                                value = state.maxAmountError,
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                        }
+                    } else {
+                        Hint(
+                            value = state.maxAmountError,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
                     }
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -226,6 +227,7 @@ private fun BudgetCard(
                 isChecked = state.isRegular,
                 onCheck = { handleViewAction(BudgetEditorViewAction.CheckIsRegular) },
                 title = stringResource(R.string.budget_editor_is_regular_budget),
+                checkForNotificationPermission = false,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -333,6 +335,7 @@ private fun CheckboxRow(
     isChecked: Boolean,
     onCheck: () -> Unit,
     title: String,
+    checkForNotificationPermission: Boolean = true,
 ) {
     val context = LocalContext.current
     val launcher =
@@ -346,11 +349,15 @@ private fun CheckboxRow(
         Checkbox(
             checked = isChecked,
             onCheckedChange = {
-                checkForNotificationPermission(
-                    launcher = launcher,
-                    context = context,
-                    action = onCheck
-                )
+                if (checkForNotificationPermission) {
+                    checkForNotificationPermission(
+                        launcher = launcher,
+                        context = context,
+                        action = onCheck
+                    )
+                } else {
+                    onCheck()
+                }
             })
 
         Text(text = title, style = MaterialTheme.typography.bodyMedium)

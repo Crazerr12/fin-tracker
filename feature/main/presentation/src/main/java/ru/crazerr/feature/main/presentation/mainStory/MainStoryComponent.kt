@@ -86,7 +86,10 @@ class MainStoryComponent(
 
     @Serializable
     sealed interface Config {
+        @Serializable
         data object Main : Config
+
+        @Serializable
         data class AccountEditor(val id: Long) : Config
     }
 }
