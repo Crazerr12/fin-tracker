@@ -66,7 +66,7 @@ class TransactionsStoryComponent(
                                 accountIds = action.accountIds,
                                 categoryIds = action.categoryIds,
                                 startDate = action.startDate,
-                                endDate = action.endDate
+                                endDate = action.endDate,
                             )
                         )
 
@@ -82,6 +82,7 @@ class TransactionsStoryComponent(
                     startDate = dependencies.args.startDate,
                     endDate = dependencies.args.endDate,
                     transactionType = dependencies.args.transactionType,
+                    fromAnalysis = dependencies.args.fromAnalysis,
                 )
             )
         )

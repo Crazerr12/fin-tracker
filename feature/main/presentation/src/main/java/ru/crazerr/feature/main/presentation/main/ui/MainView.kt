@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -47,10 +49,15 @@ import ru.crazerr.feature.main.presentation.R
 import ru.crazerr.feature.main.presentation.main.MainComponent
 import ru.crazerr.feature.main.presentation.main.MainState
 import ru.crazerr.feature.main.presentation.main.MainViewAction
+import ru.crazerr.core.utils.R as utilsR
 
 @Composable
 fun MainView(modifier: Modifier = Modifier, component: MainComponent) {
     val state by component.state.subscribeAsState()
+
+    if (state.isDeleteAccountDialogVisible) {
+        DeleteAccountDialog(handleViewAction = component::handleViewAction)
+    }
 
     Scaffold(
         modifier = modifier.statusBarsPadding(),
@@ -265,9 +272,9 @@ private fun AccountCard(
                     modifier = Modifier.size(20.dp),
                     onClick = {
                         handleViewAction(
-                            MainViewAction.DeleteAccount(
+                            MainViewAction.ShowDeleteAccountDialog(
                                 account = account,
-                                index = index
+                                index = index,
                             )
                         )
                     }
@@ -283,11 +290,36 @@ private fun AccountCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = account.amount.toAmountFormat(currencySign = account.currency.symbol[0]),
+                text = stringResource(
+                    R.string.main_account_balance,
+                    account.amount.toAmountFormat(currencySign = account.currency.symbol[0]),
+                ),
                 style = MaterialTheme.typography.titleMedium
             )
 
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+}
+
+@Composable
+private fun DeleteAccountDialog(
+    modifier: Modifier = Modifier,
+    handleViewAction: (MainViewAction) -> Unit,
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = { handleViewAction(MainViewAction.CancelDeleteAccount) },
+        confirmButton = {
+            Button(onClick = { handleViewAction(MainViewAction.DeleteAccount) }) {
+                Text(text = stringResource(utilsR.string.delete))
+            }
+        },
+        dismissButton = {
+            Button(onClick = { handleViewAction(MainViewAction.CancelDeleteAccount) }) {
+                Text(text = stringResource(utilsR.string.cancel_button))
+            }
+        },
+        title = { Text(text = stringResource(R.string.main_delete_account_dialog_title)) },
+    )
 }

@@ -4,11 +4,15 @@
     <string name="main_expenses">Расходы</string>
     <string name="main_income">Доходы</string>
     <string name="main_accounts">Счета</string>
+    <string name="main_account_balance">Баланс: %s</string>
 
     <string name="main_empty_accounts">У вас пока нет счетов!\nВы можете добавить их прямо сейчас</string>
 
     <string name="main_delete_account_content_description">Удалить счёт</string>
     <string name="main_add_account_content_description">Добавить счёт</string>
 
-    <string name="main_snackbar_title_account_deleted">Счёт удалён</string>
+    <string name="main_delete_account_dialog_title">Вы действительно хотите удалить счёт?</string>
+
+    <string name="main_snackbar_title_account_deleted_success">Счёт успешно удалён</string>
+    <string name="main_snackbar_title_account_deleted_failure">Не удалось удалить счёт</string>
 </resources>

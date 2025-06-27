@@ -11,4 +11,5 @@ class TransactionsArgs(
     val startDate: LocalDate?,
     val endDate: LocalDate?,
     val transactionType: TransactionType,
+    val fromAnalysis: Boolean = false,
 )

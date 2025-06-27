@@ -68,6 +68,7 @@ interface RootComponent : BackHandlerOwner {
             @Serializable(with = LocalDateSerializer::class)
             val endDate: LocalDate? = null,
             val transactionType: TransactionType = TransactionType.All,
+            val fromAnalysis: Boolean = false,
         ) : Config
     }
 
@@ -176,15 +177,16 @@ internal class RootComponentImpl(
                 onAction = { action ->
                     when (action) {
                         is AnalysisStoryComponentAction.OnCategoryClick -> {
-                            obtainBottomNavigation(BottomNavigationItem.Transactions)
                             navigation.pushToFront(
                                 RootComponent.Config.TransactionsStoryConfig(
                                     categoryIds = longArrayOf(action.categoryId),
                                     startDate = action.startDate,
                                     endDate = action.endDate,
                                     transactionType = action.transactionType,
+                                    fromAnalysis = true,
                                 )
                             )
+                            _selectedBottomNavigationItem.value = BottomNavigationItem.Transactions
                         }
                     }
                 }
@@ -204,6 +206,7 @@ internal class RootComponentImpl(
                     startDate = config.startDate,
                     endDate = config.endDate,
                     transactionType = config.transactionType,
+                    fromAnalysis = config.fromAnalysis,
                 )
             )
         )

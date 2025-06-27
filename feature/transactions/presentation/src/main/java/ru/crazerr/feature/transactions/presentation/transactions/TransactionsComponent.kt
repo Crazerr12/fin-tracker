@@ -16,7 +16,6 @@ import ru.crazerr.feature.transaction.domain.api.Transaction
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 import ru.crazerr.feature.transactions.presentation.transactions.TransactionsComponentAction.*
 import java.time.LocalDate
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 class TransactionsComponent(
@@ -105,11 +104,11 @@ class TransactionsComponent(
                     endDate = dependencies.args.endDate,
                     isFilterEnabled = dependencies.args.accountIds != null || dependencies.args.categoryIds != null
                             || dependencies.args.startDate != null || dependencies.args.endDate != null,
+                    fromAnalysis = dependencies.args.fromAnalysis,
                 )
             }
 
             val remainingInitialData = AtomicInteger(2)
-            val transactionsTriggered = AtomicBoolean(false)
 
             launch {
                 dependencies.accountRepository.getAccounts().fold(
@@ -131,22 +130,29 @@ class TransactionsComponent(
             }
 
             launch {
-                dependencies.categoryRepository.getCategories().fold(
-                    onSuccess = { flow ->
-                        flow.collect { categories ->
-                            reduceState {
-                                copy(categoryIds = categories.map { it.id }.toLongArray())
-                            }
+                if (state.value.fromAnalysis) {
+                    if (remainingInitialData.decrementAndGet() <= 0) {
+                        getTransactions()
+                        reduceState { copy(fromAnalysis = false) }
+                    }
+                } else {
+                    dependencies.categoryRepository.getCategories().fold(
+                        onSuccess = { flow ->
+                            flow.collect { categories ->
+                                reduceState {
+                                    copy(categoryIds = categories.map { it.id }.toLongArray())
+                                }
 
-                            if (remainingInitialData.decrementAndGet() <= 0) {
-                                getTransactions()
+                                if (remainingInitialData.decrementAndGet() <= 0) {
+                                    getTransactions()
+                                }
                             }
-                        }
-                    },
-                    onFailure = {
-                        snackbarManager.showSnackbar(it.localizedMessage ?: "")
-                    },
-                )
+                        },
+                        onFailure = {
+                            snackbarManager.showSnackbar(it.localizedMessage ?: "")
+                        },
+                    )
+                }
             }
         }
     }

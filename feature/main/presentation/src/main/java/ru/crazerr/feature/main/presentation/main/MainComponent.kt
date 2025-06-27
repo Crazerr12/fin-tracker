@@ -3,8 +3,6 @@ package ru.crazerr.feature.main.presentation.main
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnStart
 import com.arkivanov.essenty.lifecycle.doOnStop
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.crazerr.core.utils.navigation.hideBottomBar
 import ru.crazerr.core.utils.navigation.showBottomBar
@@ -13,8 +11,8 @@ import ru.crazerr.core.utils.presentation.componentCoroutineScope
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.account.domain.api.Account
 import ru.crazerr.feature.main.presentation.R
+import ru.crazerr.feature.main.presentation.main.MainComponentAction.*
 import java.util.concurrent.atomic.AtomicInteger
-import ru.crazerr.core.utils.R as utilsR
 
 class MainComponent(
     componentContext: ComponentContext,
@@ -33,47 +31,66 @@ class MainComponent(
 
     override fun handleViewAction(action: MainViewAction) {
         when (action) {
-            is MainViewAction.DeleteAccount -> onDeleteAccountById(
+            is MainViewAction.DeleteAccount -> onDeleteAccountById()
+            is MainViewAction.GoToAccount -> onAction(GoToAccount(id = action.id))
+            MainViewAction.CancelDeleteAccount -> onCancelDeleteAccount()
+            is MainViewAction.ShowDeleteAccountDialog -> onShowDeleteAccountDialog(
                 account = action.account,
-                index = action.index
+                index = action.index,
             )
-
-            is MainViewAction.GoToAccount -> onAction(MainComponentAction.GoToAccount(id = action.id))
         }
     }
 
-    private fun onDeleteAccountById(account: Account, index: Int) {
-        coroutineScope.launch {
-            reduceState { copy(accounts = accounts.filter { it.id != account.id }) }
+    private fun onCancelDeleteAccount() {
+        reduceState {
+            copy(
+                isDeleteAccountDialogVisible = false,
+                deletableAccount = null,
+                deletableAccountIndex = -1,
+            )
+        }
+    }
 
-            snackbarManager.showSnackbar(
-                dependencies.resourceManager.getString(R.string.main_snackbar_title_account_deleted),
-                dependencies.resourceManager.getString(utilsR.string.cancel_button),
-                onAction = {
+    private fun onShowDeleteAccountDialog(account: Account, index: Int) {
+        reduceState {
+            copy(
+                isDeleteAccountDialogVisible = true,
+                deletableAccount = account,
+                deletableAccountIndex = index,
+            )
+        }
+    }
+
+    private fun onDeleteAccountById() {
+        coroutineScope.launch {
+            reduceState { copy(accounts = accounts.filter { it.id != deletableAccount?.id }) }
+
+            val result =
+                dependencies.accountRepository.deleteAccountById(id = state.value.deletableAccount!!.id)
+
+            result.fold(
+                onSuccess = {
+                    snackbarManager.showSnackbar(
+                        message = dependencies.resourceManager.getString(
+                            R.string.main_snackbar_title_account_deleted_success
+                        )
+                    )
+                },
+                onFailure = {
+                    snackbarManager.showSnackbar(
+                        message = dependencies.resourceManager.getString(
+                            R.string.main_snackbar_title_account_deleted_failure
+                        )
+                    )
+
                     reduceState {
                         val mutableAccounts = mutableListOf<Account>()
                         mutableAccounts.addAll(accounts)
-                        mutableAccounts.add(index, account)
+                        mutableAccounts.add(deletableAccountIndex, deletableAccount!!)
                         copy(accounts = mutableAccounts)
                     }
-                    cancel()
-                }
+                },
             )
-
-            repeat(4) {
-                delay(1000L)
-            }
-
-            val result = dependencies.accountRepository.deleteAccountById(id = account.id)
-
-            if (result.isFailure) {
-                reduceState {
-                    val mutableAccounts = mutableListOf<Account>()
-                    mutableAccounts.addAll(accounts)
-                    mutableAccounts.add(index, account)
-                    copy(accounts = mutableAccounts)
-                }
-            }
         }
     }
 

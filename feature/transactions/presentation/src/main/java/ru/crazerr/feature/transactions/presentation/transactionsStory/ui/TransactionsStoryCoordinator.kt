@@ -13,7 +13,7 @@ import ru.crazerr.feature.transactions.presentation.transactionsStory.Transactio
 @Composable
 fun TransactionsStoryCoordinator(
     modifier: Modifier = Modifier,
-    component: TransactionsStoryComponent
+    component: TransactionsStoryComponent,
 ) {
     val stack by component.stack.subscribeAsState()
     Children(modifier = modifier, stack = stack) {

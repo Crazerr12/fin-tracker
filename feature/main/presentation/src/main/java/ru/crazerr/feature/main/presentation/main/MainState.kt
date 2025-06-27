@@ -11,6 +11,9 @@ data class MainState(
     val lastMonthExpenses: Double,
     val lastMonthIncome: Double,
     val mainCurrencySign: Char,
+    val isDeleteAccountDialogVisible: Boolean,
+    val deletableAccount: Account?,
+    val deletableAccountIndex: Int,
 )
 
 internal val InitialMainState = MainState(
@@ -22,4 +25,7 @@ internal val InitialMainState = MainState(
     lastMonthIncome = 0.0,
     lastMonthExpenses = 0.0,
     mainCurrencySign = '₽',
+    isDeleteAccountDialogVisible = false,
+    deletableAccount = null,
+    deletableAccountIndex = -1,
 )
