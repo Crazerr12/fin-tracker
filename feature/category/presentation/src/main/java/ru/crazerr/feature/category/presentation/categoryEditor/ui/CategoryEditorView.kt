@@ -50,8 +50,7 @@ import ru.crazerr.feature.category.presentation.R
 import ru.crazerr.feature.category.presentation.categoryEditor.CategoryEditorComponent
 import ru.crazerr.feature.category.presentation.categoryEditor.CategoryEditorState
 import ru.crazerr.feature.category.presentation.categoryEditor.CategoryEditorViewAction
-import ru.crazerr.feature.category.presentation.categoryEditor.InitialCategoryEditorState
-import ru.crazerr.feature.icon.domain.api.IconModel
+import ru.crazerr.feature.icon.presentation.api.model.IconUi
 import kotlin.collections.chunked
 
 private const val COLOR_ROW_SIZE = 6
@@ -215,7 +214,7 @@ private fun IconGrid(
         state.icons.chunked(COLOR_ROW_SIZE).forEach { icons ->
             IconRow(
                 icons = icons,
-                selectedIcon = state.selectedIconModel,
+                selectedIcon = state.selectedIcon,
                 handleViewAction = handleViewAction,
             )
         }
@@ -246,8 +245,8 @@ private fun ColorRow(
 @Composable
 private fun IconRow(
     modifier: Modifier = Modifier,
-    icons: List<IconModel>,
-    selectedIcon: IconModel,
+    icons: List<IconUi>,
+    selectedIcon: IconUi,
     handleViewAction: (CategoryEditorViewAction) -> Unit,
 ) {
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -264,7 +263,7 @@ private fun IconRow(
 @Composable
 private fun IconView(
     modifier: Modifier = Modifier,
-    icon: IconModel,
+    icon: IconUi,
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -315,15 +314,15 @@ private fun ColorView(
 @Preview()
 @Composable
 private fun ColorGridPreview() {
-    Column { ColorGrid(state = InitialCategoryEditorState) { } }
+    Column { ColorGrid(state = CategoryEditorState()) { } }
 }
 
 @Preview
 @Composable
 private fun ColorRowPreview() {
     ColorRow(
-        colors = InitialCategoryEditorState.colors.take(6),
-        selectedColor = InitialCategoryEditorState.selectedColor
+        colors = CategoryEditorState().colors.take(6),
+        selectedColor = CategoryEditorState().selectedColor,
     ) { }
 }
 

@@ -1,6 +1,6 @@
 package ru.crazerr.feature.budget.presentation.budgetEditor
 
-import ru.crazerr.feature.domain.api.Category
+import ru.crazerr.feature.category.domain.api.Category
 
 sealed interface BudgetEditorViewAction {
     data object BackClick : BudgetEditorViewAction

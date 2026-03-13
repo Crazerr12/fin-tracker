@@ -14,4 +14,10 @@ interface CategoriesDao : BaseDao<CategoryEntity> {
 
     @Query("SELECT * FROM categories WHERE id = :id")
     suspend fun getCategoryById(id: Long): CategoryWithIcon
+
+    @Query("DELETE FROM categories WHERE id = :id")
+    suspend fun deleteCategoryById(id: Long)
+
+    @Query("SELECT * FROM categories LIMIT :limit OFFSET :offset")
+    suspend fun getCategoriesByLimitAndOffset(limit: Int, offset: Int): List<CategoryWithIcon>
 }

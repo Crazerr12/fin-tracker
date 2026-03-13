@@ -1,5 +1,6 @@
 package ru.crazerr.feature.domain.api
 
+import ru.crazerr.feature.category.domain.api.Category
 import java.time.LocalDate
 
 data class Budget(

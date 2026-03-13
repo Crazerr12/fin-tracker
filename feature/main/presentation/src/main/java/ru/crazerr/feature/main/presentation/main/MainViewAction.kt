@@ -7,4 +7,5 @@ sealed interface MainViewAction {
     data object CancelDeleteAccount : MainViewAction
     data object DeleteAccount : MainViewAction
     data class GoToAccount(val id: Long = -1) : MainViewAction
+    data object GoToSettings : MainViewAction
 }

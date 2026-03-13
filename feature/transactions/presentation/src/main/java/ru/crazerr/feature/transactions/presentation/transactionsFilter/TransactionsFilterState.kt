@@ -1,7 +1,7 @@
 package ru.crazerr.feature.transactions.presentation.transactionsFilter
 
 import ru.crazerr.feature.account.domain.api.Account
-import ru.crazerr.feature.domain.api.Category
+import ru.crazerr.feature.category.domain.api.Category
 import ru.crazerr.feature.transactions.presentation.transactionsFilter.model.FilterType
 import java.time.LocalDate
 

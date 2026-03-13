@@ -8,6 +8,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.crazerr.feature.account.presentation.ui.AccountEditorView
 import ru.crazerr.feature.main.presentation.main.ui.MainView
 import ru.crazerr.feature.main.presentation.mainStory.MainStoryComponent
+import ru.crazerr.feature.settings.presentation.settingsStory.ui.SettingsStoryCoordinator
 
 @Composable
 fun MainStoryCoordinator(modifier: Modifier = Modifier, component: MainStoryComponent) {
@@ -17,6 +18,7 @@ fun MainStoryCoordinator(modifier: Modifier = Modifier, component: MainStoryComp
         when (val child = it.instance) {
             is MainStoryComponent.Child.AccountEditor -> AccountEditorView(component = child.component)
             is MainStoryComponent.Child.Main -> MainView(component = child.component)
+            is MainStoryComponent.Child.SettingsStory -> SettingsStoryCoordinator(component = child.component)
         }
     }
 }

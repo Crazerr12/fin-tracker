@@ -14,6 +14,9 @@ import ru.crazerr.feature.account.presentation.AccountEditorComponent
 import ru.crazerr.feature.account.presentation.AccountEditorComponentAction
 import ru.crazerr.feature.main.presentation.main.MainComponent
 import ru.crazerr.feature.main.presentation.main.MainComponentAction
+import ru.crazerr.feature.main.presentation.mainStory.MainStoryComponent.Config.*
+import ru.crazerr.feature.settings.presentation.settingsStory.SettingsStoryComponent
+import ru.crazerr.feature.settings.presentation.settingsStory.SettingsStoryComponentAction
 
 class MainStoryComponent(
     componentContext: ComponentContext,
@@ -34,12 +37,13 @@ class MainStoryComponent(
         componentContext: ComponentContext
     ): Child =
         when (config) {
-            is Config.AccountEditor -> createAccountEditorComponent(
+            is AccountEditor -> createAccountEditorComponent(
                 componentContext = componentContext,
                 config = config
             )
 
-            Config.Main -> createMainComponent(componentContext = componentContext)
+            Main -> createMainComponent(componentContext = componentContext)
+            SettingsStory -> createSettingsStoryComponent(componentContext = componentContext)
         }
 
     @OptIn(DelicateDecomposeApi::class)
@@ -50,10 +54,12 @@ class MainStoryComponent(
                 onAction = { action ->
                     when (action) {
                         is MainComponentAction.GoToAccount -> navigation.push(
-                            Config.AccountEditor(
+                            AccountEditor(
                                 id = action.id
                             )
                         )
+
+                        MainComponentAction.GoToSettings -> navigation.push(SettingsStory)
                     }
                 },
             )
@@ -75,6 +81,17 @@ class MainStoryComponent(
         )
     )
 
+    private fun createSettingsStoryComponent(componentContext: ComponentContext): Child.SettingsStory =
+        Child.SettingsStory(
+            component = dependencies.settingsStoryComponentFactory.create(
+                componentContext = componentContext,
+                onAction = { action ->
+                    when (action) {
+                        SettingsStoryComponentAction.BackClick -> onBackClick()
+                    }
+                })
+        )
+
     private fun onBackClick() {
         navigation.pop()
     }
@@ -82,6 +99,7 @@ class MainStoryComponent(
     sealed interface Child {
         class Main(val component: MainComponent) : Child
         class AccountEditor(val component: AccountEditorComponent) : Child
+        class SettingsStory(val component: SettingsStoryComponent) : Child
     }
 
     @Serializable
@@ -91,5 +109,8 @@ class MainStoryComponent(
 
         @Serializable
         data class AccountEditor(val id: Long) : Config
+
+        @Serializable
+        data object SettingsStory : Config
     }
 }

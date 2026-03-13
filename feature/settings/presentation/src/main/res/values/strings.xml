@@ -1,0 +1,7 @@
+<resources>
+    <string name="settings_top_bar_title">Настройки</string>
+
+    <string name="categories_top_bar_title">Категории</string>
+    <string name="categories_fab_content_description">Создать категорию</string>
+    <string name="categories_empty_title">Для начала работы с категориями, создайте их</string>
+</resources>

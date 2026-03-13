@@ -1,7 +1,7 @@
 package ru.crazerr.feature.transaction.presentation.transactionEditor
 
 import ru.crazerr.feature.account.domain.api.Account
-import ru.crazerr.feature.domain.api.Category
+import ru.crazerr.feature.category.domain.api.Category
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 import java.time.LocalDate
 

@@ -3,7 +3,7 @@ package ru.crazerr.feature.category.data.dataSource
 import ru.crazerr.core.database.categories.dao.CategoriesDao
 import ru.crazerr.feature.category.data.api.toCategory
 import ru.crazerr.feature.category.data.api.toCategoryEntity
-import ru.crazerr.feature.domain.api.Category
+import ru.crazerr.feature.category.domain.api.Category
 
 internal class CategoryLocalDataSource(
     private val categoriesDao: CategoriesDao,

@@ -1,4 +1,4 @@
-package ru.crazerr.feature.domain.api
+package ru.crazerr.feature.category.domain.api
 
 import ru.crazerr.feature.icon.domain.api.IconModel
 

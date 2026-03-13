@@ -38,6 +38,8 @@ class MainComponent(
                 account = action.account,
                 index = action.index,
             )
+
+            MainViewAction.GoToSettings -> onAction(GoToSettings)
         }
     }
 

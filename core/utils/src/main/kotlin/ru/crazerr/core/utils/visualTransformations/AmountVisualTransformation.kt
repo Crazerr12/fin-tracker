@@ -14,9 +14,9 @@ class AmountVisualTransformation(private val sign: Char) : VisualTransformation 
             })
         }
 
-        val (wholePart, decimalPart) = splitParts(text.text)
+        val (mainPart, decimalPart) = splitParts(text.text)
 
-        val formattedWhole = formatWholePart(part = wholePart)
+        val formattedWhole = formatWholePart(part = mainPart)
 
         val result = buildString {
             append(formattedWhole)
@@ -33,8 +33,8 @@ class AmountVisualTransformation(private val sign: Char) : VisualTransformation 
             text = AnnotatedString(result),
             offsetMapping = AmountOffsetMapping(
                 formattedWholeLength = formattedWhole.length,
-                decimalLength = (if (text.text.contains('.')) 1 else 0) + decimalPart.length,
-                wholeLength = wholePart.length,
+                decimalLength = (if (text.text.contains('.')) 1 + decimalPart.length else 0),
+                mainLength = mainPart.length,
             )
         )
     }
@@ -55,25 +55,26 @@ class AmountVisualTransformation(private val sign: Char) : VisualTransformation 
 
     private class AmountOffsetMapping(
         private val formattedWholeLength: Int,
-        private val wholeLength: Int,
+        private val mainLength: Int,
         private val decimalLength: Int,
     ) : OffsetMapping {
         override fun originalToTransformed(offset: Int): Int {
-            if (offset >= wholeLength && decimalLength != 0) {
-                return offset + (wholeLength - 1) / 3
+            if (offset >= mainLength && decimalLength != 0) {
+                return offset + (mainLength - 1) / 3
             }
 
-            val k = wholeLength - 1 - offset
-            val spaces = formattedWholeLength - wholeLength
+            val symbolsFromEnd = mainLength - 1 - offset
+            val totalSpaces = formattedWholeLength - mainLength
+            val insertedSpacesBeforeOffset = totalSpaces - symbolsFromEnd / 3
 
-            return offset + (spaces - k / 3)
+            return offset + insertedSpacesBeforeOffset
         }
 
         override fun transformedToOriginal(offset: Int): Int {
-            val spaceCount = formattedWholeLength - wholeLength
+            val spaceCount = formattedWholeLength - mainLength
 
             return if (offset > formattedWholeLength) {
-                (offset - spaceCount).coerceAtMost(wholeLength + decimalLength)
+                (offset - spaceCount).coerceAtMost(mainLength + decimalLength)
             } else {
                 (offset - (offset / 4)).coerceAtLeast(0)
             }

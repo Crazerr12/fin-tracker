@@ -2,7 +2,7 @@ package ru.crazerr.feature.transaction.presentation.transactionEditor
 
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import ru.crazerr.core.utils.presentation.formatWithAmountZeros
 import ru.crazerr.core.utils.presentation.isValidAmount
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.account.domain.api.Account
-import ru.crazerr.feature.domain.api.Category
+import ru.crazerr.feature.category.domain.api.Category
 import ru.crazerr.feature.transaction.domain.api.Transaction
 import ru.crazerr.feature.transaction.domain.api.TransactionType
 import ru.crazerr.feature.transaction.presentation.R
@@ -230,7 +230,7 @@ class TransactionEditorComponent(
         }
     }
 
-    private fun handleInput(input: MutableSharedFlow<Input>) {
+    private fun handleInput(input: SharedFlow<Input>) {
         coroutineScope.launch {
             input.collectLatest {
                 when (it) {

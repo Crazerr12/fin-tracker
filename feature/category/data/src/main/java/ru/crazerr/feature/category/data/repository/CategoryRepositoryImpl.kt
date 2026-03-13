@@ -1,8 +1,8 @@
 package ru.crazerr.feature.category.data.repository
 
 import ru.crazerr.feature.category.data.dataSource.CategoryLocalDataSource
+import ru.crazerr.feature.category.domain.api.Category
 import ru.crazerr.feature.category.domain.repository.CategoryRepository
-import ru.crazerr.feature.domain.api.Category
 
 internal class CategoryRepositoryImpl(
     private val categoryLocalDataSource: CategoryLocalDataSource,

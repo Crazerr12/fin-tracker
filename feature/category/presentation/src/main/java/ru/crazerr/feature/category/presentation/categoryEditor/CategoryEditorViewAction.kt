@@ -1,6 +1,6 @@
 package ru.crazerr.feature.category.presentation.categoryEditor
 
-import ru.crazerr.feature.icon.domain.api.IconModel
+import ru.crazerr.feature.icon.presentation.api.model.IconUi
 
 
 sealed interface CategoryEditorViewAction {
@@ -8,7 +8,7 @@ sealed interface CategoryEditorViewAction {
 
     data class UpdateName(val name: String) : CategoryEditorViewAction
     data class UpdateColor(val color: Long) : CategoryEditorViewAction
-    data class UpdateIcon(val iconModel: IconModel) : CategoryEditorViewAction
+    data class UpdateIcon(val icon: IconUi) : CategoryEditorViewAction
 
     data object SaveClick : CategoryEditorViewAction
 }

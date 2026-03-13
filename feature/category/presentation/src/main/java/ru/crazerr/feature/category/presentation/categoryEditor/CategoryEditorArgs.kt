@@ -1,5 +1,7 @@
 package ru.crazerr.feature.category.presentation.categoryEditor
 
+import ru.crazerr.feature.category.presentation.api.model.CategoryUi
+
 data class CategoryEditorArgs(
-    val id: Long = -1,
+    val categoryUi: CategoryUi? = null,
 )

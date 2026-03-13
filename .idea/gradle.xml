@@ -65,6 +65,7 @@
             <option value="$PROJECT_DIR$/feature/category/domain" />
             <option value="$PROJECT_DIR$/feature/category/domain/api" />
             <option value="$PROJECT_DIR$/feature/category/presentation" />
+            <option value="$PROJECT_DIR$/feature/category/presentation/api" />
             <option value="$PROJECT_DIR$/feature/currency" />
             <option value="$PROJECT_DIR$/feature/currency/data" />
             <option value="$PROJECT_DIR$/feature/currency/data/api" />
@@ -75,6 +76,8 @@
             <option value="$PROJECT_DIR$/feature/icon/data/api" />
             <option value="$PROJECT_DIR$/feature/icon/domain" />
             <option value="$PROJECT_DIR$/feature/icon/domain/api" />
+            <option value="$PROJECT_DIR$/feature/icon/presentation" />
+            <option value="$PROJECT_DIR$/feature/icon/presentation/api" />
             <option value="$PROJECT_DIR$/feature/main" />
             <option value="$PROJECT_DIR$/feature/main/data" />
             <option value="$PROJECT_DIR$/feature/main/domain" />
@@ -83,6 +86,10 @@
             <option value="$PROJECT_DIR$/feature/profile/data" />
             <option value="$PROJECT_DIR$/feature/profile/domain" />
             <option value="$PROJECT_DIR$/feature/profile/presentation" />
+            <option value="$PROJECT_DIR$/feature/settings" />
+            <option value="$PROJECT_DIR$/feature/settings/data" />
+            <option value="$PROJECT_DIR$/feature/settings/domain" />
+            <option value="$PROJECT_DIR$/feature/settings/presentation" />
             <option value="$PROJECT_DIR$/feature/transaction" />
             <option value="$PROJECT_DIR$/feature/transaction/data" />
             <option value="$PROJECT_DIR$/feature/transaction/data/api" />

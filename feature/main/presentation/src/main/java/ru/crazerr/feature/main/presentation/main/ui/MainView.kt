@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -100,7 +101,8 @@ private fun MainViewContent(
         item {
             MainViewHeader(
                 currentAmount = state.currentAmount,
-                currencySign = state.mainCurrencySign
+                currencySign = state.mainCurrencySign,
+                onSettingsClick = { handleViewAction(MainViewAction.GoToSettings) }
             )
         }
 
@@ -146,25 +148,40 @@ private fun MainViewContent(
 private fun MainViewHeader(
     modifier: Modifier = Modifier,
     currentAmount: Double,
-    currencySign: Char
+    currencySign: Char,
+    onSettingsClick: () -> Unit,
 ) {
-    Column(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .padding(16.dp)
     ) {
-        Text(
-            text = stringResource(R.string.main_title),
-            style = MaterialTheme.typography.titleSmall,
-        )
+        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.width(16.dp))
 
-        Text(
-            text = currentAmount.toAmountFormat(currencySign = currencySign),
-            style = MaterialTheme.typography.titleLarge
-        )
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(R.string.main_title),
+                style = MaterialTheme.typography.titleSmall,
+            )
+
+            Text(
+                text = currentAmount.toAmountFormat(currencySign = currencySign),
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
+        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.TopEnd) {
+            IconButton(onClick = onSettingsClick) {
+                Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+            }
+        }
     }
 }
 

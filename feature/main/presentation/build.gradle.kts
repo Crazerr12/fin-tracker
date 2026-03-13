@@ -10,4 +10,5 @@ dependencies {
     implementation(project(":feature:main:data"))
     implementation(project(":feature:main:domain"))
     implementation(project(":feature:account:presentation"))
+    implementation(project(":feature:settings:presentation"))
 }

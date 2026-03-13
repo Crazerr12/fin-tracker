@@ -1,5 +1,3 @@
-import ru.crazerr.conventionplugins.base.implementation
-
 plugins {
     id("data.plugin")
 }

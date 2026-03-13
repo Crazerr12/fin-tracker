@@ -11,8 +11,8 @@ import ru.crazerr.core.utils.presentation.formatWithAmountZeros
 import ru.crazerr.core.utils.presentation.isValidAmount
 import ru.crazerr.core.utils.snackbar.snackbarManager
 import ru.crazerr.feature.budget.presentation.R
+import ru.crazerr.feature.category.domain.api.Category
 import ru.crazerr.feature.domain.api.Budget
-import ru.crazerr.feature.domain.api.Category
 import ru.crazerr.core.utils.R as utilsR
 
 class BudgetEditorComponent(
